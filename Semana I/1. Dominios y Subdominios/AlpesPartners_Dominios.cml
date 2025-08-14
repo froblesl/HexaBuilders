@@ -1,0 +1,133 @@
+ContextMapper {
+Domain AlpesPartnersEcosistema {
+  domainVisionStatement = "Plataforma integral para crear, gestionar y escalar asociaciones estratégicas (afiliados, influencers, advocacy y alianzas B2B) con tracking, atribución, pagos, cumplimiento y analítica unificados."
+
+  // --- Núcleo (Core) ---
+  Subdomain ReclutamientoYDescubrimiento {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Permitir a las marcas encontrar, calificar y reclutar partners (afiliados, influencers, embajadores, B2B) mediante búsqueda, filtros y marketplace."
+  }
+
+  Subdomain OnboardingYContratos {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Estandarizar y automatizar el alta de partners y la gestión de términos (CPA, CPL, CPC), acuerdos y vigencias."
+  }
+
+  Subdomain TrackingYAtribucion {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Capturar eventos (clic, lead, venta) vía tags, píxeles y APIs S2S y resolver la atribución multi-canal y multi-touch en tiempo real."
+  }
+
+  Subdomain CampanasYProgramacion {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Diseñar, ejecutar y optimizar campañas con partners, incluyendo briefs, reglas, objetivos y calendarización."
+  }
+
+  Subdomain ReportesYAnalitica {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Proveer dashboards, contribución por partner/canal, ROI y recomendaciones operables para optimización continua."
+  }
+
+  Subdomain PagosYPayoutsPartners {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Calcular, conciliar y pagar comisiones en múltiples monedas y métodos, garantizando tiempos de pago SLA."
+  }
+
+  Subdomain CumplimientoYAntifraude {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Monitorear políticas, disclosures y fraude; prevenir abusos y auditar la actividad de partners y campañas."
+  }
+
+  Subdomain InfluencersYCreadores {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Gestionar el ciclo de vida con influencers/creadores: descubrimiento, acuerdos creativos, seguimiento de publicaciones e impacto."
+  }
+
+  Subdomain ProgramasDeLealtadYAdvocacy {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Activar clientes/empleados como embajadores, emitir enlaces únicos, medir referidos y otorgar recompensas."
+  }
+
+  Subdomain AlianzasB2BIntegraciones {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Orquestar partnerships B2B e integraciones SaaS con objetivos por hitos (instalación, activación, suscripción)."
+  }
+
+  Subdomain MarketplaceDePartners {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Exponer oferta y demanda en un mercado interno para acelerar el match entre marcas y partners."
+  }
+
+  Subdomain GestionRelacionPartnersCRM {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Centralizar perfiles, segmentación, historiales y comunicaciones para operar relaciones de largo plazo con partners."
+  }
+
+  // --- Soporte (Supporting) ---
+  Subdomain CatalogoYOfertas {
+    type = SUPPORTING_DOMAIN
+    domainVisionStatement = "Mantener catálogos de productos/servicios y reglas de ofertas para usarse en campañas y atribución."
+  }
+
+  Subdomain ContenidoUGC {
+    type = SUPPORTING_DOMAIN
+    domainVisionStatement = "Recolectar, moderar y reutilizar contenido generado por usuarios/partners para potenciar campañas."
+  }
+
+  Subdomain ComunicacionesYWorkflows {
+    type = SUPPORTING_DOMAIN
+    domainVisionStatement = "Automatizar correos, mensajes y aprobaciones con flujos configurables a lo largo del ciclo de vida del partner."
+  }
+
+  Subdomain PlataformaEventosYProcesamiento {
+    type = SUPPORTING_DOMAIN
+    domainVisionStatement = "Ingerir, enrutar y procesar eventos a escala para respaldar tracking, pagos, reportes y alertas."
+  }
+
+  Subdomain SDKsTrackingWebMobile {
+    type = SUPPORTING_DOMAIN
+    domainVisionStatement = "Proveer SDKs/etiquetas para web y mobile que faciliten la instrumentación y calidad de datos de eventos."
+  }
+
+  Subdomain FinCoreContabilidadComisiones {
+    type = SUPPORTING_DOMAIN
+    domainVisionStatement = "Llevar mayor, conciliaciones y provisiones de comisiones integradas con tesorería y facturación."
+  }
+
+  // --- Genéricos (Generic) ---
+  Subdomain IdentidadAccesoYPermisos {
+    type = GENERIC_DOMAIN
+    domainVisionStatement = "Autenticación, autorización, RBAC/ABAC, SSO y gestión de organizaciones y roles."
+  }
+
+  Subdomain NotificacionesYAlertas {
+    type = GENERIC_DOMAIN
+    domainVisionStatement = "Entrega confiable de notificaciones multi-canal (email, push, webhook) y alertas operativas."
+  }
+
+  Subdomain ObservabilidadYConfiabilidad {
+    type = GENERIC_DOMAIN
+    domainVisionStatement = "Logging, métricas, trazas y SLOs para operar la plataforma con alta disponibilidad."
+  }
+
+  Subdomain InfraestructuraYDevOps {
+    type = GENERIC_DOMAIN
+    domainVisionStatement = "CI/CD, infraestructura como código, entornos y despliegues seguros y reproducibles."
+  }
+
+  Subdomain PlataformaDeDatos {
+    type = GENERIC_DOMAIN
+    domainVisionStatement = "Lagos/warehouses, calidad, catálogos y gobernanza de datos para servir analítica y ML."
+  }
+
+  Subdomain SeguridadYComplianceTI {
+    type = GENERIC_DOMAIN
+    domainVisionStatement = "Gestión de secretos, cifrado, cumplimiento regulatorio y respuesta a incidentes."
+  }
+
+  Subdomain QAyAutomatizacionPruebas {
+    type = GENERIC_DOMAIN
+    domainVisionStatement = "Estrategia de pruebas, suites automáticas y ambientes para reducir tiempo de QA del release."
+  }
+}
+}

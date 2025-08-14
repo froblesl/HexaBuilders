@@ -1,0 +1,64 @@
+// ===========================================================
+// Bounded Contexts (AS-IS)
+// ===========================================================
+BoundedContext ProgramasPartners_ASIS {
+  domainVisionStatement = "Back-office monolítico para administrar programas, partners, campañas, catálogo/ofertas y relación con partners."
+}
+BoundedContext OnboardingContratos_ASIS {
+  domainVisionStatement = "Módulo acoplado para alta de partners y gestión de términos/contratos compartiendo modelos con Programas."
+}
+BoundedContext Tracking_ASIS {
+  domainVisionStatement = "Servicio de tracking acoplado a la base de datos común; comparte entidades con Programas y Pagos."
+}
+BoundedContext Pagos_ASIS {
+  domainVisionStatement = "Cálculo y ejecución de pagos de comisiones; fuerte dependencia a modelos de Tracking."
+}
+BoundedContext Analitica_ASIS {
+  domainVisionStatement = "Dashboards que leen directamente la base operacional/warehouse compartido."
+}
+BoundedContext Cumplimiento_ASIS {
+  domainVisionStatement = "Revisión y auditoría; consulta tablas operacionales compartidas."
+}
+BoundedContext Integraciones_ASIS {
+  domainVisionStatement = "Integraciones con e-commerce/CRM y automatizaciones; importaciones batch al tracking."
+}
+BoundedContext Identidad_ASIS {
+  domainVisionStatement = "Autenticación/roles embebidos en el monolito; sin frontera clara."
+}
+BoundedContext PlataformaDatos_ASIS {
+  domainVisionStatement = "Data lake/warehouse compartido con analítica y reporting."
+}
+BoundedContext Operabilidad_ASIS {
+  domainVisionStatement = "Operación de la plataforma con tooling compartido y pipelines acoplados."
+}
+
+// ===========================================================
+// Context Map (AS-IS)
+// ===========================================================
+ContextMap AlpesPartners_AS_IS {
+  state = AS_IS
+
+  contains ProgramasPartners_ASIS
+  contains OnboardingContratos_ASIS
+  contains Tracking_ASIS
+  contains Pagos_ASIS
+  contains Analitica_ASIS
+  contains Cumplimiento_ASIS
+  contains Integraciones_ASIS
+  contains Identidad_ASIS
+  contains PlataformaDatos_ASIS
+  contains Operabilidad_ASIS
+
+  ProgramasPartners_ASIS [SK] <-> [SK] OnboardingContratos_ASIS
+  ProgramasPartners_ASIS [SK] <-> [SK] Tracking_ASIS
+  Tracking_ASIS [SK] <-> [SK] Pagos_ASIS
+  Analitica_ASIS [SK] <-> [SK] PlataformaDatos_ASIS
+
+  Cumplimiento_ASIS [D] <- [U] Tracking_ASIS
+  Analitica_ASIS [D] <- [U] Tracking_ASIS
+  Analitica_ASIS [D] <- [U] Pagos_ASIS
+
+  Tracking_ASIS [D] <- [U] Integraciones_ASIS
+  ProgramasPartners_ASIS [D] <- [U] Identidad_ASIS
+  OnboardingContratos_ASIS [D] <- [U] Identidad_ASIS
+}

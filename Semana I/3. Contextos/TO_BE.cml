@@ -1,0 +1,99 @@
+// ===========================================================
+// Bounded Contexts (TO-BE)
+// ===========================================================
+BoundedContext RecruitmentDiscovery_TOBE {
+  domainVisionStatement = "Descubrimiento y scoring de partners con marketplace interno y búsqueda avanzada; expone consultas y perfiles."
+}
+BoundedContext PartnerOnboarding_TOBE {
+  domainVisionStatement = "Onboarding self-service y lifecycle de partner; consume perfiles, emite estados y acuerdos firmados."
+}
+BoundedContext ContractsTerms_TOBE {
+  domainVisionStatement = "Gestión de términos/planes/comisiones como catálogo versionado; publica lenguaje de contratos."
+}
+BoundedContext Campaigns_TOBE {
+  domainVisionStatement = "Orquestación de campañas, targeting y reglas; integra catálogo/ofertas y mensajes."
+}
+BoundedContext PartnerCRM_TOBE {
+  domainVisionStatement = "Perfil 360° del partner, segmentaciones y timeline de actividades."
+}
+BoundedContext TrackingAttribution_TOBE {
+  domainVisionStatement = "Captura de eventos y atribución en tiempo real; APIs/píxeles/S2S; publica eventos de conversión."
+}
+BoundedContext PayoutsBilling_TOBE {
+  domainVisionStatement = "Cálculo, conciliación y ejecución de comisiones; calendario de pagos y retenciones."
+}
+BoundedContext ComplianceFraud_TOBE {
+  domainVisionStatement = "Monitoreo y prevención de fraude/políticas; listas negras, reglas y auditorías."
+}
+BoundedContext IntegrationsHub_TOBE {
+  domainVisionStatement = "Conectores e-commerce/CRM/ads; normaliza eventos/órdenes; sandbox para partners técnicos."
+}
+BoundedContext InfluencerOps_TOBE {
+  domainVisionStatement = "Gestión creativa, briefs y seguimiento de posts; recepción y moderación de UGC."
+}
+BoundedContext LoyaltyAdvocacy_TOBE {
+  domainVisionStatement = "Referidos y advocacy multi-canal con enlaces únicos y recompensas."
+}
+BoundedContext AnalyticsBI_TOBE {
+  domainVisionStatement = "Dashboards y data products; atribución incremental y ROI por partner/canal."
+}
+BoundedContext DataPlatform_TOBE {
+  domainVisionStatement = "Event lake/warehouse, catálogo y calidad; contratos de datos; streaming/batch."
+}
+BoundedContext IdentityAccess_TOBE {
+  domainVisionStatement = "SSO y gestión de identidades (orgs, roles, tenants); políticas de acceso."
+}
+BoundedContext Notifications_TOBE {
+  domainVisionStatement = "Orquestación de notificaciones; plantillas, enrutamiento y webhooks."
+}
+BoundedContext Observability_TOBE {
+  domainVisionStatement = "Plataforma de operación: logging, métricas, trazas, CI/CD, seguridad y testing."
+}
+
+// ===========================================================
+// Context Map (TO-BE)
+// ===========================================================
+ContextMap AlpesPartners_TO_BE {
+  state = TO_BE
+
+  contains RecruitmentDiscovery_TOBE
+  contains PartnerOnboarding_TOBE
+  contains ContractsTerms_TOBE
+  contains Campaigns_TOBE
+  contains PartnerCRM_TOBE
+  contains TrackingAttribution_TOBE
+  contains PayoutsBilling_TOBE
+  contains ComplianceFraud_TOBE
+  contains IntegrationsHub_TOBE
+  contains InfluencerOps_TOBE
+  contains LoyaltyAdvocacy_TOBE
+  contains AnalyticsBI_TOBE
+  contains DataPlatform_TOBE
+  contains IdentityAccess_TOBE
+  contains Notifications_TOBE
+  contains Observability_TOBE
+
+  ContractsTerms_TOBE [OHS,PL] -> [ACL] PartnerOnboarding_TOBE
+  RecruitmentDiscovery_TOBE [OHS,PL] -> [ACL] PartnerOnboarding_TOBE
+  PartnerOnboarding_TOBE [OHS,PL] -> [ACL] PartnerCRM_TOBE
+  PartnerCRM_TOBE [OHS,PL] -> [ACL] Campaigns_TOBE
+  Campaigns_TOBE [OHS,PL] -> [ACL] TrackingAttribution_TOBE
+  ContractsTerms_TOBE [OHS,PL] -> [ACL] TrackingAttribution_TOBE
+  IntegrationsHub_TOBE [OHS,PL] -> [ACL] TrackingAttribution_TOBE
+  TrackingAttribution_TOBE [OHS,PL] -> [ACL] PayoutsBilling_TOBE
+  TrackingAttribution_TOBE [PL] -> [ACL] DataPlatform_TOBE
+  PayoutsBilling_TOBE [PL] -> [ACL] DataPlatform_TOBE
+  DataPlatform_TOBE [OHS,PL] -> [ACL] AnalyticsBI_TOBE
+  TrackingAttribution_TOBE [OHS,PL] -> [ACL] ComplianceFraud_TOBE
+  ComplianceFraud_TOBE [OHS] -> [ACL] PayoutsBilling_TOBE
+  InfluencerOps_TOBE [OHS,PL] -> [ACL] Campaigns_TOBE
+  LoyaltyAdvocacy_TOBE [OHS,PL] -> [ACL] Campaigns_TOBE
+  IdentityAccess_TOBE [OHS] -> [ACL] PartnerOnboarding_TOBE
+  IdentityAccess_TOBE [OHS] -> [ACL] PartnerCRM_TOBE
+  IdentityAccess_TOBE [OHS] -> [ACL] Campaigns_TOBE
+  IdentityAccess_TOBE [OHS] -> [ACL] TrackingAttribution_TOBE
+  IdentityAccess_TOBE [OHS] -> [ACL] PayoutsBilling_TOBE
+  Notifications_TOBE [OHS] -> [ACL] PartnerOnboarding_TOBE
+  Notifications_TOBE [OHS] -> [ACL] Campaigns_TOBE
+  Notifications_TOBE [OHS] -> [ACL] PayoutsBilling_TOBE
+}
