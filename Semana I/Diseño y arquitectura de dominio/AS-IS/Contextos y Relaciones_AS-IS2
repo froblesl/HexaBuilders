@@ -1,5 +1,5 @@
 /* ===================================
- * AS-IS
+ * AS-IS — El Monolito de Alpes Partners
  * =================================== */
 
 Domain GestionProgramasPartners {
@@ -21,16 +21,16 @@ Domain GestionProgramasPartners {
         type = CORE_DOMAIN
         domainVisionStatement = "Configuracion y ejecucion de campañas con partners."
     }
+    Subdomain PagosYPayouts { // Clasificación original
+        type = CORE_DOMAIN
+        domainVisionStatement = "Calculo, conciliacion y pago de comisiones."
+    }
     Subdomain GestionRelacionPartners {
         type = CORE_DOMAIN
         domainVisionStatement = "Perfil 360 y gestion de relacion con partners."
     }
-    Subdomain PagosYPayouts {
-        type = SUPPORTING_DOMAIN
-        domainVisionStatement = "Calculo, conciliacion y pago de comisiones."
-    }
-    Subdomain CumplimientoYAntifraude {
-        type = SUPPORTING_DOMAIN
+    Subdomain CumplimientoYAntifraude { // Clasificación original
+        type = CORE_DOMAIN
         domainVisionStatement = "Politicas, verificacion y deteccion de fraude."
     }
     Subdomain OrquestacionDeProcesos {
