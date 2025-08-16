@@ -1,0 +1,183 @@
+/* =======================
+ *  TO-BE — Alpes Partners
+ * ======================= */
+
+Domain GestionProgramasPartners {
+  domainVisionStatement = "Plataforma reactiva y distribuida con equipos autonomos, despliegues independientes y comunicacion basada en eventos para programas de partners."
+
+  Subdomain ReclutamientoYDescubrimiento {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Captacion y calificacion de partners."
+    }
+
+  Subdomain OnboardingYContratos {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Alta de partners y gestion de terminos/acuerdos; validaciones especificas."
+    }
+
+  Subdomain GestionRelacionPartners {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Perfil 360 y relacion continua con partners."
+    }
+
+  Subdomain Campanas {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Definicion y ejecucion de campañas con partners."
+    }
+  Subdomain TrackingYAtribucion {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Procesamiento de eventos y calculo de atribucion."
+    }
+
+  Subdomain PagosYPayouts {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Liquidacion y pago de comisiones."
+    }
+
+  Subdomain CumplimientoYAntifraude {
+    type = CORE_DOMAIN
+    domainVisionStatement = "Politicas, verificaciones y deteccion de fraude."
+    }
+
+  Subdomain OrquestacionDeProcesos {
+    type = SUPPORTING_DOMAIN
+    domainVisionStatement = "Coordinacion de sagas/procesos multi-servicio; sin reglas especificas."
+    }
+
+  Subdomain IdentidadAccesoYPermisos {
+    type = GENERIC_DOMAIN
+    domainVisionStatement = "Autenticacion/autorizacion transversal (SSO/RBAC)."
+    }
+
+  Subdomain InteroperabilidadYContratos {
+    type = SUPPORTING_DOMAIN
+    domainVisionStatement = "Estandariza APIs/eventos (OpenAPI/AsyncAPI), schema registry, gateway y service mesh."
+    }
+
+  Subdomain PlataformaDeEntrega {
+    type = SUPPORTING_DOMAIN
+    domainVisionStatement = "CI/CD por servicio, despliegues progresivos, observabilidad y release orchestration."
+    }
+
+  Subdomain CalidadYPruebas {
+    type = SUPPORTING_DOMAIN
+    domainVisionStatement = "Contratos de prueba (API/eventos), datos sinteticos, ambientes efimeros y quality gates."
+    }
+}
+
+BoundedContext ContextoReclutamiento implements ReclutamientoYDescubrimiento { 
+  domainVisionStatement = "Descubre y califica; publica eventos."
+}
+
+BoundedContext ContextoOnboardingContratos implements OnboardingYContratos { 
+  domainVisionStatement = "Automatiza altas/contratos; reacciona a verificaciones."
+}
+
+BoundedContext ContextoRelacion implements GestionRelacionPartners { 
+  domainVisionStatement = "Mantiene perfil 360 por eventos."
+}
+
+BoundedContext ContextoCampanas implements Campanas { 
+  domainVisionStatement = "Configura campañas y reglas; publica cambios."
+}
+
+BoundedContext ContextoAtribucion implements TrackingYAtribucion { 
+  domainVisionStatement = "Ingiere eventos y calcula atribucion casi en tiempo real."
+}
+
+BoundedContext ContextoPagos implements PagosYPayouts { 
+  domainVisionStatement = "Liquida y paga comisiones a partir de eventos y compliance."
+}
+
+BoundedContext ContextoCumplimiento implements CumplimientoYAntifraude { 
+  domainVisionStatement = "Evalua riesgo y emite decisiones de cumplimiento."
+}
+
+BoundedContext ContextoOrquestacion implements OrquestacionDeProcesos { 
+  domainVisionStatement = "Coordina sagas y enruta eventos de largo recorrido."
+}
+
+BoundedContext ContextoIdentidad implements IdentidadAccesoYPermisos { 
+  domainVisionStatement = "Provee identidad y permisos desacoplados."
+}
+
+BoundedContext ContextoInteroperabilidad implements InteroperabilidadYContratos {
+  domainVisionStatement = "API Gateway, Event Hub, Schema Registry y politicas de versionado/compatibilidad."
+}
+
+BoundedContext ContextoEntrega implements PlataformaDeEntrega {
+  domainVisionStatement = "IDP: pipelines por servicio, canary/blue-green y observabilidad by default."
+}
+
+BoundedContext ContextoCalidad implements CalidadYPruebas {
+  domainVisionStatement = "Contratos de prueba, generacion de datos y quality gates en CI/CD."
+}
+
+ContextMap AlpesPartners_TOBE {
+  state = TO_BE
+
+  contains ContextoReclutamiento
+  contains ContextoOnboardingContratos
+  contains ContextoRelacion
+  contains ContextoCampanas
+  contains ContextoAtribucion
+  contains ContextoPagos
+  contains ContextoCumplimiento
+  contains ContextoOrquestacion
+  contains ContextoIdentidad
+  contains ContextoInteroperabilidad
+  contains ContextoEntrega
+  contains ContextoCalidad
+
+  ContextoIdentidad [U] -> [D] ContextoReclutamiento
+  ContextoIdentidad [U] -> [D] ContextoOnboardingContratos
+  ContextoIdentidad [U] -> [D] ContextoCampanas
+  ContextoIdentidad [U] -> [D] ContextoAtribucion
+  ContextoIdentidad [U] -> [D] ContextoPagos
+  ContextoIdentidad [U] -> [D] ContextoCumplimiento
+  ContextoIdentidad [U] -> [D] ContextoRelacion
+
+  ContextoInteroperabilidad [U] -> [D] ContextoReclutamiento
+  ContextoInteroperabilidad [U] -> [D] ContextoOnboardingContratos
+  ContextoInteroperabilidad [U] -> [D] ContextoCampanas
+  ContextoInteroperabilidad [U] -> [D] ContextoAtribucion
+  ContextoInteroperabilidad [U] -> [D] ContextoPagos
+  ContextoInteroperabilidad [U] -> [D] ContextoCumplimiento
+  ContextoInteroperabilidad [U] -> [D] ContextoRelacion
+  ContextoInteroperabilidad [U] -> [D] ContextoOrquestacion
+
+  ContextoEntrega [U] -> [D] ContextoReclutamiento
+  ContextoEntrega [U] -> [D] ContextoOnboardingContratos
+  ContextoEntrega [U] -> [D] ContextoCampanas
+  ContextoEntrega [U] -> [D] ContextoAtribucion
+  ContextoEntrega [U] -> [D] ContextoPagos
+  ContextoEntrega [U] -> [D] ContextoCumplimiento
+  ContextoEntrega [U] -> [D] ContextoRelacion
+  ContextoEntrega [U] -> [D] ContextoOrquestacion
+  ContextoEntrega [U] -> [D] ContextoIdentidad
+
+  ContextoCalidad [U] -> [D] ContextoReclutamiento
+  ContextoCalidad [U] -> [D] ContextoOnboardingContratos
+  ContextoCalidad [U] -> [D] ContextoCampanas
+  ContextoCalidad [U] -> [D] ContextoAtribucion
+  ContextoCalidad [U] -> [D] ContextoPagos
+  ContextoCalidad [U] -> [D] ContextoCumplimiento
+  ContextoCalidad [U] -> [D] ContextoRelacion
+  ContextoCalidad [U] -> [D] ContextoOrquestacion
+  ContextoCalidad [U] -> [D] ContextoIdentidad
+
+  ContextoReclutamiento [U] -> [D] ContextoOnboardingContratos
+  ContextoOnboardingContratos [U] -> [D] ContextoCumplimiento
+  ContextoCumplimiento [U] -> [D] ContextoOnboardingContratos
+
+  ContextoCampanas [U] -> [D] ContextoAtribucion
+  ContextoAtribucion [U] -> [D] ContextoPagos
+  ContextoCumplimiento [U] -> [D] ContextoPagos
+
+  ContextoReclutamiento [U] -> [D] ContextoRelacion
+  ContextoOnboardingContratos [U] -> [D] ContextoRelacion
+  ContextoCampanas [U] -> [D] ContextoRelacion
+  ContextoAtribucion [U] -> [D] ContextoRelacion
+  ContextoPagos [U] -> [D] ContextoRelacion
+  ContextoCumplimiento [U] -> [D] ContextoRelacion
+}
