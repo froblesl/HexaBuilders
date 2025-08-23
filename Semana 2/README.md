@@ -40,6 +40,12 @@
   - Cada equipo podrá seleccionar el stack más adecuado al problema, pero esto exige mecanismos comunes de integración.  
   - Los microservicios podrán colaborar sin importar el lenguaje o framework elegido.  
 
+---
+
+## Árbol de Utilidad
+
+<img width="646" height="713" alt="Captura de pantalla 2025-08-23 a la(s) 8 42 39 a  m" src="https://github.com/user-attachments/assets/54f29ff5-c804-4128-9169-b1f1794f8ab6" />
+
 
 # Vista de contexto
 
@@ -50,4 +56,5 @@
 ## Diagrama de modulos
 
 # Vista de información
+
 
