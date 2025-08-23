@@ -49,6 +49,9 @@
 
 # Vista de contexto
 
+<img width="1140" height="724" alt="Captura de pantalla 2025-08-23 a la(s) 8 50 07 a  m" src="https://github.com/user-attachments/assets/29a6af66-0507-44a6-b073-29da368db902" />
+
+
 # Vista funcional
 
 ## Diagrama de componentes
@@ -56,5 +59,6 @@
 ## Diagrama de modulos
 
 # Vista de información
+
 
 
