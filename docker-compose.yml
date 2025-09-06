@@ -1,0 +1,157 @@
+version: '3.8'
+
+services:
+  # Apache Pulsar services
+  zookeeper:
+    image: apachepulsar/pulsar:3.1.0
+    profiles: ["pulsar"]
+    container_name: zookeeper
+    restart: on-failure
+    networks:
+      - pulsar
+    volumes:
+      - pulsardata:/pulsar/data
+      - pulsarconf:/pulsar/conf
+    environment:
+      - metadataStoreUrl=zk:zookeeper:2181
+      - PULSAR_MEM=-Xms256m -Xmx256m -XX:MaxDirectMemorySize=256m
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/zookeeper.conf && \
+               bin/generate-zookeeper-config.sh conf/zookeeper.conf && \
+               exec bin/pulsar zookeeper"
+    healthcheck:
+      test: ["CMD", "bin/pulsar-zookeeper-ruok.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  pulsar-init:
+    container_name: pulsar-init
+    hostname: pulsar-init
+    image: apachepulsar/pulsar:latest
+    profiles: ["pulsar"]
+    networks:
+      - pulsar
+    environment:
+      - metadataStoreUrl=zk:zookeeper:2181
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/client.conf && \
+               until nslookup zookeeper; do sleep 3; done && \
+               bin/pulsar initialize-cluster-metadata \
+                 --cluster cluster-a \
+                 --zookeeper zookeeper:2181 \
+                 --configuration-store zookeeper:2181 \
+                 --web-service-url http://broker:8080 \
+                 --broker-service-url pulsar://broker:6650"
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+
+  bookie:
+    image: apachepulsar/pulsar:latest
+    profiles: ["pulsar"]
+    container_name: bookie
+    restart: on-failure
+    networks:
+      - pulsar
+    environment:
+      - clusterName=cluster-a
+      - zkServers=zookeeper:2181
+      - metadataServiceUri=metadata-store:zk:zookeeper:2181
+      - advertisedAddress=bookie
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+      pulsar-init:
+        condition: service_completed_successfully
+    volumes:
+      - pulsardata:/pulsar/data
+      - pulsarconf:/pulsar/conf
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/bookkeeper.conf && \
+               bin/apply-config-from-env.py conf/pulsar_env.sh && \
+               exec bin/pulsar bookie"
+
+  broker:
+    image: apachepulsar/pulsar:latest
+    profiles: ["pulsar"]
+    container_name: broker
+    hostname: broker
+    restart: on-failure
+    networks:
+      - pulsar
+    environment:
+      - metadataStoreUrl=zk:zookeeper:2181
+      - zookeeperServers=zookeeper:2181
+      - clusterName=cluster-a
+      - managedLedgerDefaultEnsembleSize=1
+      - managedLedgerDefaultWriteQuorum=1
+      - managedLedgerDefaultAckQuorum=1
+      - advertisedAddress=broker
+      - advertisedListeners=external:pulsar://127.0.0.1:6650
+      - PULSAR_MEM=-Xms512m -Xmx512m -XX:MaxDirectMemorySize=256m
+    depends_on:
+      pulsar-init:
+        condition: service_completed_successfully
+      bookie:
+        condition: service_started
+    ports:
+      - "6650:6650"
+      - "8080:8080"
+    volumes:
+      - pulsardata:/pulsar/data
+      - pulsarconf:/pulsar/conf
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/broker.conf && \
+               bin/apply-config-from-env.py conf/pulsar_env.sh && \
+               exec bin/pulsar broker"
+
+  # Partner Management Service
+  partner-management:
+    build:
+      context: .
+      dockerfile: partner-management.Dockerfile
+    container_name: partner-management
+    profiles: ["partner-management"]
+    networks:
+      - pulsar
+    environment:
+      - PULSAR_BROKER_URL=pulsar://broker:6650
+      - PULSAR_ADDRESS=broker
+      - PULSAR_ADMIN_URL=http://broker:8080
+      - DATABASE_URL=sqlite:///partner_management.db
+      - FLASK_ENV=development
+      - PARTNER-MANAGEMENT_ADDRESS=partner-management
+    ports:
+      - "5000:5000"
+    depends_on:
+      - broker
+    volumes:
+      - ./src:/app/src
+
+  # Notifications Service
+  notifications:
+    container_name: notificacion
+    hostname: notificacion
+    profiles: ["notifications", "partner-management"]
+    depends_on:
+      - partner-management
+      - broker
+    build:
+      context: .
+      dockerfile: notifications.Dockerfile
+    networks:
+      - pulsar
+    environment:
+      - PARTNER-MANAGEMENT_ADDRESS=partner-management
+      - PULSAR_ADDRESS=broker
+    volumes:
+      - ./src/notificaciones:/app
+
+networks:
+  pulsar:
+    driver: bridge
+
+volumes:
+  pulsardata:
+  pulsarconf:
