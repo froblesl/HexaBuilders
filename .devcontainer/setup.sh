@@ -2,14 +2,11 @@
 
 echo "[*] Installing Python dependencies..."
 pip install -r requirements.txt
-pip install -r sidecar-requirements.txt
-pip install -r ui-requirements.txt
+pip install -r pulsar-requirements.txt
 
 echo "[*] Building Docker images..."
-docker build . -f aeroalpes.Dockerfile -t aeroalpes/flask
-docker build . -f adaptador.Dockerfile -t aeroalpes/adaptador
-docker build . -f notificacion.Dockerfile -t aeroalpes/notificacion
-docker build . -f ui.Dockerfile -t aeroalpes/ui
+docker build . -f partner-management.Dockerfile -t hexabuilders/partner-management
+docker build . -f notifications.Dockerfile -t hexabuilders/notifications
 
 echo "[*] Pulling docker-compose dependencies..."
 docker-compose pull
