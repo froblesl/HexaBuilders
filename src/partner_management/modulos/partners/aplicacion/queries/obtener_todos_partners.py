@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 from partner_management.seedwork.aplicacion.queries import ejecutar_query
-from partner_management.seedwork.infraestructura.uow import UnitOfWork
+from partner_management.seedwork.infraestructura.uow import InMemoryUnitOfWork
 from ...infraestructura.dto import PartnerDTO
 from .base import QueryPartner, QueryResultPartner
 
@@ -44,7 +44,7 @@ def handle_obtener_todos_partners(query: ObtenerTodosPartners) -> RespuestaObten
     
     try:
         # Use Unit of Work for read operations
-        with UnitOfWork() as uow:
+        with InMemoryUnitOfWork() as uow:
             repo = uow.partners
             
             # Build filter criteria

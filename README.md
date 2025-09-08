@@ -70,8 +70,8 @@ Business intelligence and 360-degree reporting:
 git clone https://github.com/froblesl/HexaBuilders.git
 cd HexaBuilders
 
-# 2. Start infrastructure services
-docker-compose up -d zookeeper pulsar-init bookie broker
+# 2. Start database and infrastructure services
+docker-compose up -d postgres zookeeper pulsar-init bookie broker
 
 # 3. Start main application
 docker-compose up partner-management
@@ -212,9 +212,11 @@ PYTHONPATH=./src
 FLASK_ENV=development
 FLASK_DEBUG=true
 
-# Database
-DATABASE_URL=sqlite:///hexabuilders.db
+# PostgreSQL Database
+DATABASE_URL=postgresql://hexabuilders_user:hexabuilders_password@localhost:5432/hexabuilders
 DATABASE_POOL_SIZE=10
+DATABASE_MAX_OVERFLOW=20
+DATABASE_POOL_TIMEOUT=30
 
 # Message Broker
 PULSAR_BROKER_URL=pulsar://localhost:6650
@@ -226,6 +228,7 @@ LOG_FORMAT=json
 ```
 
 ### Docker Compose Services
+- **PostgreSQL** - Enterprise-grade relational database
 - **Zookeeper** - Distributed coordination
 - **Apache Pulsar** - Message broker
 - **HexaBuilders API** - Main application  
