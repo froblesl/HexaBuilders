@@ -2,12 +2,12 @@
 Base command classes for Analytics module.
 """
 
-from .....seedwork.aplicacion.comandos import Comando, ComandoHandler
-from .....seedwork.dominio.repositorio import Repositorio
+from partner_management.seedwork.aplicacion.comandos import Command, ComandoHandler
+from partner_management.seedwork.dominio.repositorio import Repositorio
 from ...dominio.entidades import AnalyticsReport
 
 
-class ComandoAnalytics(Comando):
+class ComandoAnalytics(Command):
     """Base command for Analytics operations."""
     pass
 

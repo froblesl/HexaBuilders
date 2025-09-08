@@ -5,8 +5,8 @@ import logging
 from dataclasses import dataclass
 from typing import List, Optional
 
-from ....seedwork.aplicacion.queries import ejecutar_query
-from ....seedwork.infraestructura.uow import UnitOfWork
+from partner_management.seedwork.aplicacion.queries import ejecutar_query
+from partner_management.seedwork.infraestructura.uow import UnitOfWork
 from ...infraestructura.dto import PartnerDTO
 from .base import QueryPartner, QueryResultPartner
 
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class ObtenerTodosPartners(QueryPartner):
+class ObtenerTodosPartners:
     """Query to get all partners with optional filtering."""
     
     status: Optional[str] = None
@@ -26,7 +26,7 @@ class ObtenerTodosPartners(QueryPartner):
 
 
 @dataclass
-class RespuestaObtenerTodosPartners(QueryResultPartner):
+class RespuestaObtenerTodosPartners:
     """Response for GetAllPartners query."""
     
     partners: List[PartnerDTO]

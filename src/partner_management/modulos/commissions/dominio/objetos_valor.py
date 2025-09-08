@@ -10,8 +10,8 @@ from typing import Any, Optional
 from datetime import datetime
 from decimal import Decimal
 
-from ....seedwork.dominio.objetos_valor import ObjetoValor
-from ....seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.dominio.objetos_valor import ValueObject
+from partner_management.seedwork.dominio.excepciones import DomainException
 
 
 class CommissionStatus(Enum):
@@ -43,7 +43,7 @@ class PaymentMethod(Enum):
 
 
 @dataclass(frozen=True)
-class CommissionAmount(ObjetoValor):
+class CommissionAmount(ValueObject):
     """Commission amount value object."""
     
     amount: Decimal
@@ -71,7 +71,7 @@ class CommissionAmount(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class CommissionRate(ObjetoValor):
+class CommissionRate(ValueObject):
     """Commission rate value object."""
     
     rate: Decimal  # Percentage as decimal (0.05 = 5%)
@@ -103,7 +103,7 @@ class CommissionRate(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class CommissionPeriod(ObjetoValor):
+class CommissionPeriod(ValueObject):
     """Commission calculation period value object."""
     
     start_date: datetime
@@ -148,7 +148,7 @@ class CommissionPeriod(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class TransactionReference(ObjetoValor):
+class TransactionReference(ValueObject):
     """Transaction reference value object."""
     
     transaction_id: str
@@ -185,7 +185,7 @@ class TransactionReference(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class PaymentDetails(ObjetoValor):
+class PaymentDetails(ValueObject):
     """Payment details value object."""
     
     payment_method: PaymentMethod
@@ -228,7 +228,7 @@ class PaymentDetails(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class CommissionCalculation(ObjetoValor):
+class CommissionCalculation(ValueObject):
     """Commission calculation details value object."""
     
     base_amount: Decimal
@@ -282,7 +282,7 @@ class CommissionCalculation(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class CommissionTier(ObjetoValor):
+class CommissionTier(ValueObject):
     """Commission tier for tiered commission structures."""
     
     tier_name: str

@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 from decimal import Decimal
 
-from ....seedwork.infraestructura.repositorios import RepositorioMock
+from partner_management.seedwork.infraestructura.repositorios import RepositorioMock
 from ..dominio.entidades import Campaign
 from ..dominio.objetos_valor import (
     CampaignName, CampaignDescription, CampaignBudget, CampaignDateRange,

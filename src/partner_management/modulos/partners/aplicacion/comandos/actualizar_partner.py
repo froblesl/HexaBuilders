@@ -5,17 +5,17 @@ import logging
 from dataclasses import dataclass
 from typing import Optional
 
-from ....seedwork.aplicacion.comandos import ejecutar_comando
-from ....seedwork.infraestructura.uow import UnitOfWork
-from ....seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.aplicacion.comandos import ejecutar_comando
+from partner_management.seedwork.infraestructura.uow import UnitOfWork
+from partner_management.seedwork.dominio.excepciones import DomainException
 from ...dominio.objetos_valor import PartnerName, PartnerEmail, PartnerPhone
-from .base import ComandoPartner
+from .base import CommandPartner
 
 logger = logging.getLogger(__name__)
 
 
 @dataclass
-class ActualizarPartner(ComandoPartner):
+class ActualizarPartner:
     """Command to update an existing partner."""
     
     partner_id: str

@@ -6,9 +6,9 @@ import logging
 from dataclasses import dataclass
 from typing import Optional, List, Dict, Any
 
-from ....seedwork.aplicacion.queries import ejecutar_query
-from ....seedwork.infraestructura.uow import UnitOfWork
-from ....seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.aplicacion.queries import ejecutar_query
+from partner_management.seedwork.infraestructura.uow import UnitOfWork
+from partner_management.seedwork.dominio.excepciones import DomainException
 from ...infraestructura.dto import PartnerDTO
 from .base import QueryPartner, QueryResultPartner
 
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class ObtenerProfile360(QueryPartner):
+class ObtenerProfile360:
     """Query to get a complete 360-degree partner profile."""
     partner_id: str
 
@@ -46,7 +46,7 @@ class Profile360Data:
 
 
 @dataclass
-class RespuestaProfile360(QueryResultPartner):
+class RespuestaProfile360:
     """Response for GetProfile360 query."""
     profile: Optional[Profile360Data] = None
 

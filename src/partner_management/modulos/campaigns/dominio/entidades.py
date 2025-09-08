@@ -7,8 +7,8 @@ from typing import Optional, Dict, Any
 from datetime import datetime
 from decimal import Decimal
 
-from ....seedwork.dominio.entidades import AggregateRoot, DomainEntity
-from ....seedwork.dominio.excepciones import DomainException, BusinessRuleException
+from partner_management.seedwork.dominio.entidades import AggregateRoot, DomainEntity
+from partner_management.seedwork.dominio.excepciones import DomainException, BusinessRuleException
 from .objetos_valor import (
     CampaignName, CampaignDescription, CampaignBudget, CampaignDateRange,
     CampaignStatus, CampaignType, CampaignMetrics, CampaignTargeting,

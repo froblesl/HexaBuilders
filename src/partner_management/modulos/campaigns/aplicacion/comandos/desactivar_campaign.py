@@ -6,10 +6,10 @@ import logging
 from dataclasses import dataclass
 from typing import Optional
 
-from .....seedwork.aplicacion.comandos import ejecutar_comando
-from .....seedwork.infraestructura.uow import UnitOfWork
-from .....seedwork.dominio.excepciones import DomainException
-from .base import ComandoCampaign
+from partner_management.seedwork.aplicacion.comandos import ejecutar_comando
+from partner_management.seedwork.infraestructura.uow import UnitOfWork
+from partner_management.seedwork.dominio.excepciones import DomainException
+from .base import CommandCampaign
 
 logger = logging.getLogger(__name__)
 

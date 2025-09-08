@@ -2,7 +2,7 @@
 import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field, fields, asdict
-from typing import Any, Dict, List, Optional, Type, TypeVar, Union, Callable
+from typing import Any, Dict, List, Optional, Type, TypeVar, Union, Callable, Generic
 from datetime import datetime, date
 from enum import Enum
 

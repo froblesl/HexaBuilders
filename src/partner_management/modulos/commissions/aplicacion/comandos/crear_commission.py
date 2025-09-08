@@ -8,16 +8,16 @@ from typing import Optional
 from datetime import datetime
 from decimal import Decimal
 
-from .....seedwork.aplicacion.comandos import ejecutar_comando
-from .....seedwork.infraestructura.uow import UnitOfWork
-from .....seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.aplicacion.comandos import ejecutar_comando
+from partner_management.seedwork.infraestructura.uow import UnitOfWork
+from partner_management.seedwork.dominio.excepciones import DomainException
 from ...dominio.entidades import Commission
 from ...dominio.objetos_valor import (
     CommissionAmount, CommissionRate, CommissionPeriod, TransactionReference,
     CommissionType, CommissionStatus, CommissionCalculation
 )
 from ...infraestructura.fabricas import FabricaCommission
-from .base import ComandoCommission
+from .base import CommandCommission
 
 logger = logging.getLogger(__name__)
 

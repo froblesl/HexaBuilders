@@ -10,8 +10,8 @@ from typing import Any
 from datetime import datetime
 from decimal import Decimal
 
-from ....seedwork.dominio.objetos_valor import ObjetoValor
-from ....seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.dominio.objetos_valor import ValueObject
+from partner_management.seedwork.dominio.excepciones import DomainException
 
 
 class CampaignStatus(Enum):
@@ -33,7 +33,7 @@ class CampaignType(Enum):
 
 
 @dataclass(frozen=True)
-class CampaignName(ObjetoValor):
+class CampaignName(ValueObject):
     """Campaign name value object."""
     
     value: str
@@ -57,7 +57,7 @@ class CampaignName(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class CampaignDescription(ObjetoValor):
+class CampaignDescription(ValueObject):
     """Campaign description value object."""
     
     value: str
@@ -77,7 +77,7 @@ class CampaignDescription(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class CampaignBudget(ObjetoValor):
+class CampaignBudget(ValueObject):
     """Campaign budget value object."""
     
     amount: Decimal
@@ -105,7 +105,7 @@ class CampaignBudget(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class CampaignDateRange(ObjetoValor):
+class CampaignDateRange(ValueObject):
     """Campaign date range value object."""
     
     start_date: datetime
@@ -147,7 +147,7 @@ class CampaignDateRange(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class CampaignMetrics(ObjetoValor):
+class CampaignMetrics(ValueObject):
     """Campaign performance metrics value object."""
     
     impressions: int = 0
@@ -220,7 +220,7 @@ class CampaignMetrics(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class CampaignTargeting(ObjetoValor):
+class CampaignTargeting(ValueObject):
     """Campaign targeting criteria value object."""
     
     countries: list[str] = None
@@ -274,7 +274,7 @@ class CampaignTargeting(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class CampaignSettings(ObjetoValor):
+class CampaignSettings(ValueObject):
     """Campaign settings value object."""
     
     auto_pause_on_budget_exceeded: bool = True
@@ -311,7 +311,7 @@ class CampaignSettings(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class CampaignApproval(ObjetoValor):
+class CampaignApproval(ValueObject):
     """Campaign approval value object."""
     
     is_approved: bool = False

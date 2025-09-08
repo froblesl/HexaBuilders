@@ -8,16 +8,16 @@ from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal
 
-from .....seedwork.aplicacion.comandos import ejecutar_comando
-from .....seedwork.infraestructura.uow import UnitOfWork
-from .....seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.aplicacion.comandos import ejecutar_comando
+from partner_management.seedwork.infraestructura.uow import UnitOfWork
+from partner_management.seedwork.dominio.excepciones import DomainException
 from ...dominio.entidades import Campaign
 from ...dominio.objetos_valor import (
     CampaignName, CampaignDescription, CampaignBudget, CampaignDateRange,
     CampaignType, CampaignTargeting, CampaignSettings
 )
 from ...infraestructura.fabricas import FabricaCampaign
-from .base import ComandoCampaign
+from .base import CommandCampaign
 
 logger = logging.getLogger(__name__)
 

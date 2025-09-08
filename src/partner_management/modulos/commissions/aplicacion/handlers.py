@@ -6,7 +6,7 @@ Implements Tutorial 5 (Events) patterns with PyDispatcher integration.
 import logging
 from pydispatch import dispatcher
 
-from ...seedwork.dominio.eventos import DomainEvent
+from partner_management.seedwork.dominio.eventos import DomainEvent
 from ...partners.dominio.eventos import PartnerCreated, PartnerActivated, PartnerDeactivated
 from ...campaigns.dominio.eventos import CampaignCompleted, CampaignActivated
 from .comandos.crear_commission import CrearCommission, handle_crear_commission

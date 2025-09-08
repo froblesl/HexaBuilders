@@ -7,8 +7,8 @@ from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
 from decimal import Decimal
 
-from ....seedwork.dominio.fabricas import Fabrica
-from ....seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.dominio.fabricas import Fabrica
+from partner_management.seedwork.dominio.excepciones import DomainException
 
 from ..dominio.entidades import AnalyticsReport
 from ..dominio.objetos_valor import (

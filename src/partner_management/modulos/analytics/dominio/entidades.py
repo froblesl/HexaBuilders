@@ -6,8 +6,8 @@ Implements Analytics Report aggregate root with full business logic.
 from typing import Optional, Dict, Any, List
 from datetime import datetime
 
-from ....seedwork.dominio.entidades import AggregateRoot
-from ....seedwork.dominio.excepciones import DomainException, BusinessRuleException
+from partner_management.seedwork.dominio.entidades import AggregateRoot
+from partner_management.seedwork.dominio.excepciones import DomainException, BusinessRuleException
 from .objetos_valor import (
     ReportType, ReportStatus, ReportPeriod, AnalyticsMetrics,
     ReportConfiguration, DataFilter, Insight, TrendAnalysis, BenchmarkComparison

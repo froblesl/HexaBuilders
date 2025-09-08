@@ -6,7 +6,7 @@ Implements all commission-related domain events following CQRS patterns.
 from typing import Dict, Any, Optional
 from decimal import Decimal
 
-from ....seedwork.dominio.eventos import DomainEvent, IntegrationEvent, EventMetadata
+from partner_management.seedwork.dominio.eventos import DomainEvent, IntegrationEvent, EventMetadata
 
 
 class CommissionCreated(DomainEvent):

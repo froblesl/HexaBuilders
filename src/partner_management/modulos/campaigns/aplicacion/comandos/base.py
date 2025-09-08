@@ -5,7 +5,7 @@ Base classes for campaign commands in HexaBuilders.
 from abc import ABC
 from dataclasses import dataclass
 
-from .....seedwork.aplicacion.comandos import Comando, ComandoHandler
+from partner_management.seedwork.aplicacion.comandos import Command, ComandoHandler
 
 
 @dataclass

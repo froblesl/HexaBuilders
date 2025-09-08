@@ -7,7 +7,7 @@ import logging
 from datetime import datetime, timedelta
 from pydispatch import dispatcher
 
-from ...seedwork.dominio.eventos import DomainEvent
+from partner_management.seedwork.dominio.eventos import DomainEvent
 from ...partners.dominio.eventos import PartnerCreated, PartnerActivated, PartnerDeactivated, PartnerUpdated
 from ...campaigns.dominio.eventos import CampaignCompleted, CampaignActivated, CampaignCreated
 from ...commissions.dominio.eventos import CommissionCreated, CommissionPaid, CommissionApproved

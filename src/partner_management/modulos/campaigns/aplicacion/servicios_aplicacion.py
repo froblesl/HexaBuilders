@@ -7,9 +7,9 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime
 from decimal import Decimal
 
-from ....seedwork.aplicacion.servicios import ServicioAplicacion
-from ....seedwork.infraestructura.uow import UnitOfWork
-from ....seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.aplicacion.servicios import ServicioAplicacion
+from partner_management.seedwork.infraestructura.uow import UnitOfWork
+from partner_management.seedwork.dominio.excepciones import DomainException
 from ..dominio.entidades import Campaign
 from ..dominio.objetos_valor import CampaignStatus, CampaignType
 from ..infraestructura.dto import (

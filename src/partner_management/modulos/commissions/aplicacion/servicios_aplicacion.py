@@ -8,9 +8,9 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime
 from decimal import Decimal
 
-from ....seedwork.aplicacion.servicios import ServicioAplicacion
-from ....seedwork.infraestructura.uow import UnitOfWork
-from ....seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.aplicacion.servicios import ServicioAplicacion
+from partner_management.seedwork.infraestructura.uow import UnitOfWork
+from partner_management.seedwork.dominio.excepciones import DomainException
 
 from .comandos.crear_commission import CrearCommission, handle_crear_commission
 from .comandos.actualizar_commission import ActualizarCommission, handle_actualizar_commission

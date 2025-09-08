@@ -16,7 +16,8 @@ from .queries.obtener_todos_partners import ObtenerTodosPartners
 from .queries.obtener_profile_360 import ObtenerProfile360
 
 # Event handler configuration
-from . import handlers
+# TODO: Fix pydispatcher dependency
+# from . import handlers
 
 __all__ = [
     # Services
@@ -34,6 +35,6 @@ __all__ = [
     'ObtenerTodosPartners',
     'ObtenerProfile360',
     
-    # Handlers module
-    'handlers'
+    # Handlers module (commented out due to pydispatcher dependency)
+    # 'handlers'
 ]

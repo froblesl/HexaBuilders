@@ -10,7 +10,7 @@ from uuid import uuid4
 from ..dominio.entidades import Partner
 from ..dominio.repositorio import PartnerRepository
 from ..dominio.objetos_valor import PartnerStatus, PartnerType
-from ...seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.dominio.excepciones import DomainException
 
 logger = logging.getLogger(__name__)
 

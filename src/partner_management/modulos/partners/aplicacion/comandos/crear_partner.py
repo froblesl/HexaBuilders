@@ -2,27 +2,27 @@
 """
 
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional
 
-from ....seedwork.aplicacion.comandos import ejecutar_comando
-from ....seedwork.infraestructura.uow import UnitOfWork
-from ....seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.aplicacion.comandos import ejecutar_comando
+from partner_management.seedwork.infraestructura.uow import UnitOfWork
+from partner_management.seedwork.dominio.excepciones import DomainException
 from ...dominio.entidades import Partner
 from ...dominio.objetos_valor import PartnerName, PartnerType, PartnerEmail, PartnerPhone
 from ...dominio.eventos import PartnerCreated
 from ...infraestructura.fabricas import FabricaPartner
-from .base import ComandoPartner
+from .base import CommandPartner
 
 logger = logging.getLogger(__name__)
 
 
 @dataclass
-class CrearPartner(ComandoPartner):
+class CrearPartner:
     """Command to create a new partner."""
     
     nombre: str
-    email: str  
+    email: str
     telefono: str
     tipo_partner: str
     direccion: Optional[str] = None

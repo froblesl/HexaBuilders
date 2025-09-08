@@ -7,16 +7,16 @@ from dataclasses import dataclass
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 
-from .....seedwork.aplicacion.comandos import ejecutar_comando
-from .....seedwork.infraestructura.uow import UnitOfWork
-from .....seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.aplicacion.comandos import ejecutar_comando
+from partner_management.seedwork.infraestructura.uow import UnitOfWork
+from partner_management.seedwork.dominio.excepciones import DomainException
 from ...dominio.entidades import AnalyticsReport
 from ...dominio.objetos_valor import (
     ReportType, ReportPeriod, ReportConfiguration, DataFilter,
     AnalyticsMetrics, Insight, TrendAnalysis, BenchmarkComparison
 )
 from ...infraestructura.fabricas import FabricaAnalytics
-from .base import ComandoAnalytics
+from .base import CommandAnalytics
 
 logger = logging.getLogger(__name__)
 

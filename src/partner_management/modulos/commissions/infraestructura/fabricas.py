@@ -7,8 +7,8 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
-from ....seedwork.dominio.fabricas import Fabrica
-from ....seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.dominio.fabricas import Fabrica
+from partner_management.seedwork.dominio.excepciones import DomainException
 
 from ..dominio.entidades import Commission
 from ..dominio.objetos_valor import (

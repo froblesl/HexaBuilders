@@ -5,9 +5,9 @@ import logging
 from dataclasses import dataclass
 from typing import Optional
 
-from ....seedwork.aplicacion.queries import ejecutar_query
-from ....seedwork.infraestructura.uow import UnitOfWork
-from ....seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.aplicacion.queries import ejecutar_query
+from partner_management.seedwork.infraestructura.uow import UnitOfWork
+from partner_management.seedwork.dominio.excepciones import DomainException
 from ...infraestructura.dto import PartnerDTO
 from .base import QueryPartner, QueryResultPartner
 
@@ -15,13 +15,13 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class ObtenerPartner(QueryPartner):
+class ObtenerPartner:
     """Query to get a partner by ID."""
     partner_id: str
 
 
 @dataclass
-class RespuestaObtenerPartner(QueryResultPartner):
+class RespuestaObtenerPartner:
     """Response for GetPartner query."""
     partner: Optional[PartnerDTO] = None
 

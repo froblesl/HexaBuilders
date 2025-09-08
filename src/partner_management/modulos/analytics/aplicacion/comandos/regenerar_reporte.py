@@ -7,10 +7,10 @@ from dataclasses import dataclass
 from typing import Optional
 from datetime import datetime
 
-from .....seedwork.aplicacion.comandos import ejecutar_comando
-from .....seedwork.infraestructura.uow import UnitOfWork
-from .....seedwork.dominio.excepciones import DomainException
-from .base import ComandoAnalytics
+from partner_management.seedwork.aplicacion.comandos import ejecutar_comando
+from partner_management.seedwork.infraestructura.uow import UnitOfWork
+from partner_management.seedwork.dominio.excepciones import DomainException
+from .base import CommandAnalytics
 from .generar_reporte import _collect_analytics_metrics, _generate_insights, _analyze_trends, _generate_benchmarks
 
 logger = logging.getLogger(__name__)

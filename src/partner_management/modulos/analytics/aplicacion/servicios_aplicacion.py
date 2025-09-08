@@ -7,9 +7,9 @@ import logging
 from typing import Optional, List, Dict, Any
 from datetime import datetime, timedelta
 
-from ....seedwork.aplicacion.servicios import ServicioAplicacion
-from ....seedwork.infraestructura.uow import UnitOfWork
-from ....seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.aplicacion.servicios import ServicioAplicacion
+from partner_management.seedwork.infraestructura.uow import UnitOfWork
+from partner_management.seedwork.dominio.excepciones import DomainException
 
 from .comandos.generar_reporte import GenerarReporte, handle_generar_reporte
 from .comandos.archivar_reporte import ArchivarReporte, handle_archivar_reporte

@@ -6,8 +6,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any
 
-from ...seedwork.dominio.objetos_valor import ObjetoValor
-from ...seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.dominio.objetos_valor import ValueObject
+from partner_management.seedwork.dominio.excepciones import DomainException
 
 
 class PartnerType(Enum):
@@ -27,7 +27,7 @@ class PartnerStatus(Enum):
 
 
 @dataclass(frozen=True)
-class PartnerName(ObjetoValor):
+class PartnerName(ValueObject):
     """Partner name value object."""
     
     value: str
@@ -51,7 +51,7 @@ class PartnerName(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class PartnerEmail(ObjetoValor):
+class PartnerEmail(ValueObject):
     """Partner email value object."""
     
     value: str
@@ -73,7 +73,7 @@ class PartnerEmail(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class PartnerPhone(ObjetoValor):
+class PartnerPhone(ValueObject):
     """Partner phone value object."""
     
     value: str
@@ -100,7 +100,7 @@ class PartnerPhone(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class PartnerAddress(ObjetoValor):
+class PartnerAddress(ValueObject):
     """Partner address value object."""
     
     direccion: str
@@ -132,7 +132,7 @@ class PartnerAddress(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class PartnerValidationData(ObjetoValor):
+class PartnerValidationData(ValueObject):
     """Partner validation data value object."""
     
     email_validated: bool = False
@@ -164,7 +164,7 @@ class PartnerValidationData(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class PartnerMetrics(ObjetoValor):
+class PartnerMetrics(ValueObject):
     """Partner performance metrics value object."""
     
     total_campaigns: int = 0

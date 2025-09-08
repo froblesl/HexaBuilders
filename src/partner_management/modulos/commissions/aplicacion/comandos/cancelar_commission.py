@@ -5,10 +5,10 @@ Cancel Commission command implementation for HexaBuilders.
 import logging
 from dataclasses import dataclass
 
-from .....seedwork.aplicacion.comandos import ejecutar_comando
-from .....seedwork.infraestructura.uow import UnitOfWork
-from .....seedwork.dominio.excepciones import DomainException
-from .base import ComandoCommission
+from partner_management.seedwork.aplicacion.comandos import ejecutar_comando
+from partner_management.seedwork.infraestructura.uow import UnitOfWork
+from partner_management.seedwork.dominio.excepciones import DomainException
+from .base import CommandCommission
 
 logger = logging.getLogger(__name__)
 

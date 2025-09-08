@@ -9,8 +9,8 @@ from decimal import Decimal
 from typing import List, Dict, Optional, Any
 from collections import defaultdict
 
-from ....seedwork.dominio.repositorio import Repositorio
-from ....seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.dominio.repositorio import Repositorio
+from partner_management.seedwork.dominio.excepciones import DomainException
 
 from ..dominio.entidades import Commission
 from ..dominio.objetos_valor import (

@@ -17,6 +17,8 @@ from ..dominio.excepciones import (
 )
 from ..aplicacion.dto import ResponseDTO, ErrorResponseDTO, ValidationErrorDTO
 
+logger = logging.getLogger(__name__)
+
 
 def create_app(config: Optional[Dict[str, Any]] = None) -> Flask:
     """
@@ -55,6 +57,9 @@ def create_app(config: Optional[Dict[str, Any]] = None) -> Flask:
     
     # Registrar endpoints de verificación de salud
     register_health_endpoints(app)
+    
+    # Registrar blueprints CQRS
+    register_cqrs_blueprints(app)
     
     # Configurar logging
     setup_logging(app)
@@ -220,6 +225,18 @@ def register_middleware(app: Flask) -> None:
             )
         
         return response
+
+
+def register_cqrs_blueprints(app: Flask) -> None:
+    """Registrar blueprints CQRS de la aplicación."""
+    try:
+        from ...api.partners_cqrs import bp as partners_bp
+        app.register_blueprint(partners_bp)
+        logger.info("Partners CQRS blueprint registered successfully")
+    except ImportError as e:
+        logger.warning(f"Could not register Partners CQRS blueprint: {e}")
+    except Exception as e:
+        logger.error(f"Error registering CQRS blueprints: {e}")
 
 
 def register_health_endpoints(app: Flask) -> None:

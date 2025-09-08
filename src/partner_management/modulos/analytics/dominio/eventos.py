@@ -5,7 +5,7 @@ Implements all analytics-related domain events following CQRS patterns.
 
 from typing import Dict, Any, Optional
 
-from ....seedwork.dominio.eventos import DomainEvent, IntegrationEvent, EventMetadata
+from partner_management.seedwork.dominio.eventos import DomainEvent, IntegrationEvent, EventMetadata
 
 
 class AnalyticsReportCreated(DomainEvent):

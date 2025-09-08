@@ -10,8 +10,8 @@ from typing import Any, Dict, List, Optional
 from datetime import datetime
 from decimal import Decimal
 
-from ....seedwork.dominio.objetos_valor import ObjetoValor
-from ....seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.dominio.objetos_valor import ValueObject
+from partner_management.seedwork.dominio.excepciones import DomainException
 
 
 class ReportType(Enum):
@@ -43,7 +43,7 @@ class MetricType(Enum):
 
 
 @dataclass(frozen=True)
-class ReportPeriod(ObjetoValor):
+class ReportPeriod(ValueObject):
     """Report period value object."""
     
     start_date: datetime
@@ -85,7 +85,7 @@ class ReportPeriod(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class MetricValue(ObjetoValor):
+class MetricValue(ValueObject):
     """Metric value with type and metadata."""
     
     value: Any
@@ -128,7 +128,7 @@ class MetricValue(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class AnalyticsMetrics(ObjetoValor):
+class AnalyticsMetrics(ValueObject):
     """Collection of analytics metrics."""
     
     partner_metrics: Dict[str, MetricValue]
@@ -184,7 +184,7 @@ class AnalyticsMetrics(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class ReportConfiguration(ObjetoValor):
+class ReportConfiguration(ValueObject):
     """Report configuration value object."""
     
     report_type: ReportType
@@ -218,7 +218,7 @@ class ReportConfiguration(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class DataFilter(ObjetoValor):
+class DataFilter(ValueObject):
     """Data filter for analytics queries."""
     
     partner_ids: Optional[List[str]] = None
@@ -261,7 +261,7 @@ class DataFilter(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class Insight(ObjetoValor):
+class Insight(ValueObject):
     """Analytics insight value object."""
     
     insight_type: str
@@ -293,7 +293,7 @@ class Insight(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class TrendAnalysis(ObjetoValor):
+class TrendAnalysis(ValueObject):
     """Trend analysis value object."""
     
     metric_name: str
@@ -335,7 +335,7 @@ class TrendAnalysis(ObjetoValor):
 
 
 @dataclass(frozen=True)
-class BenchmarkComparison(ObjetoValor):
+class BenchmarkComparison(ValueObject):
     """Benchmark comparison value object."""
     
     metric_name: str

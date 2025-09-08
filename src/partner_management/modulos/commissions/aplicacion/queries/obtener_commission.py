@@ -6,9 +6,9 @@ import logging
 from dataclasses import dataclass
 from typing import Optional, Dict, Any
 
-from .....seedwork.aplicacion.queries import ejecutar_query
-from .....seedwork.infraestructura.uow import UnitOfWork
-from .....seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.aplicacion.queries import ejecutar_query
+from partner_management.seedwork.infraestructura.uow import UnitOfWork
+from partner_management.seedwork.dominio.excepciones import DomainException
 from .base import QueryCommission, CommissionQueryResult
 
 logger = logging.getLogger(__name__)

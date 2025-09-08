@@ -6,8 +6,8 @@ Implements Partner aggregate root with full business logic.
 from typing import Optional, List
 from datetime import datetime
 
-from ....seedwork.dominio.entidades import AggregateRoot, DomainEntity
-from ....seedwork.dominio.excepciones import DomainException, BusinessRuleException
+from partner_management.seedwork.dominio.entidades import AggregateRoot, DomainEntity
+from partner_management.seedwork.dominio.excepciones import DomainException, BusinessRuleException
 from .objetos_valor import (
     PartnerName, PartnerEmail, PartnerPhone, PartnerType, PartnerStatus,
     PartnerAddress, PartnerValidationData, PartnerMetrics
@@ -125,7 +125,7 @@ class Partner(AggregateRoot):
         if telefono and telefono != self._telefono:
             rule = PartnerMustHaveValidPhone(telefono)
             if not rule.is_valid():
-                raise BusinessRuleException(rule)
+                raise BusinessRuleException(rule.get_message(), "partner_validation")
             self._telefono = telefono
         
         if direccion:
@@ -154,7 +154,7 @@ class Partner(AggregateRoot):
         if self._status == PartnerStatus.INACTIVO:
             rule = PartnerCanOnlyBeActivatedIfValidated(self._validation_data)
             if not rule.is_valid():
-                raise BusinessRuleException(rule)
+                raise BusinessRuleException(rule.get_message(), "partner_validation")
         
         old_status = self._status
         self._status = PartnerStatus.ACTIVO
@@ -317,7 +317,7 @@ class Partner(AggregateRoot):
         
         for rule in rules:
             if not rule.is_valid():
-                raise BusinessRuleException(rule)
+                raise BusinessRuleException(rule.get_message(), "partner_validation")
     
     def get_profile_360(self) -> dict:
         """Get comprehensive partner profile."""

@@ -5,8 +5,8 @@ Campaign factory implementation for HexaBuilders.
 import uuid
 from typing import Optional
 
-from ....seedwork.dominio.fabricas import Fabrica
-from ....seedwork.dominio.repositorios import Repositorio
+from partner_management.seedwork.dominio.fabricas import Fabrica
+from partner_management.seedwork.dominio.repositorios import Repositorio
 from ..dominio.entidades import Campaign
 from ..dominio.objetos_valor import (
     CampaignName, CampaignDescription, CampaignBudget, CampaignDateRange,

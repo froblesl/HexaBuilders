@@ -10,13 +10,13 @@ from ..dominio.objetos_valor import (
     PartnerName, PartnerEmail, PartnerPhone, PartnerType, PartnerStatus,
     PartnerAddress, PartnerValidationData, PartnerMetrics
 )
-from ...seedwork.dominio.fabricas import Fabrica
-from ...seedwork.dominio.excepciones import DomainException
+from partner_management.seedwork.dominio.fabricas import Factory
+from partner_management.seedwork.dominio.excepciones import DomainException
 
 logger = logging.getLogger(__name__)
 
 
-class FabricaPartner(Fabrica):
+class FabricaPartner(Factory):
     """
     Factory for creating Partner entities.
     Encapsulates partner creation logic and validation.

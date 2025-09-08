@@ -2,8 +2,8 @@
 Base query classes for Analytics module.
 """
 
-from .....seedwork.aplicacion.queries import Query, QueryHandler, QueryResult
-from .....seedwork.dominio.repositorio import Repositorio
+from partner_management.seedwork.aplicacion.queries import Query, QueryHandler, QueryResult
+from partner_management.seedwork.dominio.repositorio import Repositorio
 from ...dominio.entidades import AnalyticsReport
 
 

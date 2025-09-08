@@ -5,7 +5,7 @@ Base classes for campaign queries in HexaBuilders.
 from abc import ABC
 from dataclasses import dataclass
 
-from .....seedwork.aplicacion.queries import Query, QueryHandler, QueryResult
+from partner_management.seedwork.aplicacion.queries import Query, QueryHandler, QueryResult
 
 
 @dataclass
