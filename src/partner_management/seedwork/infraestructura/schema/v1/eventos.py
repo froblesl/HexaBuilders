@@ -6,7 +6,7 @@ from .mensajes import BASE_MESSAGE_SCHEMA
 BASE_EVENT_SCHEMA = {
     "type": "record",
     "name": "BaseEvent",
-    "namespace": "com.alpes.partners.events",
+    "namespace": "com.hexabuilders.partners.events",
     "doc": "Base schema for all events with common metadata",
     "fields": BASE_MESSAGE_SCHEMA["fields"] + [
         {
@@ -36,7 +36,7 @@ BASE_EVENT_SCHEMA = {
 DOMAIN_EVENT_SCHEMA = {
     "type": "record",
     "name": "DomainEvent",
-    "namespace": "com.alpes.partners.events.domain",
+    "namespace": "com.hexabuilders.partners.events.domain",
     "doc": "Domain event for internal module communication",
     "fields": BASE_EVENT_SCHEMA["fields"] + [
         {
@@ -61,7 +61,7 @@ DOMAIN_EVENT_SCHEMA = {
 INTEGRATION_EVENT_SCHEMA = {
     "type": "record",
     "name": "IntegrationEvent", 
-    "namespace": "com.alpes.partners.events.integration",
+    "namespace": "com.hexabuilders.partners.events.integration",
     "doc": "Integration event for cross-service communication",
     "fields": BASE_EVENT_SCHEMA["fields"] + [
         {
@@ -92,7 +92,7 @@ INTEGRATION_EVENT_SCHEMA = {
 PARTNER_CREATED_EVENT_SCHEMA = {
     "type": "record",
     "name": "PartnerCreatedEvent",
-    "namespace": "com.alpes.partners.events.domain.partner",
+    "namespace": "com.hexabuilders.partners.events.domain.partner",
     "doc": "Event fired when a new partner is created",
     "fields": DOMAIN_EVENT_SCHEMA["fields"] + [
         {
@@ -118,7 +118,7 @@ PARTNER_CREATED_EVENT_SCHEMA = {
 PARTNER_STATUS_CHANGED_EVENT_SCHEMA = {
     "type": "record",
     "name": "PartnerStatusChangedEvent",
-    "namespace": "com.alpes.partners.events.domain.partner",
+    "namespace": "com.hexabuilders.partners.events.domain.partner",
     "doc": "Event fired when partner status changes",
     "fields": DOMAIN_EVENT_SCHEMA["fields"] + [
         {
@@ -144,7 +144,7 @@ PARTNER_STATUS_CHANGED_EVENT_SCHEMA = {
 PARTNER_ACTIVATED_EVENT_SCHEMA = {
     "type": "record",
     "name": "PartnerActivatedEvent",
-    "namespace": "com.alpes.partners.events.domain.partner",
+    "namespace": "com.hexabuilders.partners.events.domain.partner",
     "doc": "Event fired when partner is activated",
     "fields": DOMAIN_EVENT_SCHEMA["fields"] + [
         {
@@ -180,7 +180,7 @@ PARTNER_ACTIVATED_EVENT_SCHEMA = {
 CAMPAIGN_CREATED_EVENT_SCHEMA = {
     "type": "record",
     "name": "CampaignCreatedEvent",
-    "namespace": "com.alpes.partners.events.domain.campaign",
+    "namespace": "com.hexabuilders.partners.events.domain.campaign",
     "doc": "Event fired when a new campaign is created",
     "fields": DOMAIN_EVENT_SCHEMA["fields"] + [
         {
@@ -207,7 +207,7 @@ CAMPAIGN_CREATED_EVENT_SCHEMA = {
 PARTNER_ASSIGNED_TO_CAMPAIGN_EVENT_SCHEMA = {
     "type": "record",
     "name": "PartnerAssignedToCampaignEvent",
-    "namespace": "com.alpes.partners.events.domain.campaign",
+    "namespace": "com.hexabuilders.partners.events.domain.campaign",
     "doc": "Event fired when partner is assigned to campaign",
     "fields": DOMAIN_EVENT_SCHEMA["fields"] + [
         {
@@ -240,7 +240,7 @@ PARTNER_ASSIGNED_TO_CAMPAIGN_EVENT_SCHEMA = {
 COMMISSION_CALCULATED_EVENT_SCHEMA = {
     "type": "record",
     "name": "CommissionCalculatedEvent",
-    "namespace": "com.alpes.partners.events.domain.commission",
+    "namespace": "com.hexabuilders.partners.events.domain.commission",
     "doc": "Event fired when commission is calculated",
     "fields": DOMAIN_EVENT_SCHEMA["fields"] + [
         {
@@ -270,7 +270,7 @@ COMMISSION_CALCULATED_EVENT_SCHEMA = {
 COMMISSION_PAID_EVENT_SCHEMA = {
     "type": "record",
     "name": "CommissionPaidEvent",
-    "namespace": "com.alpes.partners.events.domain.commission",
+    "namespace": "com.hexabuilders.partners.events.domain.commission",
     "doc": "Event fired when commission is paid",
     "fields": DOMAIN_EVENT_SCHEMA["fields"] + [
         {
@@ -299,7 +299,7 @@ COMMISSION_PAID_EVENT_SCHEMA = {
 ANALYTICS_CALCULATED_EVENT_SCHEMA = {
     "type": "record",
     "name": "AnalyticsCalculatedEvent",
-    "namespace": "com.alpes.partners.events.domain.analytics",
+    "namespace": "com.hexabuilders.partners.events.domain.analytics",
     "doc": "Event fired when analytics are calculated",
     "fields": DOMAIN_EVENT_SCHEMA["fields"] + [
         {
@@ -330,7 +330,7 @@ ANALYTICS_CALCULATED_EVENT_SCHEMA = {
 PARTNER_REGISTRATION_COMPLETED_INTEGRATION_EVENT_SCHEMA = {
     "type": "record",
     "name": "PartnerRegistrationCompletedIntegrationEvent",
-    "namespace": "com.alpes.partners.events.integration",
+    "namespace": "com.hexabuilders.partners.events.integration",
     "doc": "Integration event for external systems when partner registration completes",
     "fields": INTEGRATION_EVENT_SCHEMA["fields"] + [
         {
@@ -361,7 +361,7 @@ PARTNER_REGISTRATION_COMPLETED_INTEGRATION_EVENT_SCHEMA = {
 COMMISSION_PROCESSED_INTEGRATION_EVENT_SCHEMA = {
     "type": "record",
     "name": "CommissionProcessedIntegrationEvent",
-    "namespace": "com.alpes.partners.events.integration",
+    "namespace": "com.hexabuilders.partners.events.integration",
     "doc": "Integration event when commission is processed",
     "fields": INTEGRATION_EVENT_SCHEMA["fields"] + [
         {
@@ -393,7 +393,7 @@ COMMISSION_PROCESSED_INTEGRATION_EVENT_SCHEMA = {
 EVENT_METADATA_SCHEMA = {
     "type": "record",
     "name": "EventMetadata",
-    "namespace": "com.alpes.partners.events.metadata",
+    "namespace": "com.hexabuilders.partners.events.metadata",
     "doc": "Metadata schema for event tracing and correlation",
     "fields": [
         {
@@ -449,7 +449,7 @@ EVENT_METADATA_SCHEMA = {
 PARTNER_EVENT_FAMILY_SCHEMA = {
     "type": "record",
     "name": "PartnerEventFamily",
-    "namespace": "com.alpes.partners.events.families",
+    "namespace": "com.hexabuilders.partners.events.families",
     "doc": "Base schema for all partner-related events",
     "fields": DOMAIN_EVENT_SCHEMA["fields"] + [
         {
@@ -472,7 +472,7 @@ PARTNER_EVENT_FAMILY_SCHEMA = {
 CAMPAIGN_EVENT_FAMILY_SCHEMA = {
     "type": "record", 
     "name": "CampaignEventFamily",
-    "namespace": "com.alpes.partners.events.families",
+    "namespace": "com.hexabuilders.partners.events.families",
     "doc": "Base schema for all campaign-related events",
     "fields": DOMAIN_EVENT_SCHEMA["fields"] + [
         {

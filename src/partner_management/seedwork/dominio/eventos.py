@@ -165,7 +165,7 @@ class IntegrationEvent(BaseEvent):
     def to_cloud_event(self) -> Dict[str, Any]:
         return {
             'specversion': '1.0',
-            'type': f"com.alpes.partners.{self.event_name}",
+            'type': f"com.hexabuilders.partners.{self.event_name}",
             'source': f"//partners/{self.aggregate_id}",
             'id': self.metadata.event_id,
             'time': self.metadata.occurred_on,

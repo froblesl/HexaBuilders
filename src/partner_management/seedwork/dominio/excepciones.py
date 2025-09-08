@@ -337,3 +337,7 @@ def validation_failed(field_errors: Dict[str, List[str]]) -> ValidationException
         message="Input validation failed",
         field_errors=field_errors
     )
+
+
+# Alias for backward compatibility
+BusinessRuleException = BusinessRuleViolationException

@@ -1,6 +1,5 @@
 """
 Infraestructura de consultas CQRS con patrón SingleDispatch.
-Implementa manejo de consultas y optimización de modelos de lectura siguiendo patrones del tutorial.
 """
 
 import uuid
@@ -98,7 +97,6 @@ class Query:
     """
     Clase base de consulta para operaciones de lectura.
     
-    Siguiendo el patrón CQRS Query del tutorial:
     - Las consultas solicitan datos sin efectos secundarios
     - Objetos de consulta inmutables
     - Contexto rico para optimización
@@ -457,11 +455,9 @@ class AsyncQueryHandler(QueryHandler[T], ABC):
         return asyncio.run(self.handle_async(query))
 
 
-# Decorador SingleDispatch para enrutamiento de consultas (del tutorial)
 @singledispatch
 def ejecutar_query(query: Query) -> QueryResult[Any]:
     """
-    Ejecutar consulta usando patrón SingleDispatch del tutorial.
     
     Este es el punto de entrada principal para ejecución de consultas.
     Registrar handlers usando decorador @ejecutar_query.register.

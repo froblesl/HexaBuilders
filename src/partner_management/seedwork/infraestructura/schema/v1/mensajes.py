@@ -7,7 +7,7 @@ from dataclasses import dataclass
 CLOUD_EVENT_ENVELOPE_SCHEMA = {
     "type": "record",
     "name": "CloudEventEnvelope",
-    "namespace": "com.alpes.partners.events",
+    "namespace": "com.hexabuilders.partners.events",
     "doc": "Sobre CloudEvent siguiendo la especificación CloudEvents v1.0",
     "fields": [
         {
@@ -61,7 +61,7 @@ CLOUD_EVENT_ENVELOPE_SCHEMA = {
 BASE_MESSAGE_SCHEMA = {
     "type": "record",
     "name": "BaseMessage",
-    "namespace": "com.alpes.partners.messages",
+    "namespace": "com.hexabuilders.partners.messages",
     "doc": "Esquema de mensaje base con campos de metadatos comunes",
     "fields": [
         {
@@ -145,7 +145,7 @@ BASE_MESSAGE_SCHEMA = {
 COMMISSION_RATE_PAYLOAD_SCHEMA = {
     "type": "record",
     "name": "CommissionRatePayload",
-    "namespace": "com.alpes.partners.payloads",
+    "namespace": "com.hexabuilders.partners.payloads",
     "doc": "Carga de configuración de tasa de comisión",
     "fields": [
         {
@@ -198,7 +198,7 @@ COMMISSION_RATE_PAYLOAD_SCHEMA = {
 PARTNER_EVENT_PAYLOAD_SCHEMA = {
     "type": "record",
     "name": "PartnerEventPayload",
-    "namespace": "com.alpes.partners.payloads",
+    "namespace": "com.hexabuilders.partners.payloads",
     "doc": "Carga de evento de socio con información completa del socio",
     "fields": [
         {
@@ -279,7 +279,7 @@ PARTNER_EVENT_PAYLOAD_SCHEMA = {
 CAMPAIGN_EVENT_PAYLOAD_SCHEMA = {
     "type": "record",
     "name": "CampaignEventPayload",
-    "namespace": "com.alpes.partners.payloads",
+    "namespace": "com.hexabuilders.partners.payloads",
     "doc": "Carga de evento de campaña con información de campaña",
     "fields": [
         {
@@ -349,7 +349,7 @@ CAMPAIGN_EVENT_PAYLOAD_SCHEMA = {
 COMMISSION_METRICS_PAYLOAD_SCHEMA = {
     "type": "record",
     "name": "CommissionMetricsPayload",
-    "namespace": "com.alpes.partners.payloads",
+    "namespace": "com.hexabuilders.partners.payloads",
     "doc": "Métricas de comisión y datos de rendimiento",
     "fields": [
         {
@@ -385,7 +385,7 @@ COMMISSION_METRICS_PAYLOAD_SCHEMA = {
 COMMISSION_EVENT_PAYLOAD_SCHEMA = {
     "type": "record",
     "name": "CommissionEventPayload",
-    "namespace": "com.alpes.partners.payloads",
+    "namespace": "com.hexabuilders.partners.payloads",
     "doc": "Carga de evento de comisión con detalles de comisión",
     "fields": [
         {
@@ -456,7 +456,7 @@ COMMISSION_EVENT_PAYLOAD_SCHEMA = {
 ANALYTICS_METRICS_PAYLOAD_SCHEMA = {
     "type": "record",
     "name": "AnalyticsMetricsPayload",
-    "namespace": "com.alpes.partners.payloads",
+    "namespace": "com.hexabuilders.partners.payloads",
     "doc": "Carga de métricas de analíticas para reportes",
     "fields": [
         {
@@ -501,7 +501,7 @@ ANALYTICS_METRICS_PAYLOAD_SCHEMA = {
 ANALYTICS_EVENT_PAYLOAD_SCHEMA = {
     "type": "record",
     "name": "AnalyticsEventPayload",
-    "namespace": "com.alpes.partners.payloads",
+    "namespace": "com.hexabuilders.partners.payloads",
     "doc": "Carga de evento de analíticas con datos de rendimiento",
     "fields": [
         {
@@ -538,7 +538,7 @@ ANALYTICS_EVENT_PAYLOAD_SCHEMA = {
 ERROR_PAYLOAD_SCHEMA = {
     "type": "record",
     "name": "ErrorPayload",
-    "namespace": "com.alpes.partners.payloads",
+    "namespace": "com.hexabuilders.partners.payloads",
     "doc": "Carga de información de error para eventos de error",
     "fields": [
         {

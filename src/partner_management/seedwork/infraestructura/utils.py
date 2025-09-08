@@ -17,7 +17,6 @@ from ..dominio.excepciones import DomainException
 
 class EventDispatcher:
     """
-    Event dispatcher using PyDispatcher (from tutorial).
     
     Provides:
     - Event publishing and subscription
@@ -659,6 +658,38 @@ class ConnectionPoolManager:
                 }
                 for name, pool in self._pools.items()
             }
+
+
+# Pulsar broker utility functions
+def broker_host() -> str:
+    """
+    Get the Pulsar broker host from environment or default.
+    """
+    host = os.getenv('PULSAR_HOST', 'localhost')
+    return host
+
+
+def broker_port() -> int:
+    """
+    Get the Pulsar broker port from environment or default.
+    """
+    port = int(os.getenv('PULSAR_PORT', '6650'))
+    return port
+
+
+def get_broker_url() -> str:
+    """
+    Get complete Pulsar broker URL.
+    """
+    url = f"pulsar://{broker_host()}:{broker_port()}"
+    return url
+
+
+def get_service_name() -> str:
+    """
+    Get service name for subscriptions.
+    """
+    return os.getenv('SERVICE_NAME', 'partner-management')
 
 
 # Global instances for easy access

@@ -190,7 +190,6 @@ class AsyncCommandHandler(CommandHandler[T], ABC):
         return asyncio.run(self.handle_async(command))
 
 
-# SingleDispatch decorator for command routing (from tutorial)
 @singledispatch
 def ejecutar_comando(comando: Command) -> CommandResult[Any]:
     raise DomainException(

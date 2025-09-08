@@ -24,7 +24,6 @@ class OperationType:
 @dataclass
 class BatchOperation:
     """
-    Operación por lotes para ejecución diferida (del tutorial).
     
     Las operaciones se registran y ejecutan juntas durante la confirmación
     para garantizar la atomicidad y el orden correcto de los eventos.
@@ -46,7 +45,6 @@ class UnitOfWork(ABC):
     """
     Clase base de la unidad de trabajo que gestiona los límites transaccionales.
     
-    Siguiendo la implementación del tutorial:
     - Registro por lotes para ejecución diferida
     - Gestión de sesiones mediante la serialización de sesiones de Flask
     - Capacidades de punto de guardado y reversión
@@ -63,7 +61,6 @@ class UnitOfWork(ABC):
         self._transaction_id = str(uuid.uuid4())
         self._session_key = f"uow_{self._transaction_id}"
         
-        # Compatibilidad con serialización para la sesión Flask (del tutorial)
         self._serialized_state: Optional[bytes] = None
         
     @property
@@ -270,14 +267,12 @@ class UnitOfWork(ABC):
     
     def serialize_to_session(self) -> None:
         """
-        Serializa el estado UoW a la sesión Flask utilizando pickle (del tutorial).
         Permite la persistencia del estado entre solicitudes HTTP.
         """
         self._serialize_to_session()
     
     def restore_from_session(self) -> bool:
         """
-        Restaurar el estado UoW desde la sesión Flask utilizando pickle (del tutorial).
         
         Devuelve:
             True si se ha restaurado el estado, False si no se ha encontrado ningún estado.

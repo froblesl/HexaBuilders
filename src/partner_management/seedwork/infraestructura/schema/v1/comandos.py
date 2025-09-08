@@ -6,7 +6,7 @@ from .mensajes import BASE_MESSAGE_SCHEMA
 BASE_COMMAND_SCHEMA = {
     "type": "record",
     "name": "BaseCommand",
-    "namespace": "com.alpes.partners.commands",
+    "namespace": "com.hexabuilders.partners.commands",
     "doc": "Base schema for all commands with common metadata",
     "fields": BASE_MESSAGE_SCHEMA["fields"] + [
         {
@@ -44,7 +44,7 @@ BASE_COMMAND_SCHEMA = {
 COMMAND_RESULT_SCHEMA = {
     "type": "record",
     "name": "CommandResult",
-    "namespace": "com.alpes.partners.commands.results",
+    "namespace": "com.hexabuilders.partners.commands.results",
     "doc": "Result of command execution",
     "fields": [
         {
@@ -109,7 +109,7 @@ COMMAND_RESULT_SCHEMA = {
 CREATE_PARTNER_COMMAND_SCHEMA = {
     "type": "record",
     "name": "CreatePartnerCommand",
-    "namespace": "com.alpes.partners.commands.partner",
+    "namespace": "com.hexabuilders.partners.commands.partner",
     "doc": "Command to create a new partner",
     "fields": BASE_COMMAND_SCHEMA["fields"] + [
         {
@@ -153,7 +153,7 @@ CREATE_PARTNER_COMMAND_SCHEMA = {
 UPDATE_PARTNER_COMMAND_SCHEMA = {
     "type": "record",
     "name": "UpdatePartnerCommand",
-    "namespace": "com.alpes.partners.commands.partner",
+    "namespace": "com.hexabuilders.partners.commands.partner",
     "doc": "Command to update existing partner",
     "fields": BASE_COMMAND_SCHEMA["fields"] + [
         {
@@ -181,7 +181,7 @@ UPDATE_PARTNER_COMMAND_SCHEMA = {
 ACTIVATE_PARTNER_COMMAND_SCHEMA = {
     "type": "record",
     "name": "ActivatePartnerCommand",
-    "namespace": "com.alpes.partners.commands.partner",
+    "namespace": "com.hexabuilders.partners.commands.partner",
     "doc": "Command to activate a partner",
     "fields": BASE_COMMAND_SCHEMA["fields"] + [
         {
@@ -219,7 +219,7 @@ ACTIVATE_PARTNER_COMMAND_SCHEMA = {
 SUSPEND_PARTNER_COMMAND_SCHEMA = {
     "type": "record",
     "name": "SuspendPartnerCommand",
-    "namespace": "com.alpes.partners.commands.partner",
+    "namespace": "com.hexabuilders.partners.commands.partner",
     "doc": "Command to suspend a partner",
     "fields": BASE_COMMAND_SCHEMA["fields"] + [
         {
@@ -249,7 +249,7 @@ SUSPEND_PARTNER_COMMAND_SCHEMA = {
 CREATE_CAMPAIGN_COMMAND_SCHEMA = {
     "type": "record",
     "name": "CreateCampaignCommand",
-    "namespace": "com.alpes.partners.commands.campaign",
+    "namespace": "com.hexabuilders.partners.commands.campaign",
     "doc": "Command to create a new campaign",
     "fields": BASE_COMMAND_SCHEMA["fields"] + [
         {
@@ -287,7 +287,7 @@ CREATE_CAMPAIGN_COMMAND_SCHEMA = {
 ASSIGN_PARTNER_TO_CAMPAIGN_COMMAND_SCHEMA = {
     "type": "record",
     "name": "AssignPartnerToCampaignCommand",
-    "namespace": "com.alpes.partners.commands.campaign",
+    "namespace": "com.hexabuilders.partners.commands.campaign",
     "doc": "Command to assign partner to campaign",
     "fields": BASE_COMMAND_SCHEMA["fields"] + [
         {
@@ -322,7 +322,7 @@ ASSIGN_PARTNER_TO_CAMPAIGN_COMMAND_SCHEMA = {
 CALCULATE_COMMISSION_COMMAND_SCHEMA = {
     "type": "record",
     "name": "CalculateCommissionCommand",
-    "namespace": "com.alpes.partners.commands.commission",
+    "namespace": "com.hexabuilders.partners.commands.commission",
     "doc": "Command to calculate commission for partner",
     "fields": BASE_COMMAND_SCHEMA["fields"] + [
         {
@@ -369,7 +369,7 @@ CALCULATE_COMMISSION_COMMAND_SCHEMA = {
 APPROVE_COMMISSION_COMMAND_SCHEMA = {
     "type": "record",
     "name": "ApproveCommissionCommand",
-    "namespace": "com.alpes.partners.commands.commission",
+    "namespace": "com.hexabuilders.partners.commands.commission",
     "doc": "Command to approve calculated commission",
     "fields": BASE_COMMAND_SCHEMA["fields"] + [
         {
@@ -394,7 +394,7 @@ APPROVE_COMMISSION_COMMAND_SCHEMA = {
 PROCESS_PAYMENT_COMMAND_SCHEMA = {
     "type": "record",
     "name": "ProcessPaymentCommand",
-    "namespace": "com.alpes.partners.commands.commission",
+    "namespace": "com.hexabuilders.partners.commands.commission",
     "doc": "Command to process commission payment",
     "fields": BASE_COMMAND_SCHEMA["fields"] + [
         {
@@ -422,7 +422,7 @@ PROCESS_PAYMENT_COMMAND_SCHEMA = {
 CALCULATE_ANALYTICS_COMMAND_SCHEMA = {
     "type": "record",
     "name": "CalculateAnalyticsCommand",
-    "namespace": "com.alpes.partners.commands.analytics",
+    "namespace": "com.hexabuilders.partners.commands.analytics",
     "doc": "Command to calculate analytics for partner or campaign",
     "fields": BASE_COMMAND_SCHEMA["fields"] + [
         {
@@ -457,7 +457,7 @@ CALCULATE_ANALYTICS_COMMAND_SCHEMA = {
 COMMAND_ROUTING_SCHEMA = {
     "type": "record",
     "name": "CommandRouting",
-    "namespace": "com.alpes.partners.commands.routing",
+    "namespace": "com.hexabuilders.partners.commands.routing",
     "doc": "Schema for command routing information",
     "fields": [
         {
@@ -503,7 +503,7 @@ COMMAND_ROUTING_SCHEMA = {
 COMMAND_ERROR_SCHEMA = {
     "type": "record",
     "name": "CommandError",
-    "namespace": "com.alpes.partners.commands.errors",
+    "namespace": "com.hexabuilders.partners.commands.errors",
     "doc": "Schema for command processing errors",
     "fields": [
         {
@@ -560,7 +560,7 @@ COMMAND_ERROR_SCHEMA = {
 COMMAND_LIFECYCLE_SCHEMA = {
     "type": "record",
     "name": "CommandLifecycle",
-    "namespace": "com.alpes.partners.commands.lifecycle",
+    "namespace": "com.hexabuilders.partners.commands.lifecycle",
     "doc": "Schema for tracking command lifecycle events",
     "fields": [
         {
