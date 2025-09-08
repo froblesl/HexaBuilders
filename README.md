@@ -248,24 +248,3 @@ HexaBuilders includes comprehensive observability:
 3. Commit changes (`git commit -m 'Add new functionality'`)
 4. Push to branch (`git push origin feature/new-functionality`)
 5. Create Pull Request
-
-## License
-
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for more details.
-
-## Acknowledgments
-
-Developed following best practices from:
-- **Domain-Driven Design** - Eric Evans
-- **Clean Architecture** - Robert C. Martin  
-- **Enterprise Integration Patterns** - Gregor Hohpe
-- **Microservices Patterns** - Chris Richardson
-
----
-
-**Repository**: https://github.com/froblesl/HexaBuilders  
-**Contact**: francisco.robles@hexabuilders.com
-
----
-
-*HexaBuilders - Building Enterprise Solutions with Hexagonal Architecture*
