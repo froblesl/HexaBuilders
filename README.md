@@ -1,218 +1,218 @@
 # HexaBuilders - Enterprise Partner Management Platform
 
-**HexaBuilders** es una plataforma empresarial de gestión de partners construida con arquitecturas modernas y patrones de diseño de clase mundial.
+**HexaBuilders** is an enterprise-grade partner management platform built with modern architectural patterns and world-class design principles.
 
-## 👥 Equipo de Desarrollo
+## Development Team
 
 - **Francisco Robles** [@froblesl](https://github.com/froblesl)
 - **Hernán Álvarez** [@hernanHawk](https://github.com/hernanHawk)
 - **Nicolás Escobar** [@nicolasuniandes](https://github.com/nicolasuniandes)
 - **Javier Barrera** [@j4vierb](https://github.com/j4vierb)
 
-## 🏗️ Arquitectura Empresarial
+## Enterprise Architecture
 
-HexaBuilders implementa patrones arquitectónicos de nivel empresarial:
+HexaBuilders implements enterprise-level architectural patterns:
 
-- ⚡ **Domain-Driven Design (DDD)** - Diseño dirigido por el dominio
-- 🔄 **CQRS/CQS** - Separación de comandos y consultas
-- 📡 **Event-Driven Architecture** - Arquitectura dirigida por eventos
-- 🛡️ **Hexagonal Architecture** - Puertos y adaptadores
-- 🔧 **Business Rules Engine** - Motor de reglas de negocio
-- 💎 **Value Objects** - Objetos de valor inmutables
-- 🏛️ **Repository Pattern** - Patrón repositorio
-- ⚖️ **Unit of Work** - Unidad de trabajo transaccional
+- **Domain-Driven Design (DDD)** - Domain-driven design approach
+- **CQRS/CQS** - Command Query Responsibility Segregation
+- **Event-Driven Architecture** - Event-based communication
+- **Hexagonal Architecture** - Ports and Adapters pattern
+- **Business Rules Engine** - Advanced business logic processing
+- **Value Objects** - Immutable domain objects
+- **Repository Pattern** - Data access abstraction
+- **Unit of Work** - Transactional consistency
 
-## 🌟 Módulos de Dominio
+## Domain Modules
 
-### 1. 🤝 Partners Module
-Gestión completa del perfil 360 de partners empresariales:
-- Onboarding y validación de partners
-- Gestión de tipos: Individual, Empresa, Startup
-- Estados: Activo, Inactivo, Pendiente
-- Validaciones de negocio avanzadas
-- Historial de cambios y eventos
+### 1. Partners Module
+Complete 360-degree partner profile management:
+- Partner onboarding and validation
+- Support for Individual, Company, and Startup types
+- Status management: Active, Inactive, Pending
+- Advanced business rule validation
+- Complete change history and event tracking
 
-### 2. 📊 Campaigns Module  
-Gestión inteligente de campañas de marketing:
-- Creación y configuración de campañas
-- Asignación de partners a campañas
-- Seguimiento de performance en tiempo real
-- Métricas de conversión y engagement
-- Análisis de ROI por campaña
+### 2. Campaigns Module  
+Intelligent marketing campaign management:
+- Campaign creation and configuration
+- Partner assignment to campaigns
+- Real-time performance tracking
+- Conversion and engagement metrics
+- Campaign ROI analysis
 
-### 3. 💰 Commissions Module
-Sistema avanzado de cálculo de comisiones:
-- Cálculo automático de comisiones
-- Múltiples esquemas de comisión
-- Procesamiento de pagos
-- Historial completo de transacciones
-- Reportes financieros detallados
+### 3. Commissions Module
+Advanced commission calculation system:
+- Automatic commission calculation
+- Multiple commission schemes support
+- Payment processing integration
+- Complete transaction history
+- Detailed financial reporting
 
-### 4. 📈 Analytics Module
-Inteligencia de negocio y reportes 360:
-- Dashboard ejecutivo en tiempo real
-- Métricas de rendimiento de partners
-- Análisis predictivo de tendencias  
-- Reportes automatizados
-- KPIs personalizables
+### 4. Analytics Module
+Business intelligence and 360-degree reporting:
+- Real-time executive dashboard
+- Partner performance metrics
+- Predictive trend analysis
+- Automated reporting
+- Customizable KPIs
 
-## 🚀 Instalación y Ejecución
+## Installation and Execution
 
-### Prerequisitos
+### Prerequisites
 - **Python 3.11+**
 - **Docker & Docker Compose**
 - **Git**
 
-### 🐳 Ejecución con Docker (Recomendado)
+### Docker Execution (Recommended)
 
 ```bash
-# 1. Clonar el repositorio
+# 1. Clone the repository
 git clone https://github.com/froblesl/HexaBuilders.git
 cd HexaBuilders
 
-# 2. Iniciar servicios de infraestructura
+# 2. Start infrastructure services
 docker-compose up -d zookeeper pulsar-init bookie broker
 
-# 3. Iniciar la aplicación principal
+# 3. Start main application
 docker-compose up partner-management
 
-# 4. Iniciar servicio de notificaciones (opcional)
+# 4. Start notification service (optional)
 docker-compose up notifications
 ```
 
-### 🛠️ Ejecución en Desarrollo Local
+### Local Development Execution
 
 ```bash
-# 1. Instalar dependencias
+# 1. Install dependencies
 pip install -r requirements.txt -r pulsar-requirements.txt
 
-# 2. Configurar variables de entorno
+# 2. Configure environment variables
 export PYTHONPATH=./src
 export PULSAR_BROKER_URL=pulsar://localhost:6650
 
-# 3. Ejecutar la aplicación
+# 3. Run the application
 flask --app "partner_management.seedwork.presentacion.api:create_app" run --host 127.0.0.1 --port 5000
 ```
 
-### ⚡ Inicio Rápido
+### Quick Start
 ```bash
-# Una línea para ejecutar HexaBuilders
+# One-line command to run HexaBuilders
 PYTHONPATH=./src flask --app "partner_management.seedwork.presentacion.api:create_app" run
 ```
 
-## 🧪 Testing y Calidad
+## Testing and Quality Assurance
 
 ```bash
-# Ejecutar todos los tests
+# Run all tests
 pytest
 
-# Tests con cobertura
+# Run tests with coverage
 pytest --cov=src --cov-report=html
 
-# Tests de módulos específicos
+# Run specific module tests
 pytest tests/partner_management/
 pytest tests/modulos/partners/
 pytest tests/modulos/campaigns/
 ```
 
-## 📡 API Endpoints
+## API Endpoints
 
-### 🔍 Health & Status
+### Health & Status Monitoring
 ```http
-GET /health              # Estado general del sistema
-GET /health/ready        # Verificación de preparación
-GET /health/live         # Verificación de vida
+GET /health              # General system status
+GET /health/ready        # Readiness check
+GET /health/live         # Liveness check
 ```
 
-### 👥 Partners API (CQRS)
+### Partners API (CQRS)
 
-#### Commands (Escritura)
+#### Commands (Write Operations)
 ```http
-POST   /api/v1/partners-comando           # Crear partner
-PUT    /api/v1/partners-comando/{id}      # Actualizar partner
-DELETE /api/v1/partners-comando/{id}      # Desactivar partner
+POST   /api/v1/partners-comando           # Create partner
+PUT    /api/v1/partners-comando/{id}      # Update partner
+DELETE /api/v1/partners-comando/{id}      # Deactivate partner
 ```
 
-#### Queries (Lectura)
+#### Queries (Read Operations)
 ```http
-GET /api/v1/partners-query                # Listar partners
-GET /api/v1/partners-query/{id}           # Obtener partner
-GET /api/v1/partners-query/{id}/profile360 # Perfil completo 360
+GET /api/v1/partners-query                # List partners
+GET /api/v1/partners-query/{id}           # Get partner details
+GET /api/v1/partners-query/{id}/profile360 # Complete 360 profile
 ```
 
-### 📊 Campaigns API
+### Campaigns API
 ```http
-GET    /api/v1/campaigns                  # Listar campañas
-POST   /api/v1/campaigns                  # Crear campaña
-GET    /api/v1/campaigns/{id}             # Obtener campaña
-PUT    /api/v1/campaigns/{id}             # Actualizar campaña
+GET    /api/v1/campaigns                  # List campaigns
+POST   /api/v1/campaigns                  # Create campaign
+GET    /api/v1/campaigns/{id}             # Get campaign details
+PUT    /api/v1/campaigns/{id}             # Update campaign
 ```
 
-### 💰 Commissions API
+### Commissions API
 ```http
-GET    /api/v1/commissions                # Listar comisiones
-POST   /api/v1/commissions/calculate      # Calcular comisiones
-GET    /api/v1/commissions/{partnerId}    # Comisiones por partner
+GET    /api/v1/commissions                # List commissions
+POST   /api/v1/commissions/calculate      # Calculate commissions
+GET    /api/v1/commissions/{partnerId}    # Partner commissions
 ```
 
-## 📁 Estructura del Proyecto
+## Project Structure
 
 ```
 HexaBuilders/
-├── 📂 src/
-│   └── 📂 partner_management/           # Servicio principal
-│       ├── 📂 seedwork/                # Componentes base reutilizables
-│       │   ├── 📂 dominio/            # Entidades y objetos valor base
-│       │   ├── 📂 aplicacion/         # Patrones de aplicación (CQRS)
-│       │   ├── 📂 infraestructura/    # Adaptadores e infraestructura
-│       │   └── 📂 presentacion/       # API y interfaces web
-│       ├── 📂 modulos/                # Módulos de dominio
-│       │   ├── 📂 partners/           # Gestión de partners
-│       │   ├── 📂 campaigns/          # Gestión de campañas
-│       │   ├── 📂 commissions/        # Cálculo de comisiones
-│       │   └── 📂 analytics/          # Analytics y reportes
-│       └── 📂 api/                    # Endpoints CQRS
-├── 📂 tests/                          # Tests automatizados
-├── 📂 .devcontainer/                  # Configuración Dev Container
-├── 🐳 docker-compose.yml              # Orquestación de servicios
-├── 📋 requirements.txt                # Dependencias Python
-└── 📖 README.md                       # Esta documentación
+├── src/
+│   └── partner_management/           # Main service
+│       ├── seedwork/                # Reusable base components
+│       │   ├── dominio/            # Base entities and value objects
+│       │   ├── aplicacion/         # Application patterns (CQRS)
+│       │   ├── infraestructura/    # Adapters and infrastructure
+│       │   └── presentacion/       # API and web interfaces
+│       ├── modulos/                # Domain modules
+│       │   ├── partners/           # Partner management
+│       │   ├── campaigns/          # Campaign management
+│       │   ├── commissions/        # Commission calculation
+│       │   └── analytics/          # Analytics and reporting
+│       └── api/                    # CQRS endpoints
+├── tests/                          # Automated tests
+├── .devcontainer/                  # Dev Container configuration
+├── docker-compose.yml              # Service orchestration
+├── requirements.txt                # Python dependencies
+└── README.md                       # This documentation
 ```
 
-## 🎯 Características Técnicas
+## Technical Characteristics
 
-### 💎 Domain-Driven Design
-- **Agregados** complejos con invariantes de negocio
-- **Entidades** con identidad única y ciclo de vida
-- **Objetos de Valor** inmutables con validaciones
-- **Servicios de Dominio** para lógica compleja
-- **Eventos de Dominio** para comunicación interna
+### Domain-Driven Design
+- **Aggregates** with complex business invariants
+- **Entities** with unique identity and lifecycle
+- **Value Objects** with immutable validations
+- **Domain Services** for complex business logic
+- **Domain Events** for internal communication
 
-### ⚡ CQRS/Event Sourcing
-- **Comandos** para operaciones de escritura
-- **Queries** optimizadas para lectura
-- **Event Store** para persistencia de eventos
-- **Proyecciones** para vistas materializadas
-- **Saga Pattern** para transacciones distribuidas
+### CQRS/Event Sourcing
+- **Commands** for write operations
+- **Queries** optimized for read operations
+- **Event Store** for event persistence
+- **Projections** for materialized views
+- **Saga Pattern** for distributed transactions
 
-### 🛡️ Patterns Implementados
-- **Repository Pattern** - Abstracción de persistencia
-- **Unit of Work** - Transacciones atómicas
-- **Factory Pattern** - Creación de objetos complejos
-- **Strategy Pattern** - Algoritmos intercambiables
-- **Observer Pattern** - Manejo de eventos
-- **Command Pattern** - Encapsulación de operaciones
+### Implemented Patterns
+- **Repository Pattern** - Data persistence abstraction
+- **Unit of Work** - Atomic transactions
+- **Factory Pattern** - Complex object creation
+- **Strategy Pattern** - Interchangeable algorithms
+- **Observer Pattern** - Event handling
+- **Command Pattern** - Operation encapsulation
 
-## 🔧 Configuración Avanzada
+## Advanced Configuration
 
-### Variables de Entorno
+### Environment Variables
 ```bash
-# Aplicación
+# Application
 PYTHONPATH=./src
 FLASK_ENV=development
 FLASK_DEBUG=true
 
-# Base de datos
+# Database
 DATABASE_URL=sqlite:///hexabuilders.db
 DATABASE_POOL_SIZE=10
 
@@ -225,54 +225,37 @@ LOG_LEVEL=INFO
 LOG_FORMAT=json
 ```
 
-### Docker Compose Servicios
-- **🐘 Zookeeper** - Coordinación distribuida
-- **📡 Apache Pulsar** - Message Broker
-- **📊 HexaBuilders API** - Aplicación principal  
-- **🔔 Notifications** - Servicio de notificaciones
+### Docker Compose Services
+- **Zookeeper** - Distributed coordination
+- **Apache Pulsar** - Message broker
+- **HexaBuilders API** - Main application  
+- **Notifications** - Notification service
 
-## 📊 Métricas y Monitoreo
+## Monitoring and Observability
 
-HexaBuilders incluye observabilidad completa:
+HexaBuilders includes comprehensive observability:
 
-- **📈 Métricas de aplicación** - Performance y uso
-- **📝 Structured Logging** - Logs estructurados
-- **🔍 Correlation IDs** - Trazabilidad de requests
-- **⚡ Health Checks** - Kubernetes ready
-- **📊 Business Metrics** - KPIs de negocio
+- **Application Metrics** - Performance and usage tracking
+- **Structured Logging** - Structured log output
+- **Correlation IDs** - Request traceability
+- **Health Checks** - Kubernetes readiness
+- **Business Metrics** - Business KPI tracking
 
-## 🤝 Contribución
+## Contribution Guidelines
 
-1. Fork el repositorio
-2. Crear branch feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit cambios (`git commit -m 'Agregar nueva funcionalidad'`)
-4. Push al branch (`git push origin feature/nueva-funcionalidad`)
-5. Crear Pull Request
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/new-functionality`)
+3. Commit changes (`git commit -m 'Add new functionality'`)
+4. Push to branch (`git push origin feature/new-functionality`)
+5. Create Pull Request
 
-## 📋 Roadmap
+## License
 
-### ✅ Completado
-- [x] Arquitectura DDD/CQRS completa
-- [x] 4 módulos de dominio funcionales
-- [x] API REST con Flask
-- [x] Patrones empresariales implementados
-- [x] Tests unitarios y de integración
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for more details.
 
-### 🚀 Próximas Versiones
-- [ ] Dashboard web interactivo
-- [ ] APIs GraphQL
-- [ ] Microservicios independientes
-- [ ] Machine Learning para analytics
-- [ ] Integración con sistemas ERP
-- [ ] Mobile app para partners
+## Acknowledgments
 
-## 📄 Licencia
-
-Este proyecto está bajo la licencia MIT. Ver [LICENSE](LICENSE) para más detalles.
-
-## 🏆 Reconocimientos
-
-Desarrollado siguiendo las mejores prácticas de:
+Developed following best practices from:
 - **Domain-Driven Design** - Eric Evans
 - **Clean Architecture** - Robert C. Martin  
 - **Enterprise Integration Patterns** - Gregor Hohpe
@@ -280,11 +263,9 @@ Desarrollado siguiendo las mejores prácticas de:
 
 ---
 
-⭐ **¡Dale una estrella al proyecto si te gustó!** ⭐
-
-🔗 **Repositorio**: https://github.com/froblesl/HexaBuilders  
-📧 **Contacto**: francisco.robles@hexabuilders.com
+**Repository**: https://github.com/froblesl/HexaBuilders  
+**Contact**: francisco.robles@hexabuilders.com
 
 ---
 
-*HexaBuilders - Building Enterprise Solutions with Hexagonal Architecture* 🏗️
+*HexaBuilders - Building Enterprise Solutions with Hexagonal Architecture*
