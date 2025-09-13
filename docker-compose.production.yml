@@ -1,34 +1,9 @@
 version: '3.8'
 
 services:
-  # PostgreSQL Database
-  postgres:
-    image: postgres:15-alpine
-    container_name: hexabuilders-postgres
-    hostname: postgres
-    profiles: ["database", "full"]
-    environment:
-      POSTGRES_DB: hexabuilders
-      POSTGRES_USER: hexabuilders_user
-      POSTGRES_PASSWORD: hexabuilders_password
-      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
-    ports:
-      - "5433:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - pulsar
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U hexabuilders_user -d hexabuilders"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   # Apache Pulsar services
   zookeeper:
     image: apachepulsar/pulsar:3.1.0
-    profiles: ["pulsar"]
     container_name: zookeeper
     restart: on-failure
     networks:
@@ -53,7 +28,6 @@ services:
     container_name: pulsar-init
     hostname: pulsar-init
     image: apachepulsar/pulsar:3.1.0
-    profiles: ["pulsar"]
     networks:
       - pulsar
     environment:
@@ -68,7 +42,6 @@ services:
 
   bookie:
     image: apachepulsar/pulsar:3.1.0
-    profiles: ["pulsar"]
     container_name: bookie
     restart: on-failure
     networks:
@@ -93,7 +66,6 @@ services:
 
   broker:
     image: apachepulsar/pulsar:3.1.0
-    profiles: ["pulsar"]
     container_name: broker
     hostname: broker
     restart: on-failure
@@ -130,7 +102,6 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
     container_name: hexabuilders-elasticsearch
     hostname: elasticsearch
-    profiles: ["elasticsearch", "full"]
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
@@ -155,15 +126,14 @@ services:
       dockerfile: src/partner_management/Dockerfile
     container_name: partner-management
     hostname: partner-management
-    profiles: ["services", "full"]
     networks:
       - pulsar
     environment:
       - PULSAR_BROKER_URL=pulsar://broker:6650
       - PULSAR_ADDRESS=broker
       - PULSAR_ADMIN_URL=http://broker:8080
-      - DATABASE_URL=postgresql://hexabuilders_user:hexabuilders_password@postgres:5432/hexabuilders
-      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://hexabuilders_user:hexabuilders_password@host.docker.internal:5432/hexabuilders
+      - FLASK_ENV=production
       - SERVICE_PORT=5000
     ports:
       - "5000:5000"
@@ -185,15 +155,14 @@ services:
       dockerfile: src/onboarding/Dockerfile
     container_name: onboarding
     hostname: onboarding
-    profiles: ["services", "full"]
     networks:
       - pulsar
     environment:
       - PULSAR_BROKER_URL=pulsar://broker:6650
       - PULSAR_ADDRESS=broker
       - PULSAR_ADMIN_URL=http://broker:8080
-      - DATABASE_URL=postgresql://hexabuilders_user:hexabuilders_password@postgres:5432/hexabuilders
-      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://hexabuilders_user:hexabuilders_password@host.docker.internal:5432/hexabuilders
+      - FLASK_ENV=production
       - SERVICE_PORT=5001
     ports:
       - "5001:5001"
@@ -215,22 +184,19 @@ services:
       dockerfile: src/recruitment/Dockerfile
     container_name: recruitment
     hostname: recruitment
-    profiles: ["services", "full"]
     networks:
       - pulsar
     environment:
       - PULSAR_BROKER_URL=pulsar://broker:6650
       - PULSAR_ADDRESS=broker
       - PULSAR_ADMIN_URL=http://broker:8080
-      - DATABASE_URL=postgresql://hexabuilders_user:hexabuilders_password@postgres:5432/hexabuilders
+      - DATABASE_URL=postgresql://hexabuilders_user:hexabuilders_password@host.docker.internal:5432/hexabuilders
       - ELASTICSEARCH_URL=http://elasticsearch:9200
-      - FLASK_ENV=development
+      - FLASK_ENV=production
       - SERVICE_PORT=5002
     ports:
       - "5002:5002"
     depends_on:
-      postgres:
-        condition: service_healthy
       elasticsearch:
         condition: service_healthy
       broker:
@@ -250,15 +216,14 @@ services:
       dockerfile: src/campaign_management/Dockerfile
     container_name: campaign-management
     hostname: campaign-management
-    profiles: ["services", "full"]
     networks:
       - pulsar
     environment:
       - PULSAR_BROKER_URL=pulsar://broker:6650
       - PULSAR_ADDRESS=broker
       - PULSAR_ADMIN_URL=http://broker:8080
-      - DATABASE_URL=postgresql://hexabuilders_user:hexabuilders_password@postgres:5432/hexabuilders
-      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://hexabuilders_user:hexabuilders_password@host.docker.internal:5432/hexabuilders
+      - FLASK_ENV=production
       - SERVICE_PORT=5003
     ports:
       - "5003:5003"
@@ -273,41 +238,11 @@ services:
       timeout: 10s
       retries: 3
 
-  # Notifications Service
-  notifications:
-    build:
-      context: .
-      dockerfile: src/notificaciones/Dockerfile
-    container_name: notifications
-    hostname: notifications
-    profiles: ["services", "full"]
-    depends_on:
-      partner-management:
-        condition: service_healthy
-      broker:
-        condition: service_started
-    networks:
-      - pulsar
-    environment:
-      - PARTNER_MANAGEMENT_ADDRESS=partner-management
-      - PULSAR_ADDRESS=broker
-      - SERVICE_PORT=5004
-    ports:
-      - "5004:5004"
-    volumes:
-      - ./src/notificaciones:/app
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5004/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
 networks:
   pulsar:
     driver: bridge
 
 volumes:
-  postgres_data:
   pulsardata:
   pulsarconf:
   elasticsearch_data:
