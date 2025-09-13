@@ -1,6 +1,30 @@
 version: '3.8'
 
 services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: hexabuilders-postgres
+    hostname: postgres
+    profiles: ["database", "full"]
+    environment:
+      POSTGRES_DB: hexabuilders
+      POSTGRES_USER: hexabuilders_user
+      POSTGRES_PASSWORD: hexabuilders_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - pulsar
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hexabuilders_user -d hexabuilders"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # Apache Pulsar services
   zookeeper:
     image: apachepulsar/pulsar:3.1.0
@@ -119,12 +143,13 @@ services:
       - PULSAR_BROKER_URL=pulsar://broker:6650
       - PULSAR_ADDRESS=broker
       - PULSAR_ADMIN_URL=http://broker:8080
-      - DATABASE_URL=sqlite:///partner_management.db
+      - DATABASE_URL=postgresql://hexabuilders_user:hexabuilders_password@postgres:5432/hexabuilders
       - FLASK_ENV=development
       - PARTNER-MANAGEMENT_ADDRESS=partner-management
     ports:
       - "5000:5000"
     depends_on:
+      - postgres
       - broker
     volumes:
       - ./src:/app/src
@@ -153,5 +178,6 @@ networks:
     driver: bridge
 
 volumes:
+  postgres_data:
   pulsardata:
   pulsarconf:
