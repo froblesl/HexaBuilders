@@ -1,0 +1,64 @@
+# Docker Compose Override for Development
+# This file provides development-specific configurations
+
+version: '3.8'
+
+services:
+  # Development volumes for hot reload
+  partner-management:
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development
+    volumes:
+      - ./src/partner_management:/app/partner_management:delegated
+      - ./src/partner_management/seedwork:/app/partner_management/seedwork:delegated
+
+  onboarding:
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development
+    volumes:
+      - ./src/onboarding:/app/onboarding:delegated
+
+  recruitment:
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development
+    volumes:
+      - ./src/recruitment:/app/recruitment:delegated
+
+  campaign-management:
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development
+    volumes:
+      - ./src/campaign_management:/app/campaign_management:delegated
+
+  notifications:
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development
+    volumes:
+      - ./src/notificaciones:/app/notificaciones:delegated
+
+  # Development database with exposed ports
+  postgres:
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_LOG_STATEMENT=all
+      - POSTGRES_LOG_MIN_DURATION_STATEMENT=0
+
+  # Development Pulsar with exposed admin
+  broker:
+    ports:
+      - "6650:6650"
+      - "8080:8080"
+
+  # Development ElasticSearch with exposed ports
+  elasticsearch:
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"

@@ -52,27 +52,22 @@ services:
   pulsar-init:
     container_name: pulsar-init
     hostname: pulsar-init
-    image: apachepulsar/pulsar:latest
+    image: apachepulsar/pulsar:3.1.0
     profiles: ["pulsar"]
     networks:
       - pulsar
     environment:
       - metadataStoreUrl=zk:zookeeper:2181
     command: >
-      bash -c "bin/apply-config-from-env.py conf/client.conf && \
-               until nslookup zookeeper; do sleep 3; done && \
-               bin/pulsar initialize-cluster-metadata \
-                 --cluster cluster-a \
-                 --zookeeper zookeeper:2181 \
-                 --configuration-store zookeeper:2181 \
-                 --web-service-url http://broker:8080 \
-                 --broker-service-url pulsar://broker:6650"
+      bash -c "bin/apply-config-from-env.py conf/client.conf &&
+               until nslookup zookeeper; do sleep 3; done &&
+               bin/pulsar initialize-cluster-metadata --cluster cluster-a --zookeeper zookeeper:2181 --configuration-store zookeeper:2181 --web-service-url http://broker:8080 --broker-service-url pulsar://broker:6650"
     depends_on:
       zookeeper:
         condition: service_healthy
 
   bookie:
-    image: apachepulsar/pulsar:latest
+    image: apachepulsar/pulsar:3.1.0
     profiles: ["pulsar"]
     container_name: bookie
     restart: on-failure
@@ -97,7 +92,7 @@ services:
                exec bin/pulsar bookie"
 
   broker:
-    image: apachepulsar/pulsar:latest
+    image: apachepulsar/pulsar:3.1.0
     profiles: ["pulsar"]
     container_name: broker
     hostname: broker
@@ -130,13 +125,37 @@ services:
                bin/apply-config-from-env.py conf/pulsar_env.sh && \
                exec bin/pulsar broker"
 
+  # ElasticSearch for Recruitment Service
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: hexabuilders-elasticsearch
+    hostname: elasticsearch
+    profiles: ["elasticsearch", "full"]
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - pulsar
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   # Partner Management Service
   partner-management:
     build:
       context: .
-      dockerfile: partner-management.Dockerfile
+      dockerfile: src/partner_management/Dockerfile
     container_name: partner-management
-    profiles: ["partner-management"]
+    hostname: partner-management
+    profiles: ["services", "full"]
     networks:
       - pulsar
     environment:
@@ -145,33 +164,149 @@ services:
       - PULSAR_ADMIN_URL=http://broker:8080
       - DATABASE_URL=postgresql://hexabuilders_user:hexabuilders_password@postgres:5432/hexabuilders
       - FLASK_ENV=development
-      - PARTNER-MANAGEMENT_ADDRESS=partner-management
+      - SERVICE_PORT=5000
     ports:
       - "5000:5000"
     depends_on:
-      - postgres
-      - broker
+      postgres:
+        condition: service_healthy
+      broker:
+        condition: service_started
     volumes:
       - ./src:/app/src
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  # Notifications Service
-  notifications:
-    container_name: notificacion
-    hostname: notificacion
-    profiles: ["notifications", "partner-management"]
-    depends_on:
-      - partner-management
-      - broker
+  # Onboarding Service
+  onboarding:
     build:
       context: .
-      dockerfile: notifications.Dockerfile
+      dockerfile: src/onboarding/Dockerfile
+    container_name: onboarding
+    hostname: onboarding
+    profiles: ["services", "full"]
     networks:
       - pulsar
     environment:
-      - PARTNER-MANAGEMENT_ADDRESS=partner-management
+      - PULSAR_BROKER_URL=pulsar://broker:6650
       - PULSAR_ADDRESS=broker
+      - PULSAR_ADMIN_URL=http://broker:8080
+      - DATABASE_URL=postgresql://hexabuilders_user:hexabuilders_password@postgres:5432/hexabuilders
+      - FLASK_ENV=development
+      - SERVICE_PORT=5001
+    ports:
+      - "5001:5001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      broker:
+        condition: service_started
+    volumes:
+      - ./src:/app/src
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Recruitment Service
+  recruitment:
+    build:
+      context: .
+      dockerfile: src/recruitment/Dockerfile
+    container_name: recruitment
+    hostname: recruitment
+    profiles: ["services", "full"]
+    networks:
+      - pulsar
+    environment:
+      - PULSAR_BROKER_URL=pulsar://broker:6650
+      - PULSAR_ADDRESS=broker
+      - PULSAR_ADMIN_URL=http://broker:8080
+      - DATABASE_URL=postgresql://hexabuilders_user:hexabuilders_password@postgres:5432/hexabuilders
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - FLASK_ENV=development
+      - SERVICE_PORT=5002
+    ports:
+      - "5002:5002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      broker:
+        condition: service_started
+    volumes:
+      - ./src:/app/src
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Campaign Management Service
+  campaign-management:
+    build:
+      context: .
+      dockerfile: src/campaign_management/Dockerfile
+    container_name: campaign-management
+    hostname: campaign-management
+    profiles: ["services", "full"]
+    networks:
+      - pulsar
+    environment:
+      - PULSAR_BROKER_URL=pulsar://broker:6650
+      - PULSAR_ADDRESS=broker
+      - PULSAR_ADMIN_URL=http://broker:8080
+      - DATABASE_URL=postgresql://hexabuilders_user:hexabuilders_password@postgres:5432/hexabuilders
+      - FLASK_ENV=development
+      - SERVICE_PORT=5003
+    ports:
+      - "5003:5003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      broker:
+        condition: service_started
+    volumes:
+      - ./src:/app/src
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Notifications Service
+  notifications:
+    build:
+      context: .
+      dockerfile: src/notificaciones/Dockerfile
+    container_name: notifications
+    hostname: notifications
+    profiles: ["services", "full"]
+    depends_on:
+      partner-management:
+        condition: service_healthy
+      broker:
+        condition: service_started
+    networks:
+      - pulsar
+    environment:
+      - PARTNER_MANAGEMENT_ADDRESS=partner-management
+      - PULSAR_ADDRESS=broker
+      - SERVICE_PORT=5004
+    ports:
+      - "5004:5004"
     volumes:
       - ./src/notificaciones:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   pulsar:
@@ -181,3 +316,4 @@ volumes:
   postgres_data:
   pulsardata:
   pulsarconf:
+  elasticsearch_data:

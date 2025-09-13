@@ -1,8 +1,23 @@
 -- HexaBuilders PostgreSQL Database Initialization
--- Enterprise Partner Management Platform
+-- Enterprise Microservices Partner Management Platform
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Create separate databases for each microservice
+-- Note: In production, these would be separate database instances
+-- For development, we use schemas to simulate separate databases
+
+-- Onboarding Service Schema
+CREATE SCHEMA IF NOT EXISTS onboarding;
+
+-- Recruitment Service Schema  
+CREATE SCHEMA IF NOT EXISTS recruitment;
+
+-- Campaign Management Service Schema
+CREATE SCHEMA IF NOT EXISTS campaign_management;
+
+-- Partner Management Service uses public schema
 
 -- Partners table
 CREATE TABLE IF NOT EXISTS partners (
@@ -144,14 +159,237 @@ CREATE TRIGGER update_commissions_updated_at BEFORE UPDATE ON commissions
 CREATE TRIGGER update_analytics_reports_updated_at BEFORE UPDATE ON analytics_reports
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
--- Grant permissions
+-- ==============================================
+-- ONBOARDING SERVICE TABLES (Event Sourcing)
+-- ==============================================
+
+-- Contracts table (CQRS Read Model)
+CREATE TABLE IF NOT EXISTS onboarding.contracts (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    partner_id UUID NOT NULL,
+    contract_type VARCHAR(100) NOT NULL,
+    state VARCHAR(50) NOT NULL DEFAULT 'DRAFT',
+    version INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Contract Events (Event Store)
+CREATE TABLE IF NOT EXISTS onboarding.contract_events (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    aggregate_id UUID NOT NULL,
+    event_type VARCHAR(255) NOT NULL,
+    event_data JSONB NOT NULL,
+    event_version INTEGER NOT NULL,
+    occurred_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    correlation_id UUID,
+    causation_id UUID
+);
+
+-- Contract Snapshots (Performance optimization)
+CREATE TABLE IF NOT EXISTS onboarding.contract_snapshots (
+    aggregate_id UUID PRIMARY KEY,
+    aggregate_data JSONB NOT NULL,
+    version INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ==============================================
+-- RECRUITMENT SERVICE TABLES (CRUD + Search)
+-- ==============================================
+
+-- Candidates table
+CREATE TABLE IF NOT EXISTS recruitment.candidates (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone VARCHAR(50),
+    location VARCHAR(255),
+    years_of_experience INTEGER DEFAULT 0,
+    expected_salary DECIMAL(10,2),
+    availability VARCHAR(50) DEFAULT 'AVAILABLE',
+    skills JSONB DEFAULT '[]',
+    education JSONB DEFAULT '[]',
+    work_history JSONB DEFAULT '[]',
+    preferences JSONB DEFAULT '{}',
+    metadata JSONB DEFAULT '{}',
+    status VARCHAR(50) DEFAULT 'ACTIVE',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Jobs table
+CREATE TABLE IF NOT EXISTS recruitment.jobs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    partner_id UUID NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    location VARCHAR(255),
+    salary_min DECIMAL(10,2),
+    salary_max DECIMAL(10,2),
+    job_type VARCHAR(50) DEFAULT 'FULL_TIME',
+    experience_level VARCHAR(50),
+    required_skills JSONB DEFAULT '[]',
+    preferred_skills JSONB DEFAULT '[]',
+    benefits JSONB DEFAULT '[]',
+    requirements JSONB DEFAULT '{}',
+    status VARCHAR(50) DEFAULT 'DRAFT',
+    max_applications INTEGER DEFAULT 100,
+    current_applications INTEGER DEFAULT 0,
+    expires_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Applications table
+CREATE TABLE IF NOT EXISTS recruitment.applications (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    job_id UUID NOT NULL REFERENCES recruitment.jobs(id),
+    candidate_id UUID NOT NULL REFERENCES recruitment.candidates(id),
+    status VARCHAR(50) DEFAULT 'PENDING',
+    match_score DECIMAL(5,2),
+    cover_letter TEXT,
+    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    reviewed_at TIMESTAMP,
+    notes JSONB DEFAULT '{}',
+    UNIQUE(job_id, candidate_id)
+);
+
+-- ==============================================
+-- CAMPAIGN MANAGEMENT TABLES (Hybrid CRUD + Events)
+-- ==============================================
+
+-- Campaigns table (Main aggregate)
+CREATE TABLE IF NOT EXISTS campaign_management.campaigns (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    partner_id UUID NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    campaign_type VARCHAR(100) NOT NULL,
+    status VARCHAR(50) DEFAULT 'DRAFT',
+    budget DECIMAL(10,2) NOT NULL,
+    budget_spent DECIMAL(10,2) DEFAULT 0,
+    target_audience JSONB DEFAULT '{}',
+    creative_assets JSONB DEFAULT '[]',
+    schedule JSONB DEFAULT '{}',
+    performance_metrics JSONB DEFAULT '{}',
+    start_date TIMESTAMP,
+    end_date TIMESTAMP,
+    version INTEGER DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Campaign Events (Audit trail)
+CREATE TABLE IF NOT EXISTS campaign_management.campaign_events (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    aggregate_id UUID NOT NULL,
+    event_type VARCHAR(255) NOT NULL,
+    event_data JSONB NOT NULL,
+    event_version INTEGER NOT NULL,
+    occurred_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    correlation_id UUID,
+    causation_id UUID
+);
+
+-- Ad Groups table
+CREATE TABLE IF NOT EXISTS campaign_management.ad_groups (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    campaign_id UUID NOT NULL REFERENCES campaign_management.campaigns(id),
+    name VARCHAR(255) NOT NULL,
+    budget DECIMAL(10,2),
+    budget_spent DECIMAL(10,2) DEFAULT 0,
+    targeting_criteria JSONB DEFAULT '{}',
+    ads JSONB DEFAULT '[]',
+    performance_metrics JSONB DEFAULT '{}',
+    status VARCHAR(50) DEFAULT 'ACTIVE',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ==============================================
+-- SHARED INTEGRATION TABLES
+-- ==============================================
+
+-- Integration Events Outbox Pattern
+CREATE TABLE IF NOT EXISTS integration_events_outbox (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    event_type VARCHAR(255) NOT NULL,
+    event_data JSONB NOT NULL,
+    service_name VARCHAR(100) NOT NULL,
+    correlation_id UUID,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    processed_at TIMESTAMP,
+    status VARCHAR(50) DEFAULT 'PENDING'
+);
+
+-- ==============================================
+-- INDEXES FOR PERFORMANCE
+-- ==============================================
+
+-- Onboarding indexes
+CREATE INDEX IF NOT EXISTS idx_onboarding_contract_events_aggregate_id ON onboarding.contract_events(aggregate_id);
+CREATE INDEX IF NOT EXISTS idx_onboarding_contract_events_occurred_on ON onboarding.contract_events(occurred_on);
+
+-- Recruitment indexes
+CREATE INDEX IF NOT EXISTS idx_recruitment_candidates_skills ON recruitment.candidates USING GIN(skills);
+CREATE INDEX IF NOT EXISTS idx_recruitment_jobs_required_skills ON recruitment.jobs USING GIN(required_skills);
+CREATE INDEX IF NOT EXISTS idx_recruitment_jobs_partner_id ON recruitment.jobs(partner_id);
+CREATE INDEX IF NOT EXISTS idx_recruitment_applications_job_id ON recruitment.applications(job_id);
+CREATE INDEX IF NOT EXISTS idx_recruitment_applications_candidate_id ON recruitment.applications(candidate_id);
+
+-- Campaign Management indexes
+CREATE INDEX IF NOT EXISTS idx_campaign_mgmt_campaigns_partner_id ON campaign_management.campaigns(partner_id);
+CREATE INDEX IF NOT EXISTS idx_campaign_mgmt_campaigns_status ON campaign_management.campaigns(status);
+CREATE INDEX IF NOT EXISTS idx_campaign_mgmt_campaign_events_aggregate_id ON campaign_management.campaign_events(aggregate_id);
+CREATE INDEX IF NOT EXISTS idx_campaign_mgmt_ad_groups_campaign_id ON campaign_management.ad_groups(campaign_id);
+
+-- Integration indexes
+CREATE INDEX IF NOT EXISTS idx_integration_outbox_status ON integration_events_outbox(status);
+CREATE INDEX IF NOT EXISTS idx_integration_outbox_created_at ON integration_events_outbox(created_at);
+
+-- ==============================================
+-- TRIGGERS FOR UPDATED_AT
+-- ==============================================
+
+-- Apply updated_at triggers to new tables
+CREATE TRIGGER update_onboarding_contracts_updated_at BEFORE UPDATE ON onboarding.contracts
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_recruitment_candidates_updated_at BEFORE UPDATE ON recruitment.candidates
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_recruitment_jobs_updated_at BEFORE UPDATE ON recruitment.jobs
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_campaign_mgmt_campaigns_updated_at BEFORE UPDATE ON campaign_management.campaigns
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_campaign_mgmt_ad_groups_updated_at BEFORE UPDATE ON campaign_management.ad_groups
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- ==============================================
+-- GRANT PERMISSIONS
+-- ==============================================
+
+-- Grant permissions for all schemas
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO hexabuilders_user;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO hexabuilders_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA onboarding TO hexabuilders_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA onboarding TO hexabuilders_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA recruitment TO hexabuilders_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA recruitment TO hexabuilders_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA campaign_management TO hexabuilders_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA campaign_management TO hexabuilders_user;
+GRANT USAGE ON SCHEMA onboarding TO hexabuilders_user;
+GRANT USAGE ON SCHEMA recruitment TO hexabuilders_user;
+GRANT USAGE ON SCHEMA campaign_management TO hexabuilders_user;
 
 -- Success message
 DO $$
 BEGIN
-    RAISE NOTICE 'HexaBuilders PostgreSQL database initialized successfully!';
-    RAISE NOTICE 'Tables created: partners, campaigns, commissions, analytics_reports, domain_events';
-    RAISE NOTICE 'Sample data inserted and ready for enterprise operations.';
+    RAISE NOTICE 'HexaBuilders Microservices PostgreSQL database initialized successfully!';
+    RAISE NOTICE 'Schemas created: public (Partner Management), onboarding, recruitment, campaign_management';
+    RAISE NOTICE 'All tables, indexes, triggers, and permissions configured.';
+    RAISE NOTICE 'Ready for microservices enterprise operations.';
 END $$;
