@@ -11,7 +11,7 @@ from recruitment.seedwork.dominio.eventos import DomainEvent
 class MatchingAlgorithm(Enum):
     BASIC_SKILLS = "BASIC_SKILLS"
     WEIGHTED_CRITERIA = "WEIGHTED_CRITERIA"
-    ML_ENHANCED = "ML_ENHANCED"
+    ADVANCED_ENHANCED = "ADVANCED_ENHANCED"
     SEMANTIC_MATCHING = "SEMANTIC_MATCHING"
     HYBRID_APPROACH = "HYBRID_APPROACH"
 

@@ -31,7 +31,7 @@ El **Campaign Management Service** es el motor de gestión de campañas de marke
 ├─────────────────────────────────────────────────────────────┤
 │  🔄 Application Layer                                       │
 │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐          │
-│  │  Commands   │ │Real-time    │ │  AI/ML      │          │
+│  │  Commands   │ │Real-time    │ │ Advanced   │          │
 │  │  & Events   │ │Queries      │ │Optimization │          │
 │  └─────────────┘ └─────────────┘ └─────────────┘          │
 ├─────────────────────────────────────────────────────────────┤
@@ -112,7 +112,7 @@ src/campaign_management/
 │   │   │       └── targeting_optimizer.py
 │   │   └── infraestructura/
 │   │       ├── data_providers.py      # External data sources
-│   │       └── ml_models.py           # Machine learning models
+│   │       └── advanced_models.py      # Advanced analytics models
 │   ├── performance/            # 📈 Métricas en tiempo real
 │   │   ├── dominio/
 │   │   │   ├── entidades.py           # Metric, KPI, PerformanceSnapshot
@@ -506,7 +506,7 @@ class Budget(AggregateRoot):
         recent_spends = self._spend_history[-7:]  # Últimos 7 registros
         daily_avg = self._calculate_daily_average_spend(recent_spends)
         
-        # Proyección simple lineal (en producción, usar ML)
+        # Proyección simple lineal (en producción, usar algoritmos avanzados)
         projected_total_spend = self._current_spend.amount + (daily_avg * forecast_period_days)
         
         # Calcular probabilidad de exceder presupuesto
@@ -817,10 +817,10 @@ class RealTimeMetricsProcessor:
         )
 ```
 
-### **Machine Learning para Optimización**
+### **Advanced Analytics para Optimización**
 ```python
 class CampaignOptimizationEngine:
-    """Motor de optimización automática basado en ML"""
+    """Motor de optimización automática basado en algoritmos avanzados"""
     
     def __init__(self):
         self.performance_predictor = PerformancePredictor()
@@ -832,7 +832,7 @@ class CampaignOptimizationEngine:
         self, 
         campaign_id: str
     ) -> List[OptimizationSuggestion]:
-        """Generar sugerencias de optimización basadas en ML"""
+        """Generar sugerencias de optimización basadas en algoritmos avanzados"""
         
         # 1. Obtener datos históricos de la campaña
         campaign_data = await self._get_campaign_historical_data(campaign_id)
@@ -903,7 +903,7 @@ class CampaignOptimizationEngine:
             return OptimizationResult.failed(str(e))
 
 class PerformancePredictor:
-    """Predictor de rendimiento futuro usando ML"""
+    """Predictor de rendimiento futuro usando algoritmos avanzados"""
     
     async def predict_campaign_performance(
         self, 

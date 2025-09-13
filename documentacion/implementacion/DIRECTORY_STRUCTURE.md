@@ -208,7 +208,7 @@ src/recruitment/
 │   ├── 📁 infraestructura/
 │   │   ├── 📄 repositorios_crud.py          # 🆕 CRUD repositories
 │   │   ├── 📄 search_indexer.py             # 🆕 Search indexing
-│   │   └── 📄 ml_services.py                # 🆕 ML for matching
+│   │   └── 📄 ml_services.py                # 🆕 Advanced analytics for matching
 │   └── 📁 presentacion/
 │       └── 📄 api.py                        # Flask app con search endpoints
 ├── 
@@ -257,7 +257,7 @@ src/recruitment/
 │   │   │       ├── 📄 matching_engine.py
 │   │   │       └── 📄 ranking_service.py
 │   │   └── 📁 infraestructura/
-│   │       ├── 📄 ml_models.py              # ML models para matching
+│   │       ├── 📄 advanced_models.py       # Advanced models para matching
 │   │       └── 📄 analytics_service.py      # Matching analytics
 │   └── 
 │   └── 📁 interviews/                       # Gestión de entrevistas
@@ -336,7 +336,7 @@ src/campaign_management/
 │   │   │   └── 📁 servicios/
 │   │   │       └── 📄 targeting_optimizer.py
 │   │   └── 📁 infraestructura/
-│   │       └── 📄 ml_models.py              # ML models para targeting
+│   │       └── 📄 advanced_models.py       # Advanced models para targeting
 │   ├── 
 │   ├── 📁 performance/                      # Métricas en tiempo real
 │   │   ├── 📁 dominio/
@@ -534,7 +534,7 @@ docker/
 ├── 
 ├── 📁 base/
 │   ├── 📄 python-base.Dockerfile           # Base image compartida
-│   └── 📄 python-ml.Dockerfile             # Base con ML libraries
+│   └── 📄 python-analytics.Dockerfile      # Base con analytics libraries
 ├── 
 └── 📁 compose/
     ├── 📄 docker-compose.yml               # ✅ Configuración principal

@@ -66,7 +66,7 @@
 - **Candidates** ✅ - Candidate profile and skills management
 - **Jobs** ✅ - Job posting and requirements management
 - **Interviews** ✅ - Interview scheduling and evaluation system
-- **Matching** ✅ - AI-enhanced candidate-job matching engine
+- **Matching** ✅ - Advanced candidate-job matching engine
 
 #### Key Features:
 - ElasticSearch integration for advanced candidate search
@@ -140,7 +140,7 @@
 - `Candidate` - Rich candidate profiles with skills matching
 - `Job` - Detailed job specifications with requirements
 - `Interview` - Complete interview lifecycle management
-- `MatchingEngine` - AI-enhanced matching algorithms
+- `MatchingEngine` - Advanced matching algorithms
 
 #### Campaign Management
 - `Campaign` - Hybrid CRUD + Event Sourcing campaign management
@@ -229,7 +229,7 @@
 
 ### Complete Platform Capabilities
 1. **360° Partner Management** - Comprehensive partner lifecycle
-2. **Intelligent Recruitment** - AI-enhanced candidate matching
+2. **Intelligent Recruitment** - Advanced candidate matching
 3. **Advanced Campaign Management** - Performance-optimized marketing
 4. **Legal Compliance** - Automated compliance and risk management
 5. **Real-time Analytics** - Business intelligence across all operations

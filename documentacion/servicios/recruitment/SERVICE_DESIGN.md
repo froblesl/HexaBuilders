@@ -127,7 +127,7 @@ src/recruitment/
 │   │   │       ├── matching_engine.py
 │   │   │       └── ranking_service.py
 │   │   └── infraestructura/
-│   │       ├── ml_models.py           # Machine learning models
+│   │       ├── advanced_models.py      # Advanced analytics models
 │   │       └── analytics_service.py   # Matching analytics
 │   └── interviews/             # 📞 Gestión de entrevistas
 │       ├── dominio/
@@ -606,16 +606,16 @@ class MatchingEngine:
             candidate.location_preferences
         )
         
-        # ML-based matching (considera patrones históricos)
-        ml_score = await self.ml_matcher.predict_match_score(job, candidate)
+        # Advanced analytics matching (considera patrones históricos)
+        analytics_score = await self.analytics_matcher.predict_match_score(job, candidate)
         
         return MatchScore(
             skill_match=skill_score,
             experience_match=experience_score,
             location_match=location_score,
-            ml_prediction=ml_score,
+            analytics_prediction=analytics_score,
             total_score=self._compute_weighted_total(
-                skill_score, experience_score, location_score, ml_score
+                skill_score, experience_score, location_score, analytics_score
             )
         )
 

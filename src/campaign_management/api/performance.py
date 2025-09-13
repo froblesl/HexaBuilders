@@ -168,7 +168,7 @@ def compare_campaigns():
 
 @performance_bp.route('/optimization/<campaign_id>', methods=['GET'])
 def get_optimization_suggestions(campaign_id):
-    """Get AI-powered optimization suggestions"""
+    """Get advanced optimization suggestions"""
     try:
         # TODO: Implement optimization suggestions
         

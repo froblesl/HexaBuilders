@@ -264,7 +264,7 @@ sequenceDiagram
 
     Note over P, AD: Fase 5: Optimización Automática
     CM->>CM: Detectar oportunidades optimización
-    CM->>CM: Aplicar ML para recomendaciones
+    CM->>CM: Aplicar algoritmos avanzados para recomendaciones
     
     alt Optimización automática elegible
         CM->>CM: Aplicar optimización
