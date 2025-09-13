@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recruitment
+  namespace: hexabuilders
+  labels:
+    app: recruitment
+    component: application
+spec:
+  replicas: 1  # Reducido para minimizar costos
+  selector:
+    matchLabels:
+      app: recruitment
+  template:
+    metadata:
+      labels:
+        app: recruitment
+        component: application
+    spec:
+      containers:
+      - name: recruitment
+        image: gcr.io/PROJECT_ID/hexabuilders-recruitment:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5002
+          name: http
+        env:
+        - name: PYTHONPATH
+          value: "/app/src"
+        - name: DATABASE_URL
+          value: "postgresql://hexabuilders_user:hexabuilders_password@postgres:5432/hexabuilders"
+        - name: ELASTICSEARCH_URL
+          value: "http://elasticsearch:9200"
+        - name: PULSAR_BROKER_URL
+          value: "pulsar://broker:6650"
+        - name: PULSAR_ADDRESS
+          value: "broker"
+        - name: PULSAR_ADMIN_URL
+          value: "http://broker:8080"
+        - name: FLASK_ENV
+          value: "production"
+        - name: SERVICE_PORT
+          value: "5002"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5002
+          initialDelaySeconds: 45  # Más tiempo porque depende de Elasticsearch
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5002
+          initialDelaySeconds: 30
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "128Mi"  # Reducido para minimizar costos
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recruitment
+  namespace: hexabuilders
+  labels:
+    app: recruitment
+    component: application
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5002
+    targetPort: 5002
+    name: http
+  selector:
+    app: recruitment

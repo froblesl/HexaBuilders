@@ -24,4 +24,4 @@ COPY src/ ./src/
 ENV PYTHONPATH=/app/src
 
 # Run the application
-CMD [ "flask", "--app", "./src/partner_management/api", "run", "--host=0.0.0.0"]
+CMD [ "flask", "--app", "partner_management.seedwork.presentacion.api:create_app", "run", "--host=0.0.0.0", "--port=5000"]

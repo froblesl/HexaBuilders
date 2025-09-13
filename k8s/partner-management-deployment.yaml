@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: partner-management
+  namespace: hexabuilders
+  labels:
+    app: partner-management
+    component: application
+spec:
+  replicas: 1  # Reducido para minimizar costos académicos
+  selector:
+    matchLabels:
+      app: partner-management
+  template:
+    metadata:
+      labels:
+        app: partner-management
+        component: application
+    spec:
+      containers:
+      - name: partner-management
+        # Esta imagen se construirá y subirá a GCR
+        image: gcr.io/PROJECT_ID/hexabuilders-partner-management:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+          name: http
+        env:
+        - name: PYTHONPATH
+          value: "/app/src"
+        - name: DATABASE_URL
+          value: "postgresql://hexabuilders_user:hexabuilders_password@postgres:5432/hexabuilders"
+        - name: PULSAR_BROKER_URL
+          value: "pulsar://broker:6650"
+        - name: PULSAR_ADDRESS
+          value: "broker"
+        - name: PULSAR_ADMIN_URL
+          value: "http://broker:8080"
+        - name: FLASK_ENV
+          value: "production"
+        - name: PARTNER-MANAGEMENT_ADDRESS
+          value: "partner-management"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "128Mi"  # Reducido para minimizar costos
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: partner-management
+  namespace: hexabuilders
+  labels:
+    app: partner-management
+    component: application
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5000
+    targetPort: 5000
+    name: http
+  selector:
+    app: partner-management
+---
+# LoadBalancer service para acceso externo
+apiVersion: v1
+kind: Service
+metadata:
+  name: partner-management-lb
+  namespace: hexabuilders
+  labels:
+    app: partner-management
+    component: loadbalancer
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 5000
+    name: http
+  selector:
+    app: partner-management

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hexabuilders
+  labels:
+    name: hexabuilders
+    environment: production

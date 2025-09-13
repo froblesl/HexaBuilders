@@ -65,39 +65,125 @@ Business intelligence and 360-degree reporting:
 
 ### Docker Execution (Recommended)
 
+**⚠️ Importante**: Temporalmente renombrar el archivo override para evitar conflictos:
+```bash
+mv docker-compose.override.yml docker-compose.override.yml.bak
+```
+
+**Opción 1: Levantar todos los servicios** 
 ```bash
 # 1. Clone the repository
 git clone https://github.com/froblesl/HexaBuilders.git
 cd HexaBuilders
 
-# 2. Start database and infrastructure services
-docker-compose up -d postgres zookeeper pulsar-init bookie broker
+# 2. Levantar infraestructura completa (PostgreSQL, Pulsar, Elasticsearch)
+docker-compose -f docker-compose.simple.yml --profile database --profile pulsar --profile elasticsearch up -d
 
-# 3. Start main application
-docker-compose up partner-management
+# 3. Esperar a que los servicios estén listos (60 segundos)
+sleep 60
 
-# 4. Start notification service (optional)
-docker-compose up notifications
+# 4. Levantar todos los microservicios
+docker-compose -f docker-compose.simple.yml --profile services up -d
+
+# 5. Verificar estado
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+```
+
+**Opción 2: Solo servicios principales (sin Elasticsearch/Recruitment)**
+```bash
+# 1. Levantar infraestructura base
+docker-compose --profile database --profile pulsar up -d
+
+# 2. Construir imágenes específicas
+docker build -t hexabuilders-partner-management -f src/partner_management/Dockerfile .
+docker build -t hexabuilders-onboarding -f src/onboarding/Dockerfile .
+docker build -t hexabuilders-campaign-management -f src/campaign_management/Dockerfile .
+docker build -t hexabuilders-notifications -f notifications.Dockerfile .
+
+# 3. Esperar que infraestructura esté lista
+sleep 30
+
+# 4. Levantar servicios construidos
+docker run -d --name partner-management --network hexabuilders_pulsar \
+  -e DATABASE_URL="postgresql://hexabuilders_user:hexabuilders_password@postgres:5432/hexabuilders" \
+  -e PULSAR_BROKER_URL="pulsar://broker:6650" \
+  -p 5000:5000 hexabuilders-partner-management
+
+# Repetir para otros servicios según necesites
+```
+
+### One-Command Startup (Todos los Servicios)
+
+```bash
+# Renombrar override y levantar todo de una vez
+mv docker-compose.override.yml docker-compose.override.yml.bak && \
+docker-compose -f docker-compose.simple.yml --profile database --profile pulsar --profile elasticsearch --profile services up --build -d
+
+# Esperar y probar
+sleep 90 && curl http://localhost:5000/health
+```
+
+### Servicios Disponibles Una Vez Levantados
+
+```bash
+# Partner Management API
+curl http://localhost:5000/health
+curl http://localhost:5000/api/v1/partners-query
+
+# Onboarding API  
+curl http://localhost:5001/health
+
+# Recruitment API (requiere Elasticsearch)
+curl http://localhost:5002/health
+
+# Campaign Management API
+curl http://localhost:5003/health  
+
+# Notifications Service
+curl http://localhost:5004/health
+```
+
+### Service Status Verification
+
+```bash
+# Check all running containers
+docker-compose ps
+
+# View application logs
+docker-compose logs -f partner-management
+
+# View PostgreSQL logs
+docker-compose logs postgres
+
+# View Pulsar broker logs
+docker-compose logs broker
 ```
 
 ### Local Development Execution
 
 ```bash
-# 1. Install dependencies
+# 1. Activate virtual environment
+source venv/bin/activate
+
+# 2. Install dependencies
 pip install -r requirements.txt -r pulsar-requirements.txt
 
-# 2. Configure environment variables
-export PYTHONPATH=./src
-export PULSAR_BROKER_URL=pulsar://localhost:6650
+# 3. Start infrastructure only (Docker)
+docker-compose --profile database --profile pulsar up -d
 
-# 3. Run the application
+# 4. Configure environment variables
+export PYTHONPATH=./src
+export DATABASE_URL="postgresql://hexabuilders_user:hexabuilders_password@localhost:5433/hexabuilders"
+export PULSAR_BROKER_URL="pulsar://localhost:6650"
+
+# 5. Run the application
 flask --app "partner_management.seedwork.presentacion.api:create_app" run --host 127.0.0.1 --port 5000
 ```
 
 ### Quick Start
 ```bash
-# One-line command to run HexaBuilders
-PYTHONPATH=./src flask --app "partner_management.seedwork.presentacion.api:create_app" run
+# One-line command to run HexaBuilders (after infrastructure is up)
+PYTHONPATH=./src DATABASE_URL="postgresql://hexabuilders_user:hexabuilders_password@localhost:5433/hexabuilders" PULSAR_BROKER_URL="pulsar://localhost:6650" flask --app "partner_management.seedwork.presentacion.api:create_app" run
 ```
 
 ## Testing and Quality Assurance
@@ -227,12 +313,109 @@ LOG_LEVEL=INFO
 LOG_FORMAT=json
 ```
 
+## Troubleshooting
+
+### Common Issues and Solutions
+
+#### 1. Port Already in Use (PostgreSQL)
+```bash
+# Error: "bind: address already in use" on port 5432
+# Solution: The compose file uses port 5433 to avoid conflicts
+# Check if PostgreSQL is running: lsof -i :5432
+```
+
+#### 2. pulsar-init Container Not Running
+```bash
+# This is NORMAL - pulsar-init is a one-time setup container
+# Check if it completed successfully:
+docker-compose logs pulsar-init
+
+# Should show: "Cluster metadata for 'cluster-a' setup correctly"
+```
+
+#### 3. Application Won't Start
+```bash
+# Check if all dependencies are running:
+docker-compose ps
+
+# Ensure these are healthy/running:
+# - hexabuilders-postgres (healthy)
+# - zookeeper (healthy)
+# - broker (running)
+# - bookie (running)
+
+# Restart sequence if needed:
+docker-compose --profile database --profile pulsar --profile partner-management down
+docker-compose --profile database --profile pulsar up -d
+sleep 30
+docker-compose --profile partner-management up -d
+```
+
+#### 4. Connection Refused Errors
+```bash
+# Wait for services to fully start:
+sleep 30
+
+# Check service health:
+curl http://localhost:5000/health
+curl http://localhost:8080/admin/v2/brokers/health
+
+# Check PostgreSQL connection:
+docker exec -it hexabuilders-postgres pg_isready -U hexabuilders_user -d hexabuilders
+```
+
+### Cleanup and Restart
+
+```bash
+# Stop all services
+docker-compose --profile database --profile pulsar --profile partner-management down
+
+# Remove volumes (WARNING: This deletes all data)
+docker-compose --profile database --profile pulsar --profile partner-management down -v
+
+# Restart fresh
+docker-compose --profile database --profile pulsar up -d
+sleep 30
+docker-compose --profile partner-management up -d
+
+# Clean rebuild (if needed)
+docker-compose --profile database --profile pulsar --profile partner-management down -v
+docker build -t hexabuilders-partner-management -f partner-management.Dockerfile .
+docker-compose --profile database --profile pulsar --profile partner-management up --build -d
+```
+
+### Service Monitoring
+
+```bash
+# Real-time logs
+docker-compose logs -f partner-management
+docker-compose logs -f broker
+docker-compose logs -f postgres
+
+# Check resource usage
+docker stats
+
+# Access PostgreSQL directly
+docker exec -it hexabuilders-postgres psql -U hexabuilders_user -d hexabuilders
+
+# Test Pulsar broker
+curl http://localhost:8080/admin/v2/brokers/ready
+```
+
 ### Docker Compose Services
-- **PostgreSQL** - Enterprise-grade relational database
-- **Zookeeper** - Distributed coordination
-- **Apache Pulsar** - Message broker
-- **HexaBuilders API** - Main application  
-- **Notifications** - Notification service
+- **PostgreSQL** - Enterprise-grade relational database (Port 5433)
+- **Zookeeper** - Distributed coordination (Internal)
+- **Apache Pulsar Broker** - Message broker (Ports 6650, 8080)
+- **Apache BookKeeper** - Persistent message storage (Internal)  
+- **pulsar-init** - One-time initialization container (Exits after setup)
+- **HexaBuilders API** - Main application (Port 5000)
+- **Notifications** - Notification service (Internal)
+
+### Important Notes
+
+- **pulsar-init** is a one-time initialization container that sets up Pulsar cluster metadata and then exits. This is normal behavior.
+- PostgreSQL runs on port **5433** to avoid conflicts with local PostgreSQL installations.
+- All services use Docker networks for internal communication.
 
 ## Monitoring and Observability
 

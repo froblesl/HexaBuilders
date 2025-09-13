@@ -1,0 +1,39 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: hexabuilders
+
+resources:
+  - namespace.yaml
+  - postgres-secret.yaml
+  - postgres-pvc.yaml
+  - postgres-configmap.yaml
+  - postgres-deployment.yaml
+  - pulsar-zookeeper.yaml
+  - pulsar-bookie.yaml
+  - pulsar-broker.yaml
+  - elasticsearch-deployment.yaml
+  - partner-management-deployment.yaml
+  - onboarding-deployment.yaml
+  - recruitment-deployment.yaml
+  - campaign-management-deployment.yaml
+  - notifications-deployment.yaml
+
+# Imágenes que se reemplazarán por las de GCR
+images:
+  - name: gcr.io/PROJECT_ID/hexabuilders-partner-management
+    newTag: latest
+  - name: gcr.io/PROJECT_ID/hexabuilders-onboarding
+    newTag: latest
+  - name: gcr.io/PROJECT_ID/hexabuilders-recruitment
+    newTag: latest
+  - name: gcr.io/PROJECT_ID/hexabuilders-campaign-management
+    newTag: latest
+  - name: gcr.io/PROJECT_ID/hexabuilders-notifications
+    newTag: latest
+
+# Labels comunes para todos los recursos
+commonLabels:
+  project: hexabuilders
+  environment: production
+  version: v1.0.0

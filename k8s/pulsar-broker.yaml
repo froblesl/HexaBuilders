@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broker
+  namespace: hexabuilders
+  labels:
+    app: broker
+    component: pulsar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: broker
+  template:
+    metadata:
+      labels:
+        app: broker
+        component: pulsar
+    spec:
+      initContainers:
+      - name: pulsar-init
+        image: apachepulsar/pulsar:latest
+        env:
+        - name: metadataStoreUrl
+          value: "zk:zookeeper:2181"
+        command:
+        - bash
+        - -c
+        - |
+          bin/apply-config-from-env.py conf/client.conf && \
+          until nslookup zookeeper; do sleep 3; done && \
+          bin/pulsar initialize-cluster-metadata \
+            --cluster cluster-a \
+            --zookeeper zookeeper:2181 \
+            --configuration-store zookeeper:2181 \
+            --web-service-url http://broker:8080 \
+            --broker-service-url pulsar://broker:6650
+      containers:
+      - name: broker
+        image: apachepulsar/pulsar:latest
+        ports:
+        - containerPort: 6650
+          name: pulsar
+        - containerPort: 8080
+          name: http
+        env:
+        - name: metadataStoreUrl
+          value: "zk:zookeeper:2181"
+        - name: zookeeperServers
+          value: "zookeeper:2181"
+        - name: clusterName
+          value: "cluster-a"
+        - name: managedLedgerDefaultEnsembleSize
+          value: "1"
+        - name: managedLedgerDefaultWriteQuorum
+          value: "1"
+        - name: managedLedgerDefaultAckQuorum
+          value: "1"
+        - name: advertisedAddress
+          value: "broker"
+        - name: advertisedListeners
+          value: "external:pulsar://broker:6650"
+        - name: PULSAR_MEM
+          value: "-Xms512m -Xmx512m -XX:MaxDirectMemorySize=256m"
+        command:
+        - bash
+        - -c
+        - |
+          bin/apply-config-from-env.py conf/broker.conf && \
+          bin/apply-config-from-env.py conf/pulsar_env.sh && \
+          exec bin/pulsar broker
+        volumeMounts:
+        - name: broker-data
+          mountPath: /pulsar/data
+        - name: broker-conf
+          mountPath: /pulsar/conf
+        livenessProbe:
+          httpGet:
+            path: /admin/v2/brokers/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /admin/v2/brokers/ready
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+      volumes:
+      - name: broker-data
+        emptyDir: {}
+      - name: broker-conf
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: broker
+  namespace: hexabuilders
+  labels:
+    app: broker
+    component: pulsar
+spec:
+  ports:
+  - port: 6650
+    targetPort: 6650
+    name: pulsar
+  - port: 8080
+    targetPort: 8080
+    name: http
+  selector:
+    app: broker

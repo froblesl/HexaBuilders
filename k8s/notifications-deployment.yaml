@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notifications
+  namespace: hexabuilders
+  labels:
+    app: notifications
+    component: notifications
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notifications
+  template:
+    metadata:
+      labels:
+        app: notifications
+        component: notifications
+    spec:
+      containers:
+      - name: notifications
+        # Esta imagen se construirá y subirá a GCR
+        image: gcr.io/PROJECT_ID/hexabuilders-notifications:latest
+        imagePullPolicy: Always
+        env:
+        - name: PARTNER-MANAGEMENT_ADDRESS
+          value: "partner-management"
+        - name: PULSAR_ADDRESS
+          value: "broker"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notifications
+  namespace: hexabuilders
+  labels:
+    app: notifications
+    component: notifications
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8000
+    targetPort: 8000
+    name: http
+  selector:
+    app: notifications
