@@ -1,0 +1,37 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: hexabuilders
+
+resources:
+  - namespace.yaml
+  - partner-db-secret.yaml
+  - onboarding-db-secret.yaml
+  - recruitment-db-secret.yaml
+  - campaign-db-secret.yaml
+  - partner-management-deployment-separated.yaml
+  - onboarding-deployment-separated.yaml
+  - recruitment-deployment-separated.yaml
+  - campaign-management-deployment-separated.yaml
+  - pulsar-zookeeper.yaml
+  - pulsar-bookie.yaml
+  - pulsar-broker.yaml
+  - elasticsearch-deployment.yaml
+
+# Imágenes que se reemplazarán por las de GCR
+images:
+  - name: gcr.io/PROJECT_ID/hexabuilders-partner-management
+    newTag: latest
+  - name: gcr.io/PROJECT_ID/hexabuilders-onboarding
+    newTag: latest
+  - name: gcr.io/PROJECT_ID/hexabuilders-recruitment
+    newTag: latest
+  - name: gcr.io/PROJECT_ID/hexabuilders-campaign-management
+    newTag: latest
+
+# Labels comunes para todos los recursos
+commonLabels:
+  project: hexabuilders
+  environment: production
+  version: v1.0.0
+  database-separation: "true"
