@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: onboarding
+  namespace: hexabuilders
+  labels:
+    app: onboarding
+    component: application
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: onboarding
+  template:
+    metadata:
+      labels:
+        app: onboarding
+        component: application
+    spec:
+      containers:
+      - name: onboarding
+        image: gcr.io/PROJECT_ID/hexabuilders-onboarding:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5001
+          name: http
+        env:
+        - name: PYTHONPATH
+          value: "/app/src"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: onboarding-db-secret
+              key: DATABASE_URL
+        - name: PULSAR_BROKER_URL
+          value: "pulsar://broker:6650"
+        - name: PULSAR_ADDRESS
+          value: "broker"
+        - name: PULSAR_ADMIN_URL
+          value: "http://broker:8080"
+        - name: FLASK_ENV
+          value: "production"
+        - name: SERVICE_PORT
+          value: "5001"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5001
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: onboarding
+  namespace: hexabuilders
+  labels:
+    app: onboarding
+    component: application
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5001
+    targetPort: 5001
+    name: http
+  selector:
+    app: onboarding

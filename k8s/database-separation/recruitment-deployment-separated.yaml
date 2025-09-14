@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recruitment
+  namespace: hexabuilders
+  labels:
+    app: recruitment
+    component: application
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: recruitment
+  template:
+    metadata:
+      labels:
+        app: recruitment
+        component: application
+    spec:
+      containers:
+      - name: recruitment
+        image: gcr.io/PROJECT_ID/hexabuilders-recruitment:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5002
+          name: http
+        env:
+        - name: PYTHONPATH
+          value: "/app/src"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: recruitment-db-secret
+              key: DATABASE_URL
+        - name: ELASTICSEARCH_URL
+          value: "http://elasticsearch:9200"
+        - name: PULSAR_BROKER_URL
+          value: "pulsar://broker:6650"
+        - name: PULSAR_ADDRESS
+          value: "broker"
+        - name: PULSAR_ADMIN_URL
+          value: "http://broker:8080"
+        - name: FLASK_ENV
+          value: "production"
+        - name: SERVICE_PORT
+          value: "5002"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5002
+          initialDelaySeconds: 45  # More time because it depends on Elasticsearch
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5002
+          initialDelaySeconds: 30
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recruitment
+  namespace: hexabuilders
+  labels:
+    app: recruitment
+    component: application
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5002
+    targetPort: 5002
+    name: http
+  selector:
+    app: recruitment

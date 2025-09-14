@@ -1,0 +1,292 @@
+version: '3.8'
+
+services:
+  # Separate Database Instances for Production
+  partner-db:
+    image: postgres:15-alpine
+    container_name: partner-db
+    hostname: partner-db
+    environment:
+      POSTGRES_DB: partner_management
+      POSTGRES_USER: partner_user
+      POSTGRES_PASSWORD: partner_secure_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5433:5432"
+    volumes:
+      - partner_db_data:/var/lib/postgresql/data
+      - ./sql/partner_management_init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - partner-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U partner_user -d partner_management"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  onboarding-db:
+    image: postgres:15-alpine
+    container_name: onboarding-db
+    hostname: onboarding-db
+    environment:
+      POSTGRES_DB: onboarding
+      POSTGRES_USER: onboarding_user
+      POSTGRES_PASSWORD: onboarding_secure_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5434:5432"
+    volumes:
+      - onboarding_db_data:/var/lib/postgresql/data
+      - ./sql/onboarding_init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - onboarding-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U onboarding_user -d onboarding"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  recruitment-db:
+    image: postgres:15-alpine
+    container_name: recruitment-db
+    hostname: recruitment-db
+    environment:
+      POSTGRES_DB: recruitment
+      POSTGRES_USER: recruitment_user
+      POSTGRES_PASSWORD: recruitment_secure_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5435:5432"
+    volumes:
+      - recruitment_db_data:/var/lib/postgresql/data
+      - ./sql/recruitment_init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - recruitment-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U recruitment_user -d recruitment"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  campaign-db:
+    image: postgres:15-alpine
+    container_name: campaign-db
+    hostname: campaign-db
+    environment:
+      POSTGRES_DB: campaign_management
+      POSTGRES_USER: campaign_user
+      POSTGRES_PASSWORD: campaign_secure_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5436:5432"
+    volumes:
+      - campaign_db_data:/var/lib/postgresql/data
+      - ./sql/campaign_management_init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - campaign-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U campaign_user -d campaign_management"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Apache Pulsar services (shared)
+  zookeeper:
+    image: apachepulsar/pulsar:3.1.0
+    container_name: zookeeper
+    restart: on-failure
+    networks:
+      - pulsar
+    volumes:
+      - pulsardata:/pulsar/data
+      - pulsarconf:/pulsar/conf
+    environment:
+      - metadataStoreUrl=zk:zookeeper:2181
+      - PULSAR_MEM=-Xms256m -Xmx256m -XX:MaxDirectMemorySize=256m
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/zookeeper.conf && 
+               bin/generate-zookeeper-config.sh conf/zookeeper.conf && 
+               exec bin/pulsar zookeeper"
+
+  broker:
+    image: apachepulsar/pulsar:3.1.0
+    container_name: broker
+    hostname: broker
+    restart: on-failure
+    networks:
+      - pulsar
+    environment:
+      - metadataStoreUrl=zk:zookeeper:2181
+      - zookeeperServers=zookeeper:2181
+      - clusterName=cluster-a
+      - managedLedgerDefaultEnsembleSize=1
+      - managedLedgerDefaultWriteQuorum=1
+      - managedLedgerDefaultAckQuorum=1
+      - advertisedAddress=broker
+      - advertisedListeners=external:pulsar://127.0.0.1:6650
+      - PULSAR_MEM=-Xms512m -Xmx512m -XX:MaxDirectMemorySize=256m
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - "6650:6650"
+      - "8080:8080"
+    volumes:
+      - pulsardata:/pulsar/data
+      - pulsarconf:/pulsar/conf
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/broker.conf && 
+               exec bin/pulsar broker"
+
+  # Application Services with Separate Databases
+  partner-management:
+    build:
+      context: .
+      dockerfile: src/partner_management/Dockerfile
+    container_name: partner-management
+    restart: unless-stopped
+    networks:
+      - partner-network
+      - pulsar
+    environment:
+      - DATABASE_URL=postgresql://partner_user:partner_secure_password@partner-db:5432/partner_management
+      - PULSAR_SERVICE_URL=pulsar://broker:6650
+      - PULSAR_WEB_SERVICE_URL=http://broker:8080
+      - JWT_SECRET_KEY=partner-dev-secret
+      - LOG_LEVEL=INFO
+    ports:
+      - "5000:5000"
+    depends_on:
+      partner-db:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  onboarding:
+    build:
+      context: .
+      dockerfile: src/onboarding/Dockerfile
+    container_name: onboarding
+    restart: unless-stopped
+    networks:
+      - onboarding-network
+      - pulsar
+    environment:
+      - DATABASE_URL=postgresql://onboarding_user:onboarding_secure_password@onboarding-db:5432/onboarding
+      - PULSAR_SERVICE_URL=pulsar://broker:6650
+      - PULSAR_WEB_SERVICE_URL=http://broker:8080
+      - JWT_SECRET_KEY=onboarding-dev-secret
+      - LOG_LEVEL=INFO
+    ports:
+      - "5001:5000"
+    depends_on:
+      onboarding-db:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  recruitment:
+    build:
+      context: .
+      dockerfile: src/recruitment/Dockerfile
+    container_name: recruitment
+    restart: unless-stopped
+    networks:
+      - recruitment-network
+      - pulsar
+    environment:
+      - DATABASE_URL=postgresql://recruitment_user:recruitment_secure_password@recruitment-db:5432/recruitment
+      - PULSAR_SERVICE_URL=pulsar://broker:6650
+      - PULSAR_WEB_SERVICE_URL=http://broker:8080
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - JWT_SECRET_KEY=recruitment-dev-secret
+      - LOG_LEVEL=INFO
+    ports:
+      - "5002:5000"
+    depends_on:
+      recruitment-db:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  campaign-management:
+    build:
+      context: .
+      dockerfile: src/campaign_management/Dockerfile
+    container_name: campaign-management
+    restart: unless-stopped
+    networks:
+      - campaign-network
+      - pulsar
+    environment:
+      - DATABASE_URL=postgresql://campaign_user:campaign_secure_password@campaign-db:5432/campaign_management
+      - PULSAR_SERVICE_URL=pulsar://broker:6650
+      - PULSAR_WEB_SERVICE_URL=http://broker:8080
+      - JWT_SECRET_KEY=campaign-dev-secret
+      - LOG_LEVEL=INFO
+    ports:
+      - "5003:5000"
+    depends_on:
+      campaign-db:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Supporting Services
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: elasticsearch
+    restart: unless-stopped
+    networks:
+      - recruitment-network
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+volumes:
+  partner_db_data:
+  onboarding_db_data:
+  recruitment_db_data:
+  campaign_db_data:
+  pulsardata:
+  pulsarconf:
+  elasticsearch_data:
+
+networks:
+  partner-network:
+    driver: bridge
+  onboarding-network:
+    driver: bridge
+  recruitment-network:
+    driver: bridge
+  campaign-network:
+    driver: bridge
+  pulsar:
+    driver: bridge

@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookie
+  namespace: hexabuilders
+  labels:
+    app: bookie
+    component: pulsar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bookie
+  template:
+    metadata:
+      labels:
+        app: bookie
+        component: pulsar
+    spec:
+      containers:
+      - name: bookie
+        image: apachepulsar/pulsar:latest
+        ports:
+        - containerPort: 3181
+          name: bookie
+        env:
+        - name: clusterName
+          value: "cluster-a"
+        - name: zkServers
+          value: "zookeeper:2181"
+        - name: metadataServiceUri
+          value: "metadata-store:zk:zookeeper:2181"
+        - name: advertisedAddress
+          value: "bookie"
+        command:
+        - bash
+        - -c
+        - |
+          bin/apply-config-from-env.py conf/bookkeeper.conf && \
+          bin/apply-config-from-env.py conf/pulsar_env.sh && \
+          exec bin/pulsar bookie
+        volumeMounts:
+        - name: bookie-data
+          mountPath: /pulsar/data
+        - name: bookie-conf
+          mountPath: /pulsar/conf
+        livenessProbe:
+          httpGet:
+            path: /heartbeat
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /api/v1/bookie/state
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      volumes:
+      - name: bookie-data
+        emptyDir: {}
+      - name: bookie-conf
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bookie
+  namespace: hexabuilders
+  labels:
+    app: bookie
+    component: pulsar
+spec:
+  ports:
+  - port: 3181
+    targetPort: 3181
+    name: bookie
+  - port: 8080
+    targetPort: 8080
+    name: http
+  selector:
+    app: bookie
