@@ -7,9 +7,9 @@ from datetime import datetime
 
 @dataclass
 class BaseCommand:
-    id: str = None
-    timestamp: datetime = None
-    user_id: str = None
+    id: Optional[str] = field(default=None)
+    timestamp: Optional[datetime] = field(default=None)
+    user_id: Optional[str] = field(default=None)
     
     def __post_init__(self):
         if not self.id:
