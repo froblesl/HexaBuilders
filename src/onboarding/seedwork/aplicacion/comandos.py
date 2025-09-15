@@ -189,3 +189,7 @@ class SignDocument(BaseCommand):
 class ValidateSignature(BaseCommand):
     document_id: str = field(default_factory=lambda: "")
     signature_id: str = field(default_factory=lambda: "")
+
+
+# Compatibility aliases for existing imports
+Command = BaseCommand

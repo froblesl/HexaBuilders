@@ -190,3 +190,7 @@ class GetLegalMetrics(BaseQuery):
     period: str = "month"
     date_from: Optional[datetime] = None
     date_to: Optional[datetime] = None
+
+
+# Compatibility aliases for existing imports
+Query = BaseQuery
