@@ -64,128 +64,128 @@ class CommandBus:
 # Contract Commands
 @dataclass
 class CreateContract(BaseCommand):
-    partner_id: str = field()
-    contract_type: str = field()
-    template_id: str = field()
-    initial_terms: Dict[str, Any] = field()
+    partner_id: str = field(default_factory=lambda: "")
+    contract_type: str = field(default_factory=lambda: "")
+    template_id: str = field(default_factory=lambda: "")
+    initial_terms: Dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
 class UpdateContractTerms(BaseCommand):
-    contract_id: str = field()
-    updated_terms: Dict[str, Any] = field()
+    contract_id: str = field(default_factory=lambda: "")
+    updated_terms: Dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
 class SubmitForLegalReview(BaseCommand):
-    contract_id: str = field()
-    legal_reviewer: str = field()
+    contract_id: str = field(default_factory=lambda: "")
+    legal_reviewer: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class ApprovalLegalReview(BaseCommand):
-    contract_id: str = field()
-    reviewer: str = field()
+    contract_id: str = field(default_factory=lambda: "")
+    reviewer: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class RejectLegalReview(BaseCommand):
-    contract_id: str = field()
-    reviewer: str = field()
-    reason: str = field()
+    contract_id: str = field(default_factory=lambda: "")
+    reviewer: str = field(default_factory=lambda: "")
+    reason: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class SignContract(BaseCommand):
-    contract_id: str = field()
-    signer: str = field()
-    signature_method: str = field()
-    signature_data: str = field()
+    contract_id: str = field(default_factory=lambda: "")
+    signer: str = field(default_factory=lambda: "")
+    signature_method: str = field(default_factory=lambda: "")
+    signature_data: str = field(default_factory=lambda: "")
     ip_address: Optional[str] = None
 
 
 @dataclass
 class ActivateContract(BaseCommand):
-    contract_id: str = field()
+    contract_id: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class CancelContract(BaseCommand):
-    contract_id: str = field()
-    reason: str = field()
+    contract_id: str = field(default_factory=lambda: "")
+    reason: str = field(default_factory=lambda: "")
 
 
 # Negotiation Commands
 @dataclass
 class StartNegotiation(BaseCommand):
-    contract_id: str = field()
-    initiator: str = field()
+    contract_id: str = field(default_factory=lambda: "")
+    initiator: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class SubmitProposal(BaseCommand):
-    negotiation_id: str = field()
-    proposer: str = field()
-    terms: Dict[str, Any] = field()
+    negotiation_id: str = field(default_factory=lambda: "")
+    proposer: str = field(default_factory=lambda: "")
+    terms: Dict[str, Any] = field(default_factory=dict)
     message: Optional[str] = None
 
 
 @dataclass
 class AcceptProposal(BaseCommand):
-    negotiation_id: str = field()
-    proposal_id: str = field()
-    acceptor: str = field()
+    negotiation_id: str = field(default_factory=lambda: "")
+    proposal_id: str = field(default_factory=lambda: "")
+    acceptor: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class RejectProposal(BaseCommand):
-    negotiation_id: str = field()
-    proposal_id: str = field()
-    rejector: str = field()
-    reason: str = field()
+    negotiation_id: str = field(default_factory=lambda: "")
+    proposal_id: str = field(default_factory=lambda: "")
+    rejector: str = field(default_factory=lambda: "")
+    reason: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class CompleteNegotiation(BaseCommand):
-    negotiation_id: str = field()
-    final_terms: Dict[str, Any] = field()
+    negotiation_id: str = field(default_factory=lambda: "")
+    final_terms: Dict[str, Any] = field(default_factory=dict)
 
 
 # Legal Commands
 @dataclass
 class RequestLegalValidation(BaseCommand):
-    contract_id: str = field()
-    validation_type: str = field()
-    validator: str = field()
+    contract_id: str = field(default_factory=lambda: "")
+    validation_type: str = field(default_factory=lambda: "")
+    validator: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class CompleteLegalValidation(BaseCommand):
-    validation_id: str = field()
-    result: str = field()
-    issues: list = field()
+    validation_id: str = field(default_factory=lambda: "")
+    result: str = field(default_factory=lambda: "")
+    issues: list = field(default_factory=list)
     recommendations: Optional[str] = None
 
 
 # Document Commands
 @dataclass
 class UploadDocument(BaseCommand):
-    contract_id: str = field()
-    document_type: str = field()
-    file_name: str = field()
-    file_content: bytes = field()
-    content_type: str = field()
+    contract_id: str = field(default_factory=lambda: "")
+    document_type: str = field(default_factory=lambda: "")
+    file_name: str = field(default_factory=lambda: "")
+    file_content: bytes = field(default_factory=bytes)
+    content_type: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class SignDocument(BaseCommand):
-    document_id: str = field()
-    signer: str = field()
-    signature_data: str = field()
-    signature_method: str = field()
+    document_id: str = field(default_factory=lambda: "")
+    signer: str = field(default_factory=lambda: "")
+    signature_data: str = field(default_factory=lambda: "")
+    signature_method: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class ValidateSignature(BaseCommand):
-    document_id: str = field()
-    signature_id: str = field()
+    document_id: str = field(default_factory=lambda: "")
+    signature_id: str = field(default_factory=lambda: "")
