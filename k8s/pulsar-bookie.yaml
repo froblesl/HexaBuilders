@@ -34,9 +34,36 @@ spec:
           value: "pulsar-cluster"
         - name: BK_useHostNameAsBookieID
           value: "true"
+        - name: BK_bookiePort
+          value: "3181"
+        - name: BK_httpServerEnabled
+          value: "true"
+        - name: BK_httpServerPort
+          value: "8080"
+        - name: BK_journalDirectory
+          value: "/opt/bookkeeper/data/journal"
+        - name: BK_ledgerDirectories
+          value: "/opt/bookkeeper/data/ledgers"
+        - name: BK_indexDirectories
+          value: "/opt/bookkeeper/data/ledgers"
+        - name: BK_allowLoopback
+          value: "true"
         volumeMounts:
         - name: bookie-data
           mountPath: /opt/bookkeeper/data
+        command:
+        - /bin/bash
+        - -c
+        - |
+          # Crear directorios necesarios
+          mkdir -p /opt/bookkeeper/data/journal
+          mkdir -p /opt/bookkeeper/data/ledgers
+          
+          # Inicializar cluster si no existe
+          /opt/bookkeeper/bin/bookkeeper shell initnewcluster -force || true
+          
+          # Arrancar bookie
+          exec /opt/bookkeeper/bin/bookkeeper bookie
         # Eliminando health checks temporalmente hasta que esté estable
         # livenessProbe:
         #   httpGet:
