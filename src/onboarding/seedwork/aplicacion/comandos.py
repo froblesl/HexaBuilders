@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Dict, Optional
 import uuid
 from datetime import datetime
@@ -64,128 +64,128 @@ class CommandBus:
 # Contract Commands
 @dataclass
 class CreateContract(BaseCommand):
-    partner_id: str
-    contract_type: str
-    template_id: str
-    initial_terms: Dict[str, Any]
+    partner_id: str = field()
+    contract_type: str = field()
+    template_id: str = field()
+    initial_terms: Dict[str, Any] = field()
 
 
 @dataclass
 class UpdateContractTerms(BaseCommand):
-    contract_id: str
-    updated_terms: Dict[str, Any]
+    contract_id: str = field()
+    updated_terms: Dict[str, Any] = field()
 
 
 @dataclass
 class SubmitForLegalReview(BaseCommand):
-    contract_id: str
-    legal_reviewer: str
+    contract_id: str = field()
+    legal_reviewer: str = field()
 
 
 @dataclass
 class ApprovalLegalReview(BaseCommand):
-    contract_id: str
-    reviewer: str
+    contract_id: str = field()
+    reviewer: str = field()
 
 
 @dataclass
 class RejectLegalReview(BaseCommand):
-    contract_id: str
-    reviewer: str
-    reason: str
+    contract_id: str = field()
+    reviewer: str = field()
+    reason: str = field()
 
 
 @dataclass
 class SignContract(BaseCommand):
-    contract_id: str
-    signer: str
-    signature_method: str
-    signature_data: str
+    contract_id: str = field()
+    signer: str = field()
+    signature_method: str = field()
+    signature_data: str = field()
     ip_address: Optional[str] = None
 
 
 @dataclass
 class ActivateContract(BaseCommand):
-    contract_id: str
+    contract_id: str = field()
 
 
 @dataclass
 class CancelContract(BaseCommand):
-    contract_id: str
-    reason: str
+    contract_id: str = field()
+    reason: str = field()
 
 
 # Negotiation Commands
 @dataclass
 class StartNegotiation(BaseCommand):
-    contract_id: str
-    initiator: str
+    contract_id: str = field()
+    initiator: str = field()
 
 
 @dataclass
 class SubmitProposal(BaseCommand):
-    negotiation_id: str
-    proposer: str
-    terms: Dict[str, Any]
+    negotiation_id: str = field()
+    proposer: str = field()
+    terms: Dict[str, Any] = field()
     message: Optional[str] = None
 
 
 @dataclass
 class AcceptProposal(BaseCommand):
-    negotiation_id: str
-    proposal_id: str
-    acceptor: str
+    negotiation_id: str = field()
+    proposal_id: str = field()
+    acceptor: str = field()
 
 
 @dataclass
 class RejectProposal(BaseCommand):
-    negotiation_id: str
-    proposal_id: str
-    rejector: str
-    reason: str
+    negotiation_id: str = field()
+    proposal_id: str = field()
+    rejector: str = field()
+    reason: str = field()
 
 
 @dataclass
 class CompleteNegotiation(BaseCommand):
-    negotiation_id: str
-    final_terms: Dict[str, Any]
+    negotiation_id: str = field()
+    final_terms: Dict[str, Any] = field()
 
 
 # Legal Commands
 @dataclass
 class RequestLegalValidation(BaseCommand):
-    contract_id: str
-    validation_type: str
-    validator: str
+    contract_id: str = field()
+    validation_type: str = field()
+    validator: str = field()
 
 
 @dataclass
 class CompleteLegalValidation(BaseCommand):
-    validation_id: str
-    result: str
-    issues: list
+    validation_id: str = field()
+    result: str = field()
+    issues: list = field()
     recommendations: Optional[str] = None
 
 
 # Document Commands
 @dataclass
 class UploadDocument(BaseCommand):
-    contract_id: str
-    document_type: str
-    file_name: str
-    file_content: bytes
-    content_type: str
+    contract_id: str = field()
+    document_type: str = field()
+    file_name: str = field()
+    file_content: bytes = field()
+    content_type: str = field()
 
 
 @dataclass
 class SignDocument(BaseCommand):
-    document_id: str
-    signer: str
-    signature_data: str
-    signature_method: str
+    document_id: str = field()
+    signer: str = field()
+    signature_data: str = field()
+    signature_method: str = field()
 
 
 @dataclass
 class ValidateSignature(BaseCommand):
-    document_id: str
-    signature_id: str
+    document_id: str = field()
+    signature_id: str = field()
