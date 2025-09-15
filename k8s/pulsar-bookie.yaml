@@ -19,54 +19,40 @@ spec:
     spec:
       containers:
       - name: bookie
-        image: apachepulsar/pulsar:latest
+        image: apache/bookkeeper:4.16.0
         ports:
         - containerPort: 3181
           name: bookie
+        - containerPort: 8080
+          name: http
         env:
-        - name: clusterName
-          value: "cluster-a"
-        - name: zkServers
+        - name: BK_zkServers
           value: "zookeeper:2181"
-        - name: metadataServiceUri
-          value: "metadata-store:zk:zookeeper:2181"
-        - name: advertisedAddress
-          value: "bookie"
-        command:
-        - bash
-        - -c
-        - |
-          bin/apply-config-from-env.py conf/bookkeeper.conf && \
-          bin/apply-config-from-env.py conf/pulsar_env.sh && \
-          exec bin/pulsar bookie
+        - name: BK_metadataServiceUri
+          value: "zk://zookeeper:2181/ledgers"
+        - name: BK_clusterName
+          value: "pulsar-cluster"
+        - name: BK_useHostNameAsBookieID
+          value: "true"
         volumeMounts:
         - name: bookie-data
-          mountPath: /pulsar/data
-        - name: bookie-conf
-          mountPath: /pulsar/conf
-        livenessProbe:
-          httpGet:
-            path: /heartbeat
-            port: 8080
-          initialDelaySeconds: 60
-          periodSeconds: 30
-        readinessProbe:
-          httpGet:
-            path: /api/v1/bookie/state
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 10
+          mountPath: /opt/bookkeeper/data
+        # Eliminando health checks temporalmente hasta que esté estable
+        # livenessProbe:
+        #   httpGet:
+        #     path: /api/v1/bookie/is_ready
+        #     port: 8080
+        #   initialDelaySeconds: 60
+        #   periodSeconds: 30
         resources:
           requests:
-            memory: "256Mi"
-            cpu: "250m"
+            memory: "128Mi"
+            cpu: "100m"
           limits:
-            memory: "512Mi"
-            cpu: "500m"
+            memory: "256Mi"
+            cpu: "200m"
       volumes:
       - name: bookie-data
-        emptyDir: {}
-      - name: bookie-conf
         emptyDir: {}
 ---
 apiVersion: v1
