@@ -41,6 +41,8 @@ spec:
               key: POSTGRES_PASSWORD
         - name: POSTGRES_INITDB_ARGS
           value: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+        - name: PGDATA
+          value: "/var/lib/postgresql/data/pgdata"
         volumeMounts:
         - name: postgres-storage
           mountPath: /var/lib/postgresql/data
@@ -69,11 +71,11 @@ spec:
           periodSeconds: 5
         resources:
           requests:
-            memory: "256Mi"
-            cpu: "250m"
+            memory: "128Mi"
+            cpu: "100m"
           limits:
-            memory: "512Mi"
-            cpu: "500m"
+            memory: "256Mi"
+            cpu: "200m"
       volumes:
       - name: postgres-storage
         persistentVolumeClaim:
