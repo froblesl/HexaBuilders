@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 from datetime import datetime
 
 
 @dataclass
 class BaseQuery:
-    timestamp: datetime = None
-    user_id: str = None
+    timestamp: Optional[datetime] = field(default=None)
+    user_id: Optional[str] = field(default=None)
     
     def __post_init__(self):
         if not self.timestamp:
@@ -60,18 +60,18 @@ class QueryBus:
 # Contract Queries
 @dataclass
 class GetContract(BaseQuery):
-    contract_id: str
+    contract_id: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class GetContractsByPartner(BaseQuery):
-    partner_id: str
+    partner_id: str = field(default_factory=lambda: "")
     include_inactive: bool = False
 
 
 @dataclass
 class SearchContracts(BaseQuery):
-    filters: Dict[str, Any]
+    filters: Dict[str, Any] = field(default_factory=dict)
     page: int = 1
     page_size: int = 20
     sort_by: str = "created_at"
@@ -80,7 +80,7 @@ class SearchContracts(BaseQuery):
 
 @dataclass
 class GetContractHistory(BaseQuery):
-    contract_id: str
+    contract_id: str = field(default_factory=lambda: "")
 
 
 @dataclass
@@ -90,18 +90,18 @@ class GetContractTemplates(BaseQuery):
 
 @dataclass
 class GetContractTemplate(BaseQuery):
-    template_id: str
+    template_id: str = field(default_factory=lambda: "")
 
 
 # Negotiation Queries
 @dataclass
 class GetNegotiation(BaseQuery):
-    negotiation_id: str
+    negotiation_id: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class GetNegotiationsByContract(BaseQuery):
-    contract_id: str
+    contract_id: str = field(default_factory=lambda: "")
 
 
 @dataclass
@@ -111,18 +111,18 @@ class GetActiveNegotiations(BaseQuery):
 
 @dataclass
 class GetNegotiationHistory(BaseQuery):
-    negotiation_id: str
+    negotiation_id: str = field(default_factory=lambda: "")
 
 
 # Legal Queries
 @dataclass
 class GetLegalValidation(BaseQuery):
-    validation_id: str
+    validation_id: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class GetLegalValidationsByContract(BaseQuery):
-    contract_id: str
+    contract_id: str = field(default_factory=lambda: "")
 
 
 @dataclass
@@ -140,24 +140,24 @@ class GetComplianceReport(BaseQuery):
 # Document Queries
 @dataclass
 class GetDocument(BaseQuery):
-    document_id: str
+    document_id: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class GetDocumentsByContract(BaseQuery):
-    contract_id: str
+    contract_id: str = field(default_factory=lambda: "")
     document_type: Optional[str] = None
 
 
 @dataclass
 class GetDocumentSignatures(BaseQuery):
-    document_id: str
+    document_id: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class ValidateDocumentSignature(BaseQuery):
-    document_id: str
-    signature_id: str
+    document_id: str = field(default_factory=lambda: "")
+    signature_id: str = field(default_factory=lambda: "")
 
 
 # Dashboard and Analytics Queries
@@ -170,7 +170,7 @@ class GetContractsDashboard(BaseQuery):
 
 @dataclass
 class GetContractsMetrics(BaseQuery):
-    metric_type: str  # "completion_rate", "average_duration", "success_rate"
+    metric_type: str = field(default_factory=lambda: "")  # "completion_rate", "average_duration", "success_rate"
     period: str = "month"  # "day", "week", "month", "year"
     date_from: Optional[datetime] = None
     date_to: Optional[datetime] = None
@@ -178,7 +178,7 @@ class GetContractsMetrics(BaseQuery):
 
 @dataclass
 class GetNegotiationMetrics(BaseQuery):
-    metric_type: str
+    metric_type: str = field(default_factory=lambda: "")
     period: str = "month"
     date_from: Optional[datetime] = None
     date_to: Optional[datetime] = None
@@ -186,7 +186,7 @@ class GetNegotiationMetrics(BaseQuery):
 
 @dataclass
 class GetLegalMetrics(BaseQuery):
-    metric_type: str
+    metric_type: str = field(default_factory=lambda: "")
     period: str = "month"
     date_from: Optional[datetime] = None
     date_to: Optional[datetime] = None
