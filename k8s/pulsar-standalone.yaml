@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pulsar-standalone
+  namespace: hexabuilders
+  labels:
+    app: pulsar-standalone
+    component: messaging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pulsar-standalone
+  template:
+    metadata:
+      labels:
+        app: pulsar-standalone
+        component: messaging
+    spec:
+      containers:
+      - name: pulsar
+        image: apachepulsar/pulsar:3.0.0
+        ports:
+        - containerPort: 6650
+          name: pulsar
+        - containerPort: 8080
+          name: http
+        env:
+        - name: PULSAR_MEM
+          value: "-Xms256m -Xmx256m"
+        command:
+        - /bin/bash
+        - -c
+        - |
+          # Configurar directorios de datos
+          mkdir -p /pulsar/data
+          
+          # Arrancar Pulsar Standalone (incluye todo: Zookeeper, BookKeeper, Broker)
+          exec bin/pulsar standalone --no-functions-worker --no-stream-storage
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "400m"
+        volumeMounts:
+        - name: pulsar-data
+          mountPath: /pulsar/data
+        livenessProbe:
+          httpGet:
+            path: /admin/v2/brokers/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /admin/v2/brokers/ready
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+      volumes:
+      - name: pulsar-data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: broker
+  namespace: hexabuilders
+  labels:
+    app: pulsar-standalone
+    component: messaging
+spec:
+  selector:
+    app: pulsar-standalone
+  ports:
+  - port: 6650
+    targetPort: 6650
+    name: pulsar
+  - port: 8080
+    targetPort: 8080
+    name: http
+---
+# Service adicional para compatibilidad con aplicaciones
+apiVersion: v1
+kind: Service
+metadata:
+  name: pulsar
+  namespace: hexabuilders
+  labels:
+    app: pulsar-standalone
+    component: messaging
+spec:
+  selector:
+    app: pulsar-standalone
+  ports:
+  - port: 6650
+    targetPort: 6650
+    name: pulsar
+  - port: 8080
+    targetPort: 8080
+    name: http

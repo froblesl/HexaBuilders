@@ -9,9 +9,7 @@ resources:
   - postgres-pvc.yaml
   - postgres-configmap.yaml
   - postgres-deployment.yaml
-  - pulsar-zookeeper.yaml
-  - pulsar-bookie.yaml
-  - pulsar-broker.yaml
+  - pulsar-standalone.yaml
   - elasticsearch-deployment.yaml
   - partner-management-deployment.yaml
   - onboarding-deployment.yaml
