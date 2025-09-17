@@ -102,57 +102,57 @@ class NegotiationMilestone:
 # Domain Events
 @dataclass
 class NegotiationStarted(DomainEvent):
-    negotiation_id: str
-    partner_id: str
-    contract_type: str
-    initiated_by: str
-    initial_terms: List[Dict[str, Any]]
+    negotiation_id: str = field(default_factory=lambda: "")
+    partner_id: str = field(default_factory=lambda: "")
+    contract_type: str = field(default_factory=lambda: "")
+    initiated_by: str = field(default_factory=lambda: "")
+    initial_terms: List[Dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass
 class ProposalSubmitted(DomainEvent):
-    negotiation_id: str
-    proposal_id: str
-    proposal_type: ProposalType
-    proposed_by: str
-    terms_count: int
-    estimated_value: Optional[float] = None
+    negotiation_id: str = field(default_factory=lambda: "")
+    proposal_id: str = field(default_factory=lambda: "")
+    proposal_type: ProposalType = field(default_factory=lambda: ProposalType.INITIAL_OFFER)
+    proposed_by: str = field(default_factory=lambda: "")
+    terms_count: int = field(default_factory=lambda: 0)
+    estimated_value: Optional[float] = field(default=None)
 
 
 @dataclass
 class ProposalResponded(DomainEvent):
-    negotiation_id: str
-    proposal_id: str
-    response: ProposalStatus
-    responded_by: str
-    response_message: str
+    negotiation_id: str = field(default_factory=lambda: "")
+    proposal_id: str = field(default_factory=lambda: "")
+    response: ProposalStatus = field(default_factory=lambda: ProposalStatus.PENDING)
+    responded_by: str = field(default_factory=lambda: "")
+    response_message: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class NegotiationCompleted(DomainEvent):
-    negotiation_id: str
-    partner_id: str
-    final_terms: List[Dict[str, Any]]
-    total_proposals: int
-    duration_days: int
-    completed_by: str
+    negotiation_id: str = field(default_factory=lambda: "")
+    partner_id: str = field(default_factory=lambda: "")
+    final_terms: List[Dict[str, Any]] = field(default_factory=list)
+    total_proposals: int = field(default_factory=lambda: 0)
+    duration_days: int = field(default_factory=lambda: 0)
+    completed_by: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class NegotiationCancelled(DomainEvent):
-    negotiation_id: str
-    partner_id: str
-    cancelled_by: str
-    cancellation_reason: str
+    negotiation_id: str = field(default_factory=lambda: "")
+    partner_id: str = field(default_factory=lambda: "")
+    cancelled_by: str = field(default_factory=lambda: "")
+    cancellation_reason: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class DeadlineExtended(DomainEvent):
-    negotiation_id: str
-    proposal_id: str
-    old_deadline: datetime
-    new_deadline: datetime
-    extended_by: str
+    negotiation_id: str = field(default_factory=lambda: "")
+    proposal_id: str = field(default_factory=lambda: "")
+    old_deadline: datetime = field(default_factory=datetime.utcnow)
+    new_deadline: datetime = field(default_factory=datetime.utcnow)
+    extended_by: str = field(default_factory=lambda: "")
     reason: str
 
 

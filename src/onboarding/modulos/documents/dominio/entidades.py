@@ -70,42 +70,42 @@ class ComplianceCheck:
 # Domain Events
 @dataclass
 class DocumentUploaded(DomainEvent):
-    document_id: str
-    partner_id: str
-    document_type: DocumentType
-    metadata: DocumentMetadata
+    document_id: str = field(default_factory=lambda: "")
+    partner_id: str = field(default_factory=lambda: "")
+    document_type: DocumentType = field(default_factory=lambda: DocumentType.IDENTITY)
+    metadata: DocumentMetadata = field(default_factory=lambda: DocumentMetadata("", 0, "", datetime.utcnow(), "", ""))
 
 
 @dataclass
 class DocumentReviewed(DomainEvent):
-    document_id: str
-    partner_id: str
-    review_result: ReviewResult
-    previous_status: DocumentStatus
-    new_status: DocumentStatus
+    document_id: str = field(default_factory=lambda: "")
+    partner_id: str = field(default_factory=lambda: "")
+    review_result: ReviewResult = field(default_factory=lambda: ReviewResult("", datetime.utcnow(), "", ""))
+    previous_status: DocumentStatus = field(default_factory=lambda: DocumentStatus.PENDING_UPLOAD)
+    new_status: DocumentStatus = field(default_factory=lambda: DocumentStatus.UPLOADED)
 
 
 @dataclass
 class DocumentExpired(DomainEvent):
-    document_id: str
-    partner_id: str
-    document_type: DocumentType
-    expiry_date: datetime
+    document_id: str = field(default_factory=lambda: "")
+    partner_id: str = field(default_factory=lambda: "")
+    document_type: DocumentType = field(default_factory=lambda: DocumentType.IDENTITY)
+    expiry_date: datetime = field(default_factory=datetime.utcnow)
 
 
 @dataclass
 class ComplianceCheckCompleted(DomainEvent):
-    document_id: str
-    partner_id: str
-    compliance_check: ComplianceCheck
+    document_id: str = field(default_factory=lambda: "")
+    partner_id: str = field(default_factory=lambda: "")
+    compliance_check: ComplianceCheck = field(default_factory=lambda: ComplianceCheck("", datetime.utcnow(), False, {}, ""))
 
 
 @dataclass
 class DocumentPackageCompleted(DomainEvent):
-    partner_id: str
-    verification_level: VerificationLevel
-    completed_documents: List[str]
-    completion_timestamp: datetime
+    partner_id: str = field(default_factory=lambda: "")
+    verification_level: VerificationLevel = field(default_factory=lambda: VerificationLevel.BASIC)
+    completed_documents: List[str] = field(default_factory=list)
+    completion_timestamp: datetime = field(default_factory=datetime.utcnow)
 
 
 class Document(AggregateRoot):

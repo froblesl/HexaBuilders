@@ -95,47 +95,47 @@ class ContractClause:
 # Domain Events
 @dataclass
 class LegalReviewRequested(DomainEvent):
-    partner_id: str
-    document_type: LegalDocumentType
-    jurisdiction: Jurisdiction
-    priority: str
-    requested_by: str
+    partner_id: str = field(default_factory=lambda: "")
+    document_type: LegalDocumentType = field(default_factory=lambda: LegalDocumentType.TERMS_OF_SERVICE)
+    jurisdiction: Jurisdiction = field(default_factory=lambda: Jurisdiction.GLOBAL)
+    priority: str = field(default_factory=lambda: "")
+    requested_by: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class ComplianceCheckCompleted(DomainEvent):
-    partner_id: str
-    requirement_id: str
-    status: ComplianceStatus
-    risk_level: RiskLevel
-    performed_by: str
+    partner_id: str = field(default_factory=lambda: "")
+    requirement_id: str = field(default_factory=lambda: "")
+    status: ComplianceStatus = field(default_factory=lambda: ComplianceStatus.PENDING)
+    risk_level: RiskLevel = field(default_factory=lambda: RiskLevel.LOW)
+    performed_by: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class LegalOpinionIssued(DomainEvent):
-    partner_id: str
-    opinion_id: str
-    topic: str
-    risk_assessment: RiskLevel
-    lawyer_id: str
+    partner_id: str = field(default_factory=lambda: "")
+    opinion_id: str = field(default_factory=lambda: "")
+    topic: str = field(default_factory=lambda: "")
+    risk_assessment: RiskLevel = field(default_factory=lambda: RiskLevel.LOW)
+    lawyer_id: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class ContractTemplateUpdated(DomainEvent):
-    template_id: str
-    document_type: LegalDocumentType
-    version: str
-    updated_by: str
-    changes_summary: str
+    template_id: str = field(default_factory=lambda: "")
+    document_type: LegalDocumentType = field(default_factory=lambda: LegalDocumentType.TERMS_OF_SERVICE)
+    version: str = field(default_factory=lambda: "")
+    updated_by: str = field(default_factory=lambda: "")
+    changes_summary: str = field(default_factory=lambda: "")
 
 
 @dataclass
 class ComplianceViolationDetected(DomainEvent):
-    partner_id: str
-    violation_type: str
-    risk_level: RiskLevel
-    description: str
-    required_actions: List[str]
+    partner_id: str = field(default_factory=lambda: "")
+    violation_type: str = field(default_factory=lambda: "")
+    risk_level: RiskLevel = field(default_factory=lambda: RiskLevel.LOW)
+    description: str = field(default_factory=lambda: "")
+    required_actions: List[str] = field(default_factory=list)
 
 
 class LegalDocument(AggregateRoot):
