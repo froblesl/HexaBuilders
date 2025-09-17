@@ -316,6 +316,31 @@ EOF
 
 # Ejecutar con Cloud Scheduler (cron job en la nube)
 ```
+---
+
+docker build -t gcr.io/${PROJECT_ID}/onboarding:v11-corrected -f src/onboarding/Dockerfile .
+docker build -t gcr.io/${PROJECT_ID}/partner-management:v4-corrected -f src/partner_management/Dockerfile .
+docker build -t gcr.io/${PROJECT_ID}/recruitment:v4-corrected -f src/recruitment/Dockerfile .
+
+echo "✅ Imágenes reconstruidas con TODAS las correcciones aplicadas"
+
+docker push gcr.io/${PROJECT_ID}/onboarding:v11-corrected
+docker push gcr.io/${PROJECT_ID}/partner-management:v4-corrected
+docker push gcr.io/${PROJECT_ID}/recruitment:v4-corrected
+
+echo "✅ Imágenes corregidas pusheadas a GCR"
+
+kubectl set image deployment/onboarding onboarding=gcr.io/${PROJECT_ID}/onboarding:v11-corrected -n hexabuilders
+kubectl set image deployment/recruitment recruitment=gcr.io/${PROJECT_ID}/recruitment:v4-corrected -n hexabuilders
+kubectl set image deployment/partner-management partner-management=gcr.io/${PROJECT_ID}/partner-management:v4-corrected -n hexabuilders
+
+echo "✅ Deployments actualizados con imágenes corregidas"
+
+kubectl rollout status deployment/onboarding -n hexabuilders
+kubectl rollout status deployment/recruitment -n hexabuilders
+kubectl rollout status deployment/partner-management -n hexabuilders
+
+echo "✅ Rollouts actualizados con imágenes corregidas"
 
 ---
 
