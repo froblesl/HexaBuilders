@@ -22,7 +22,7 @@ spec:
         image: gcr.io/PROJECT_ID/hexabuilders-onboarding:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 5001
+        - containerPort: 5000
           name: http
         env:
         - name: PYTHONPATH
@@ -38,17 +38,17 @@ spec:
         - name: FLASK_ENV
           value: "production"
         - name: SERVICE_PORT
-          value: "5001"
+          value: "5000"
         livenessProbe:
           httpGet:
             path: /health
-            port: 5001
+            port: 5000
           initialDelaySeconds: 30
           periodSeconds: 10
         readinessProbe:
           httpGet:
             path: /health
-            port: 5001
+            port: 5000
           initialDelaySeconds: 15
           periodSeconds: 5
         resources:
@@ -70,8 +70,8 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 5001
-    targetPort: 5001
+  - port: 5000
+    targetPort: 5000
     name: http
   selector:
     app: onboarding
