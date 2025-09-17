@@ -141,7 +141,7 @@ def setup_logging():
     
     logging.basicConfig(
         level=getattr(logging, log_level),
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s - %(correlation_id)s',
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
     )
     
@@ -156,4 +156,4 @@ def setup_logging():
 
 if __name__ == '__main__':
     app = crear_app()
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

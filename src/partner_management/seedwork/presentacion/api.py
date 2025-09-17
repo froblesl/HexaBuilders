@@ -651,3 +651,8 @@ def extract_sort_params() -> List[tuple[str, str]]:
         sort_fields.append((field, direction))
     
     return sort_fields
+
+
+if __name__ == '__main__':
+    app = create_app()
+    app.run(host='0.0.0.0', port=5000, debug=True)
