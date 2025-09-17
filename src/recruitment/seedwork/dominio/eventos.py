@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Dict, Any, Optional, List
 from .entidades import DomainEvent, IntegrationEvent
@@ -7,10 +7,10 @@ from .entidades import DomainEvent, IntegrationEvent
 # Candidate Domain Events
 @dataclass
 class CandidateRegistered(DomainEvent):
-    candidate_id: str
-    name: str
-    email: str
-    skills: List[str]
+    candidate_id: str = field(default_factory=lambda: "")
+    name: str = field(default_factory=lambda: "")
+    email: str = field(default_factory=lambda: "")
+    skills: List[str] = field(default_factory=list)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -25,8 +25,8 @@ class CandidateRegistered(DomainEvent):
 
 @dataclass
 class CandidateProfileUpdated(DomainEvent):
-    candidate_id: str
-    updated_fields: Dict[str, Any]
+    candidate_id: str = field(default_factory=lambda: "")
+    updated_fields: Dict[str, Any] = field(default_factory=dict)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -39,9 +39,9 @@ class CandidateProfileUpdated(DomainEvent):
 
 @dataclass
 class CandidateAvailabilityChanged(DomainEvent):
-    candidate_id: str
-    availability: str
-    reason: Optional[str] = None
+    candidate_id: str = field(default_factory=lambda: "")
+    availability: str = field(default_factory=lambda: "")
+    reason: Optional[str] = field(default=None)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -56,10 +56,10 @@ class CandidateAvailabilityChanged(DomainEvent):
 # Job Domain Events
 @dataclass
 class JobPosted(DomainEvent):
-    job_id: str
-    partner_id: str
-    title: str
-    required_skills: List[str]
+    job_id: str = field(default_factory=lambda: "")
+    partner_id: str = field(default_factory=lambda: "")
+    title: str = field(default_factory=lambda: "")
+    required_skills: List[str] = field(default_factory=list)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -74,8 +74,8 @@ class JobPosted(DomainEvent):
 
 @dataclass
 class JobUpdated(DomainEvent):
-    job_id: str
-    updated_fields: Dict[str, Any]
+    job_id: str = field(default_factory=lambda: "")
+    updated_fields: Dict[str, Any] = field(default_factory=dict)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -88,9 +88,9 @@ class JobUpdated(DomainEvent):
 
 @dataclass
 class JobClosed(DomainEvent):
-    job_id: str
-    reason: str
-    closed_by: str
+    job_id: str = field(default_factory=lambda: "")
+    reason: str = field(default_factory=lambda: "")
+    closed_by: str = field(default_factory=lambda: "")
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -105,10 +105,10 @@ class JobClosed(DomainEvent):
 # Matching Domain Events
 @dataclass
 class CandidateMatchFound(DomainEvent):
-    job_id: str
-    candidate_id: str
-    match_score: float
-    matching_criteria: Dict[str, Any]
+    job_id: str = field(default_factory=lambda: "")
+    candidate_id: str = field(default_factory=lambda: "")
+    match_score: float = field(default_factory=lambda: 0.0)
+    matching_criteria: Dict[str, Any] = field(default_factory=dict)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -123,9 +123,9 @@ class CandidateMatchFound(DomainEvent):
 
 @dataclass
 class CandidateApplied(DomainEvent):
-    job_id: str
-    candidate_id: str
-    application_data: Dict[str, Any]
+    job_id: str = field(default_factory=lambda: "")
+    candidate_id: str = field(default_factory=lambda: "")
+    application_data: Dict[str, Any] = field(default_factory=dict)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -139,12 +139,12 @@ class CandidateApplied(DomainEvent):
 
 @dataclass
 class ApplicationStatusChanged(DomainEvent):
-    application_id: str
-    job_id: str
-    candidate_id: str
-    old_status: str
-    new_status: str
-    changed_by: str
+    application_id: str = field(default_factory=lambda: "")
+    job_id: str = field(default_factory=lambda: "")
+    candidate_id: str = field(default_factory=lambda: "")
+    old_status: str = field(default_factory=lambda: "")
+    new_status: str = field(default_factory=lambda: "")
+    changed_by: str = field(default_factory=lambda: "")
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -162,11 +162,11 @@ class ApplicationStatusChanged(DomainEvent):
 # Interview Domain Events
 @dataclass
 class InterviewScheduled(DomainEvent):
-    interview_id: str
-    job_id: str
-    candidate_id: str
-    interviewer: str
-    scheduled_time: datetime
+    interview_id: str = field(default_factory=lambda: "")
+    job_id: str = field(default_factory=lambda: "")
+    candidate_id: str = field(default_factory=lambda: "")
+    interviewer: str = field(default_factory=lambda: "")
+    scheduled_time: datetime = field(default_factory=datetime.utcnow)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -182,11 +182,11 @@ class InterviewScheduled(DomainEvent):
 
 @dataclass
 class InterviewCompleted(DomainEvent):
-    interview_id: str
-    job_id: str
-    candidate_id: str
-    result: str
-    feedback: str
+    interview_id: str = field(default_factory=lambda: "")
+    job_id: str = field(default_factory=lambda: "")
+    candidate_id: str = field(default_factory=lambda: "")
+    result: str = field(default_factory=lambda: "")
+    feedback: str = field(default_factory=lambda: "")
     score: Optional[int] = None
     
     def to_dict(self) -> Dict[str, Any]:
@@ -205,11 +205,11 @@ class InterviewCompleted(DomainEvent):
 # Integration Events
 @dataclass
 class CandidateMatchedIntegrationEvent(IntegrationEvent):
-    job_id: str
-    candidate_id: str
-    partner_id: str
-    match_score: float
-    candidate_profile: Dict[str, Any]
+    job_id: str = field(default_factory=lambda: "")
+    candidate_id: str = field(default_factory=lambda: "")
+    partner_id: str = field(default_factory=lambda: "")
+    match_score: float = field(default_factory=lambda: 0.0)
+    candidate_profile: Dict[str, Any] = field(default_factory=dict)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -225,12 +225,12 @@ class CandidateMatchedIntegrationEvent(IntegrationEvent):
 
 @dataclass
 class CandidateHiredIntegrationEvent(IntegrationEvent):
-    job_id: str
-    candidate_id: str
-    partner_id: str
-    position: str
-    start_date: datetime
-    salary: Optional[float] = None
+    job_id: str = field(default_factory=lambda: "")
+    candidate_id: str = field(default_factory=lambda: "")
+    partner_id: str = field(default_factory=lambda: "")
+    position: str = field(default_factory=lambda: "")
+    start_date: datetime = field(default_factory=datetime.utcnow)
+    salary: Optional[float] = field(default=None)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -247,10 +247,10 @@ class CandidateHiredIntegrationEvent(IntegrationEvent):
 
 @dataclass
 class RecruitmentRequiredIntegrationEvent(IntegrationEvent):
-    partner_id: str
-    job_requirements: Dict[str, Any]
-    urgency: str
-    budget: Optional[float] = None
+    partner_id: str = field(default_factory=lambda: "")
+    job_requirements: Dict[str, Any] = field(default_factory=dict)
+    urgency: str = field(default_factory=lambda: "")
+    budget: Optional[float] = field(default=None)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -265,10 +265,10 @@ class RecruitmentRequiredIntegrationEvent(IntegrationEvent):
 
 @dataclass
 class CampaignStaffingRequestIntegrationEvent(IntegrationEvent):
-    campaign_id: str
-    partner_id: str
-    positions_needed: List[Dict[str, Any]]
-    timeline: str
+    campaign_id: str = field(default_factory=lambda: "")
+    partner_id: str = field(default_factory=lambda: "")
+    positions_needed: List[Dict[str, Any]] = field(default_factory=list)
+    timeline: str = field(default_factory=lambda: "")
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()

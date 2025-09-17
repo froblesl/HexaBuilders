@@ -25,7 +25,7 @@ class DomainEvent(BaseEvent):
 
 @dataclass
 class IntegrationEvent(BaseEvent):
-    correlation_id: str = None
+    correlation_id: str = field(default=None)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()

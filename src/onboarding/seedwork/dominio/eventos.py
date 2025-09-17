@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Dict, Any, Optional
 from .entidades import DomainEvent, IntegrationEvent
@@ -6,13 +6,13 @@ from .entidades import DomainEvent, IntegrationEvent
 
 @dataclass
 class EventEnvelope:
-    event_id: str
-    aggregate_id: str
-    event_type: str
-    event_data: Dict[str, Any]
-    version: int
-    timestamp: datetime
-    correlation_id: Optional[str] = None
+    event_id: str = field(default_factory=lambda: "")
+    aggregate_id: str = field(default_factory=lambda: "")
+    event_type: str = field(default_factory=lambda: "")
+    event_data: Dict[str, Any] = field(default_factory=dict)
+    version: int = field(default_factory=lambda: 0)
+    timestamp: datetime = field(default_factory=datetime.utcnow)
+    correlation_id: Optional[str] = field(default=None)
     
     def to_cloud_event(self) -> Dict[str, Any]:
         return {
@@ -31,10 +31,10 @@ class EventEnvelope:
 # Contract Domain Events
 @dataclass
 class ContractCreated(DomainEvent):
-    contract_id: str
-    partner_id: str
-    contract_type: str
-    template_id: str
+    contract_id: str = field(default_factory=lambda: "")
+    partner_id: str = field(default_factory=lambda: "")
+    contract_type: str = field(default_factory=lambda: "")
+    template_id: str = field(default_factory=lambda: "")
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -49,9 +49,9 @@ class ContractCreated(DomainEvent):
 
 @dataclass
 class ContractTermsUpdated(DomainEvent):
-    contract_id: str
-    updated_terms: Dict[str, Any]
-    updated_by: str
+    contract_id: str = field(default_factory=lambda: "")
+    updated_terms: Dict[str, Any] = field(default_factory=dict)
+    updated_by: str = field(default_factory=lambda: "")
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -65,9 +65,9 @@ class ContractTermsUpdated(DomainEvent):
 
 @dataclass
 class ContractSubmittedForLegalReview(DomainEvent):
-    contract_id: str
-    submitted_by: str
-    legal_reviewer: str
+    contract_id: str = field(default_factory=lambda: "")
+    submitted_by: str = field(default_factory=lambda: "")
+    legal_reviewer: str = field(default_factory=lambda: "")
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -81,10 +81,10 @@ class ContractSubmittedForLegalReview(DomainEvent):
 
 @dataclass
 class ContractSigned(DomainEvent):
-    contract_id: str
-    partner_id: str
-    signatory: str
-    signature_method: str
+    contract_id: str = field(default_factory=lambda: "")
+    partner_id: str = field(default_factory=lambda: "")
+    signatory: str = field(default_factory=lambda: "")
+    signature_method: str = field(default_factory=lambda: "")
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -99,9 +99,9 @@ class ContractSigned(DomainEvent):
 
 @dataclass
 class ContractActivated(DomainEvent):
-    contract_id: str
-    partner_id: str
-    activation_date: datetime
+    contract_id: str = field(default_factory=lambda: "")
+    partner_id: str = field(default_factory=lambda: "")
+    activation_date: datetime = field(default_factory=datetime.utcnow)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -116,9 +116,9 @@ class ContractActivated(DomainEvent):
 # Negotiation Domain Events
 @dataclass
 class NegotiationStarted(DomainEvent):
-    negotiation_id: str
-    contract_id: str
-    initiator: str
+    negotiation_id: str = field(default_factory=lambda: "")
+    contract_id: str = field(default_factory=lambda: "")
+    initiator: str = field(default_factory=lambda: "")
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -132,10 +132,10 @@ class NegotiationStarted(DomainEvent):
 
 @dataclass
 class ProposalSubmitted(DomainEvent):
-    negotiation_id: str
-    proposal_id: str
-    proposer: str
-    terms: Dict[str, Any]
+    negotiation_id: str = field(default_factory=lambda: "")
+    proposal_id: str = field(default_factory=lambda: "")
+    proposer: str = field(default_factory=lambda: "")
+    terms: Dict[str, Any] = field(default_factory=dict)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -150,9 +150,9 @@ class ProposalSubmitted(DomainEvent):
 
 @dataclass
 class ProposalAccepted(DomainEvent):
-    negotiation_id: str
-    proposal_id: str
-    acceptor: str
+    negotiation_id: str = field(default_factory=lambda: "")
+    proposal_id: str = field(default_factory=lambda: "")
+    acceptor: str = field(default_factory=lambda: "")
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -166,9 +166,9 @@ class ProposalAccepted(DomainEvent):
 
 @dataclass
 class NegotiationCompleted(DomainEvent):
-    negotiation_id: str
-    contract_id: str
-    final_terms: Dict[str, Any]
+    negotiation_id: str = field(default_factory=lambda: "")
+    contract_id: str = field(default_factory=lambda: "")
+    final_terms: Dict[str, Any] = field(default_factory=dict)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -183,10 +183,10 @@ class NegotiationCompleted(DomainEvent):
 # Legal Domain Events
 @dataclass
 class LegalValidationRequested(DomainEvent):
-    validation_id: str
-    contract_id: str
-    validator: str
-    validation_type: str
+    validation_id: str = field(default_factory=lambda: "")
+    contract_id: str = field(default_factory=lambda: "")
+    validator: str = field(default_factory=lambda: "")
+    validation_type: str = field(default_factory=lambda: "")
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -201,10 +201,10 @@ class LegalValidationRequested(DomainEvent):
 
 @dataclass
 class LegalValidationCompleted(DomainEvent):
-    validation_id: str
-    contract_id: str
-    result: str
-    issues: list
+    validation_id: str = field(default_factory=lambda: "")
+    contract_id: str = field(default_factory=lambda: "")
+    result: str = field(default_factory=lambda: "")
+    issues: list = field(default_factory=list)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -220,11 +220,11 @@ class LegalValidationCompleted(DomainEvent):
 # Document Domain Events
 @dataclass
 class DocumentUploaded(DomainEvent):
-    document_id: str
-    contract_id: str
-    document_type: str
-    file_path: str
-    uploaded_by: str
+    document_id: str = field(default_factory=lambda: "")
+    contract_id: str = field(default_factory=lambda: "")
+    document_type: str = field(default_factory=lambda: "")
+    file_path: str = field(default_factory=lambda: "")
+    uploaded_by: str = field(default_factory=lambda: "")
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -240,10 +240,10 @@ class DocumentUploaded(DomainEvent):
 
 @dataclass
 class DocumentSigned(DomainEvent):
-    document_id: str
-    signature_id: str
-    signer: str
-    signature_hash: str
+    document_id: str = field(default_factory=lambda: "")
+    signature_id: str = field(default_factory=lambda: "")
+    signer: str = field(default_factory=lambda: "")
+    signature_hash: str = field(default_factory=lambda: "")
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -259,10 +259,10 @@ class DocumentSigned(DomainEvent):
 # Integration Events
 @dataclass
 class ContractSignedIntegrationEvent(IntegrationEvent):
-    contract_id: str
-    partner_id: str
-    contract_type: str
-    effective_date: datetime
+    contract_id: str = field(default_factory=lambda: "")
+    partner_id: str = field(default_factory=lambda: "")
+    contract_type: str = field(default_factory=lambda: "")
+    effective_date: datetime = field(default_factory=datetime.utcnow)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -277,10 +277,10 @@ class ContractSignedIntegrationEvent(IntegrationEvent):
 
 @dataclass
 class ContractActivatedIntegrationEvent(IntegrationEvent):
-    contract_id: str
-    partner_id: str
-    contract_type: str
-    permissions: Dict[str, Any]
+    contract_id: str = field(default_factory=lambda: "")
+    partner_id: str = field(default_factory=lambda: "")
+    contract_type: str = field(default_factory=lambda: "")
+    permissions: Dict[str, Any] = field(default_factory=dict)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
@@ -295,11 +295,11 @@ class ContractActivatedIntegrationEvent(IntegrationEvent):
 
 @dataclass
 class EmploymentContractSignedIntegrationEvent(IntegrationEvent):
-    contract_id: str
-    candidate_id: str
-    partner_id: str
-    position: str
-    start_date: datetime
+    contract_id: str = field(default_factory=lambda: "")
+    candidate_id: str = field(default_factory=lambda: "")
+    partner_id: str = field(default_factory=lambda: "")
+    position: str = field(default_factory=lambda: "")
+    start_date: datetime = field(default_factory=datetime.utcnow)
     
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
