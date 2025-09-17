@@ -223,46 +223,10 @@ kubectl logs -n hexabuilders -l app=postgres
 kubectl logs -n hexabuilders -l app=broker
 ```
 
----
-
-## 💸 Control de Costos - Apagar/Encender Servicios
-
-### **💰 Tabla de Costos Reales**
-
-| Estado | Cluster GKE | Load Balancer | Discos | Total/mes |
-|--------|-------------|---------------|--------|-----------|
-| 🟢 **Encendido** | ~$25 | ~$18 | ~$3 | **~$46** |
-| 🟡 **Cluster Off** | $0 | ~$18 | ~$3 | **~$21** |
-| 🔴 **Todo Off** | $0 | $0 | ~$3 | **~$3** |
-
-**📊 Ahorro potencial: 93% (~$43/mes)**
-
-### **🚀 Script Automatizado (Recomendado)**
-
-He creado un script para que sea súper fácil:
-
-```bash
-# Dar permisos de ejecución (solo una vez)
-chmod +x scripts/gcp-cost-control.sh
-
-# 🛑 APAGAR todo (fin de semana/vacaciones)
-./scripts/gcp-cost-control.sh shutdown
-
-# ✅ ENCENDER cuando necesites trabajar  
-./scripts/gcp-cost-control.sh startup
-
-# 📊 Ver estado actual y costos
-./scripts/gcp-cost-control.sh status
-
-# 💰 Ver tabla completa de costos
-./scripts/gcp-cost-control.sh costs
-```
-
 ### **MÉTODO 1: Escalar Cluster a 0 (Recomendado) 💰**
 
 **Desde Cloud Shell:**
 ```bash
-# 🛑 APAGAR: Escalar cluster a 0 nodos (COSTO = $0/mes por compute)
 gcloud container clusters resize hexabuilders-cluster --num-nodes=0 --zone=us-central1-a
 
 # ✅ ENCENDER: Restaurar 1 nodo cuando necesites
@@ -275,47 +239,6 @@ gcloud container clusters resize hexabuilders-cluster --num-nodes=1 --zone=us-ce
 3. Clic en **"RESIZE"**
 4. **Cambiar "Number of nodes"** a `0` para apagar o `1` para encender
 5. Clic en **"RESIZE"**
-
-**⏱️ Tiempo de reactivación**: ~3-5 minutos
-**💰 Ahorro**: ~$25/mes (solo pagas Load Balancer ~$18/mes)
-
-### **MÉTODO 2: Eliminar Load Balancer (Ahorro Extra)**
-
-**Si quieres ahorrar aún más (~$18/mes adicionales):**
-
-```bash
-# 🛑 APAGAR: Eliminar Load Balancer (acceso externo)
-kubectl delete service partner-management-lb -n hexabuilders
-
-# ✅ ENCENDER: Recrear Load Balancer
-kubectl expose deployment partner-management --type=LoadBalancer --port=80 --target-port=5000 --name=partner-management-lb -n hexabuilders
-```
-
-### **MÉTODO 3: Suspender Completamente**
-
-**Para pausas largas (1+ semanas):**
-
-```bash
-# 🛑 APAGAR TODO: Eliminar cluster completo
-gcloud container clusters delete hexabuilders-cluster --zone=us-central1-a
-
-# ✅ ENCENDER: Recrear desde cero (usar la guía completa)
-# Las imágenes en Container Registry se mantienen, solo recrear cluster
-```
-
-### **MÉTODO 4: Programar Apagado Automático**
-
-**Crear script para apagar automáticamente:**
-```bash
-# Crear archivo shutdown-schedule.sh
-cat > shutdown-schedule.sh << 'EOF'
-#!/bin/bash
-# Apagar cluster todos los días a las 6 PM
-0 18 * * * gcloud container clusters resize hexabuilders-cluster --num-nodes=0 --zone=us-central1-a --quiet
-EOF
-
-# Ejecutar con Cloud Scheduler (cron job en la nube)
-```
 ---
 
 docker build -t gcr.io/${PROJECT_ID}/onboarding:v11-corrected -f src/onboarding/Dockerfile .
@@ -353,14 +276,47 @@ Una vez completado, tendrás acceso a:
 - **GCP Console**: https://console.cloud.google.com
 - **Container Registry**: https://console.cloud.google.com/gcr
 
-## ✅ Checklist de Verificación
+---
 
-- [ ] Proyecto GCP creado y APIs habilitadas
-- [ ] Cluster GKE creado con 1 nodo e2-small
-- [ ] 5 imágenes Docker construidas y subidas a GCR
-- [ ] Todos los pods en estado "Running"
-- [ ] Load Balancer con IP externa asignada
-- [ ] API responde correctamente a health checks
-- [ ] Capaz de crear y consultar partners
+# Cambiar onboarding a NodePort
+kubectl patch svc onboarding -n hexabuilders -p '{"spec":{"type":"NodePort"}}'
 
-**¡Listo! Tu sistema HexaBuilders está corriendo en producción en GCP con costos optimizados para uso académico.**
+# Cambiar recruitment a NodePort  
+kubectl patch svc recruitment -n hexabuilders -p '{"spec":{"type":"NodePort"}}'
+
+# Cambiar campaign-management a NodePort
+kubectl patch svc campaign-management -n hexabuilders -p '{"spec":{"type":"NodePort"}}'
+
+# Cambiar partner-management a NodePort
+kubectl patch svc partner-management -n hexabuilders -p '{"spec":{"type":"NodePort"}}'
+
+echo "✅ Servicios configurados como NodePort"
+
+# Ver IPs externas de los nodos
+kubectl get nodes -o wide
+
+# Ver puertos NodePort asignados
+kubectl get svc -n hexabuilders
+
+---
+
+# Escalar todas las aplicaciones a 0 (pero mantener configuración)
+kubectl scale deployment campaign-management onboarding partner-management postgres pulsar-standalone recruitment --replicas=0 -n hexabuilders
+
+echo "✅ Todas las aplicaciones detenidas"
+
+gcloud container clusters resize hexabuilders-cluster --num-nodes=0 --zone=us-central1-a --project=${PROJECT_ID}
+
+echo "🛑 CLUSTER APAGADO"
+
+---
+
+# Volver a escalar a 4 nodos
+gcloud container clusters resize hexabuilders-cluster --num-nodes=4 --zone=us-central1-a --project=${PROJECT_ID}
+
+# Esperar a que nodos estén listos
+kubectl get nodes -w
+
+kubectl scale deployment campaign-management onboarding partner-management postgres pulsar-standalone recruitment --replicas=1 -n hexabuilders
+
+echo "🚀 Todas las aplicaciones reactivadas"
