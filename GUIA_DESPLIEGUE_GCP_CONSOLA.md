@@ -301,6 +301,7 @@ kubectl get svc -n hexabuilders
 ---
 
 # Escalar todas las aplicaciones a 0 (pero mantener configuración)
+export PROJECT_ID=pruebas-hernan
 kubectl scale deployment campaign-management onboarding partner-management postgres pulsar-standalone recruitment --replicas=0 -n hexabuilders
 
 echo "✅ Todas las aplicaciones detenidas"
