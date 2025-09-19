@@ -302,6 +302,35 @@ services:
       timeout: 10s
       retries: 3
 
+  # BFF Web Service (GraphQL)
+  bff-web:
+    build:
+      context: .
+      dockerfile: bff_web.Dockerfile
+    container_name: bff-web
+    hostname: bff-web
+    profiles: ["bff", "full"]
+    networks:
+      - pulsar
+    environment:
+      - SAGA_SERVICE_URL=http://partner-management:5000
+      - SAGA_SERVICE_TIMEOUT=30
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:3001
+      - LOG_LEVEL=INFO
+      - DEBUG=false
+    ports:
+      - "8000:8000"
+    depends_on:
+      partner-management:
+        condition: service_healthy
+    volumes:
+      - ./src/bff_web:/app/src/bff_web
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
 networks:
   pulsar:
     driver: bridge

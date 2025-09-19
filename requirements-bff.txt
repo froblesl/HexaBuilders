@@ -1,0 +1,29 @@
+# BFF Web Requirements
+# Backend for Frontend usando FastAPI y Strawberry GraphQL
+
+# Web Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# GraphQL
+strawberry-graphql[fastapi]==0.215.0
+
+# HTTP Client
+httpx==0.25.2
+
+# Data Validation
+pydantic==2.5.0
+
+# CORS
+python-multipart==0.0.6
+
+# Logging
+structlog==23.2.0
+
+# Environment
+python-dotenv==1.0.0
+
+# Development
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2  # Para testing
