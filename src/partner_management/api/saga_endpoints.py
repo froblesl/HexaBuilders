@@ -8,28 +8,55 @@ from datetime import datetime
 import logging
 from uuid import uuid4
 
-from ..modulos.partners.aplicacion.saga_choreography import (
+from src.partner_management.modulos.partners.aplicacion.saga_choreography import (
     ChoreographySagaOrchestrator, 
     SagaStateRepository
 )
-from ..seedwork.infraestructura.utils import EventDispatcher
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../../..'))
+from src.pulsar_event_dispatcher import PulsarEventDispatcher
 
 saga_bp = Blueprint('sagas', __name__)
 logger = logging.getLogger(__name__)
 
 # Inicializar componentes de Saga de Choreography
-event_dispatcher = EventDispatcher()
-saga_state_repository = SagaStateRepository(event_dispatcher)  # Usar EventDispatcher como storage
+saga_state_repository = SagaStateRepository()
 
-# Crear orquestador de Saga de Choreography
-choreography_saga = ChoreographySagaOrchestrator(
-    event_dispatcher=event_dispatcher,
-    saga_state_repository=saga_state_repository
-)
+# Inicializar event dispatcher de forma lazy para evitar errores de conexión en import
+event_dispatcher = None
+choreography_saga = None
+
+def _get_event_dispatcher():
+    """Get or create event dispatcher lazily"""
+    global event_dispatcher
+    if event_dispatcher is None:
+        try:
+            event_dispatcher = PulsarEventDispatcher("partner-management")
+        except Exception as e:
+            logger.warning(f"Failed to initialize Pulsar dispatcher: {e}")
+            # Create a mock dispatcher for testing
+            event_dispatcher = None
+    return event_dispatcher
+
+def _get_choreography_saga():
+    """Get or create choreography saga lazily"""
+    global choreography_saga
+    if choreography_saga is None:
+        dispatcher = _get_event_dispatcher()
+        if dispatcher:
+            choreography_saga = ChoreographySagaOrchestrator(
+                saga_state_repository=saga_state_repository,
+                event_dispatcher=dispatcher
+            )
+        else:
+            logger.warning("Choreography saga not available - Pulsar connection failed")
+            choreography_saga = None
+    return choreography_saga
 
 
 @saga_bp.route('/partner-onboarding', methods=['POST'])
-async def start_partner_onboarding():
+def start_partner_onboarding():
     """
     Inicia el onboarding de un partner usando Saga de Choreografía.
     
@@ -70,12 +97,19 @@ async def start_partner_onboarding():
                     'timestamp': datetime.utcnow().isoformat()
                 }), 400
         
-        # Agregar partner_id si no existe
-        if 'partner_id' not in partner_data:
+        # Agregar partner_id si no existe o es None
+        if 'partner_id' not in partner_data or partner_data['partner_id'] is None:
             partner_data['partner_id'] = str(uuid4())
         
         # Iniciar Saga de Choreografía
-        partner_id = await choreography_saga.start_partner_onboarding(
+        saga = _get_choreography_saga()
+        if not saga:
+            return jsonify({
+                'error': 'Saga service unavailable - Pulsar connection failed',
+                'timestamp': datetime.utcnow().isoformat()
+            }), 503
+        
+        partner_id = saga.start_partner_onboarding(
             partner_data=partner_data,
             correlation_id=correlation_id
         )
@@ -99,13 +133,13 @@ async def start_partner_onboarding():
 
 
 @saga_bp.route('/<partner_id>/status', methods=['GET'])
-async def get_saga_status(partner_id):
+def get_saga_status(partner_id):
     """
     Obtiene el estado actual de una Saga de Choreografía.
     """
     try:
         # Obtener estado de Saga de Choreografía
-        saga_state = await saga_state_repository.get(partner_id)
+        saga_state = saga_state_repository.get(partner_id)
         
         if not saga_state:
             return jsonify({
@@ -134,7 +168,7 @@ async def get_saga_status(partner_id):
 
 
 @saga_bp.route('/<partner_id>/compensate', methods=['POST'])
-async def compensate_saga(partner_id):
+def compensate_saga(partner_id):
     """
     Inicia la compensación de una Saga de Choreografía.
     
@@ -148,7 +182,7 @@ async def compensate_saga(partner_id):
         reason = data.get('reason', 'Manual compensation request')
         
         # Compensar Saga de Choreografía
-        saga_state = await saga_state_repository.get(partner_id)
+        saga_state = saga_state_repository.get(partner_id)
         
         if not saga_state:
             return jsonify({
@@ -161,7 +195,14 @@ async def compensate_saga(partner_id):
         correlation_id = saga_state.get('correlation_id')
         
         # Llamar al método de compensación (acceso directo para simplicidad)
-        await choreography_saga._initiate_compensation(partner_id, failed_step, correlation_id)
+        saga = _get_choreography_saga()
+        if not saga:
+            return jsonify({
+                'error': 'Saga service unavailable - Pulsar connection failed',
+                'timestamp': datetime.utcnow().isoformat()
+            }), 503
+        
+        saga._initiate_compensation(partner_id, failed_step, correlation_id)
         
         return jsonify({
             'partner_id': partner_id,

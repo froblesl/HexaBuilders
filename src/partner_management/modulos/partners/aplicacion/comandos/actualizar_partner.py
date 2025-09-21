@@ -5,9 +5,9 @@ import logging
 from dataclasses import dataclass
 from typing import Optional
 
-from partner_management.seedwork.aplicacion.comandos import ejecutar_comando
-from partner_management.seedwork.infraestructura.uow import UnitOfWork
-from partner_management.seedwork.dominio.excepciones import DomainException
+from src.partner_management.seedwork.aplicacion.comandos import ejecutar_comando
+from src.partner_management.seedwork.infraestructura.uow import UnitOfWork
+from src.partner_management.seedwork.dominio.excepciones import DomainException
 from ...dominio.objetos_valor import PartnerName, PartnerEmail, PartnerPhone
 from .base import CommandPartner
 

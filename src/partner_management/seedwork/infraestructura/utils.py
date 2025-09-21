@@ -10,7 +10,7 @@ from contextlib import contextmanager
 from threading import Lock
 import time
 
-from pydispatcher import dispatcher
+from pydispatch import dispatcher
 from ..dominio.eventos import DomainEvent, IntegrationEvent
 from ..dominio.excepciones import DomainException
 

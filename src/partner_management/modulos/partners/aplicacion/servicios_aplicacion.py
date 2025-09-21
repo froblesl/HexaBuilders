@@ -7,9 +7,9 @@ from typing import Dict, Any, Optional, List
 
 from ..dominio.repositorio import PartnerRepository
 from ..infraestructura.fabricas import FabricaPartner
-from partner_management.seedwork.infraestructura.uow import UnitOfWork
-from partner_management.seedwork.aplicacion.comandos import ejecutar_comando
-from partner_management.seedwork.aplicacion.queries import ejecutar_query
+from src.partner_management.seedwork.infraestructura.uow import UnitOfWork
+from src.partner_management.seedwork.aplicacion.comandos import ejecutar_comando
+from src.partner_management.seedwork.aplicacion.queries import ejecutar_query
 from .comandos.crear_partner import CrearPartner
 from .comandos.actualizar_partner import ActualizarPartner
 from .comandos.activar_partner import ActivarPartner

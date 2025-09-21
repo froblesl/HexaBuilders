@@ -5,8 +5,8 @@ from sqlalchemy import Column, String, Integer, DateTime, Text, Index
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session
 
-from onboarding.seedwork.dominio.entidades import DomainEvent, EventStore
-from onboarding.seedwork.dominio.eventos import EventEnvelope
+from src.onboarding.seedwork.dominio.entidades import DomainEvent, EventStore
+from src.onboarding.seedwork.dominio.eventos import EventEnvelope
 
 
 Base = declarative_base()

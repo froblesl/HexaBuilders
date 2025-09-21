@@ -1,58 +1,62 @@
 #!/bin/bash
 
-# Script para desplegar HexaBuilders en Google Kubernetes Engine (GKE)
-# Uso: ./deploy-to-gke.sh PROJECT_ID CLUSTER_NAME [ZONE]
+# Script para desplegar HexaBuilders en GKE
+# Uso: ./deploy-to-gke.sh PROJECT_ID [CLUSTER_NAME] [ZONE] [TAG]
 
 set -e
 
-if [ "$#" -lt 2 ]; then
-    echo "Uso: $0 PROJECT_ID CLUSTER_NAME [ZONE]"
-    echo "Ejemplo: $0 my-hexabuilders-project hexabuilders-cluster us-central1-a"
+if [ "$#" -lt 1 ]; then
+    echo "Uso: $0 PROJECT_ID [CLUSTER_NAME] [ZONE] [TAG]"
+    echo "Ejemplo: $0 my-hexabuilders-project hexabuilders-cluster us-central1-a v1.0.0"
     exit 1
 fi
 
 PROJECT_ID=$1
-CLUSTER_NAME=$2
+CLUSTER_NAME=${2:-hexabuilders-cluster}
 ZONE=${3:-us-central1-a}
+TAG=${4:-latest}
 
-echo "🚀 Conectando al cluster GKE..."
-gcloud container clusters get-credentials $CLUSTER_NAME --zone=$ZONE --project=$PROJECT_ID
+echo "🚀 Configurando proyecto GCP..."
+gcloud config set project $PROJECT_ID
 
-echo "📝 Actualizando manifiestos con PROJECT_ID..."
-# Crear una copia temporal de kustomization.yaml con el PROJECT_ID correcto
-cp k8s/kustomization.yaml k8s/kustomization.yaml.bak
-sed "s/PROJECT_ID/$PROJECT_ID/g" k8s/kustomization.yaml.bak > k8s/kustomization.yaml
+echo "🔗 Obteniendo credenciales del cluster..."
+gcloud container clusters get-credentials $CLUSTER_NAME --zone=$ZONE
 
-# También actualizar los deployments
-sed "s/PROJECT_ID/$PROJECT_ID/g" k8s/partner-management-deployment.yaml > k8s/partner-management-deployment.yaml.tmp
-mv k8s/partner-management-deployment.yaml.tmp k8s/partner-management-deployment.yaml
+echo "🏗️ Aplicando configuración de Kubernetes..."
 
-sed "s/PROJECT_ID/$PROJECT_ID/g" k8s/notifications-deployment.yaml > k8s/notifications-deployment.yaml.tmp
-mv k8s/notifications-deployment.yaml.tmp k8s/notifications-deployment.yaml
+# Reemplazar PROJECT_ID en los archivos de Kubernetes
+sed -i.bak "s/PROJECT_ID/$PROJECT_ID/g" k8s/*.yaml
 
-echo "📦 Desplegando con Kustomize..."
+# Aplicar configuración
 kubectl apply -k k8s/
 
-echo "⏳ Esperando a que los pods estén listos..."
-kubectl wait --namespace=hexabuilders --for=condition=ready pod --selector=app=postgres --timeout=300s
-kubectl wait --namespace=hexabuilders --for=condition=ready pod --selector=app=zookeeper --timeout=300s
-kubectl wait --namespace=hexabuilders --for=condition=ready pod --selector=app=broker --timeout=300s
-kubectl wait --namespace=hexabuilders --for=condition=ready pod --selector=app=partner-management --timeout=300s
+echo "⏳ Esperando que los pods estén listos..."
+kubectl wait --for=condition=ready pod -l app=pulsar-standalone -n hexabuilders --timeout=300s
+kubectl wait --for=condition=ready pod -l app=postgres -n hexabuilders --timeout=300s
+kubectl wait --for=condition=ready pod -l app=elasticsearch -n hexabuilders --timeout=300s
 
-echo "🌍 Obteniendo IP del Load Balancer..."
-kubectl get service partner-management-lb -n hexabuilders
+echo "⏳ Esperando que los servicios de aplicación estén listos..."
+kubectl wait --for=condition=ready pod -l app=partner-management -n hexabuilders --timeout=300s
+kubectl wait --for=condition=ready pod -l app=onboarding -n hexabuilders --timeout=300s
+kubectl wait --for=condition=ready pod -l app=campaign-management -n hexabuilders --timeout=300s
+kubectl wait --for=condition=ready pod -l app=recruitment -n hexabuilders --timeout=300s
+kubectl wait --for=condition=ready pod -l app=notifications -n hexabuilders --timeout=300s
+kubectl wait --for=condition=ready pod -l app=bff-web -n hexabuilders --timeout=300s
 
-echo "✅ Despliegue completado!"
+echo "✅ Despliegue completado exitosamente!"
 echo ""
-echo "Para verificar el estado:"
-echo "  kubectl get all -n hexabuilders"
-echo ""
-echo "Para ver los logs:"
-echo "  kubectl logs -n hexabuilders -l app=partner-management"
-echo ""
-echo "Para probar la API:"
-echo "  export LOAD_BALANCER_IP=\$(kubectl get service partner-management-lb -n hexabuilders -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
-echo "  curl http://\$LOAD_BALANCER_IP/health"
+echo "📊 Estado de los pods:"
+kubectl get pods -n hexabuilders
 
-# Restaurar el archivo original
-mv k8s/kustomization.yaml.bak k8s/kustomization.yaml
+echo ""
+echo "🌐 Servicios disponibles:"
+kubectl get services -n hexabuilders
+
+echo ""
+echo "🔗 Para acceder al BFF Web:"
+echo "  kubectl port-forward service/bff-web-lb 8000:80 -n hexabuilders"
+echo "  Luego abrir: http://localhost:8000"
+
+echo ""
+echo "📈 Para ver logs:"
+echo "  kubectl logs -f deployment/bff-web -n hexabuilders"

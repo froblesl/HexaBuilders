@@ -6,8 +6,8 @@ Implements Partner aggregate root with full business logic.
 from typing import Optional, List
 from datetime import datetime
 
-from partner_management.seedwork.dominio.entidades import AggregateRoot, DomainEntity
-from partner_management.seedwork.dominio.excepciones import DomainException, BusinessRuleException
+from src.partner_management.seedwork.dominio.entidades import AggregateRoot, DomainEntity
+from src.partner_management.seedwork.dominio.excepciones import DomainException, BusinessRuleException
 from .objetos_valor import (
     PartnerName, PartnerEmail, PartnerPhone, PartnerType, PartnerStatus,
     PartnerAddress, PartnerValidationData, PartnerMetrics

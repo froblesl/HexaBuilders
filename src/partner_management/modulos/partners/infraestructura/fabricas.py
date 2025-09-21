@@ -10,8 +10,8 @@ from ..dominio.objetos_valor import (
     PartnerName, PartnerEmail, PartnerPhone, PartnerType, PartnerStatus,
     PartnerAddress, PartnerValidationData, PartnerMetrics
 )
-from partner_management.seedwork.dominio.fabricas import Factory
-from partner_management.seedwork.dominio.excepciones import DomainException
+from src.partner_management.seedwork.dominio.fabricas import Factory
+from src.partner_management.seedwork.dominio.excepciones import DomainException
 
 logger = logging.getLogger(__name__)
 

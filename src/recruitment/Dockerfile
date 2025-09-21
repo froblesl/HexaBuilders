@@ -23,17 +23,17 @@ RUN pip install --no-cache-dir -r pulsar-requirements.txt
 RUN pip install --no-cache-dir elasticsearch==8.11.0
 
 # Copy application code
-COPY src/recruitment/ ./recruitment/
+COPY src/ ./src/
 
 # Set Python path
 ENV PYTHONPATH=/app
 
 # Expose port
-EXPOSE 5000
+EXPOSE 5002
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:5000/health || exit 1
+    CMD curl -f http://localhost:${SERVICE_PORT:-5002}/health || exit 1
 
 # Run application
-CMD ["python", "-m", "recruitment.seedwork.presentacion.api"]
+CMD ["python", "-m", "src.recruitment.seedwork.presentacion.api"]

@@ -6,8 +6,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any
 
-from partner_management.seedwork.aplicacion.comandos import Command
-from partner_management.seedwork.infraestructura.uow import UnitOfWork
+from src.partner_management.seedwork.aplicacion.comandos import Command
+from src.partner_management.seedwork.infraestructura.uow import UnitOfWork
 
 logger = logging.getLogger(__name__)
 

@@ -5,9 +5,9 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 import json
 
-from onboarding.modulos.contracts.dominio.entidades import Contract, ContractState, ContractType, ContractTerms, Signature
-from onboarding.modulos.contracts.dominio.repositorios import ContractRepository, ContractTemplateRepository
-from onboarding.seedwork.infraestructura.event_store import SqlAlchemyEventStore
+from src.onboarding.modulos.contracts.dominio.entidades import Contract, ContractState, ContractType, ContractTerms, Signature
+from src.onboarding.modulos.contracts.dominio.repositorios import ContractRepository, ContractTemplateRepository
+from src.onboarding.seedwork.infraestructura.event_store import SqlAlchemyEventStore
 
 
 Base = declarative_base()

@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any
 
-from onboarding.seedwork.aplicacion.queries import Query, QueryResult
+from src.onboarding.seedwork.aplicacion.queries import Query, QueryResult
 
 logger = logging.getLogger(__name__)
 

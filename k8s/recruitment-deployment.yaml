@@ -22,7 +22,7 @@ spec:
         image: gcr.io/PROJECT_ID/hexabuilders-recruitment:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 5000
+        - containerPort: 5002
           name: http
         env:
         - name: PYTHONPATH
@@ -40,17 +40,17 @@ spec:
         - name: FLASK_ENV
           value: "production"
         - name: SERVICE_PORT
-          value: "5000"
+          value: "5002"
         livenessProbe:
           httpGet:
             path: /health
-            port: 5000
+            port: 5002
           initialDelaySeconds: 45  # Más tiempo porque depende de Elasticsearch
           periodSeconds: 10
         readinessProbe:
           httpGet:
             path: /health
-            port: 5000
+            port: 5002
           initialDelaySeconds: 30
           periodSeconds: 5
         resources:
@@ -72,8 +72,8 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 5000
-    targetPort: 5000
+  - port: 5002
+    targetPort: 5002
     name: http
   selector:
     app: recruitment

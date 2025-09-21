@@ -5,8 +5,13 @@ import logging
 from datetime import datetime
 import uuid
 
-from onboarding.seedwork.aplicacion.comandos import CommandBus
-from onboarding.seedwork.aplicacion.queries import QueryBus
+from src.onboarding.seedwork.aplicacion.comandos import CommandBus
+from src.onboarding.seedwork.aplicacion.queries import QueryBus
+from src.onboarding.saga_integration import OnboardingSagaIntegration
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../../..'))
+from src.pulsar_event_dispatcher import PulsarEventDispatcher
 
 
 def crear_app():
@@ -33,17 +38,24 @@ def crear_app():
     app.query_bus = query_bus
     
     # Register blueprints
-    from onboarding.api.contracts import contracts_bp
-    from onboarding.api.contracts_query import contracts_query_bp
-    from onboarding.api.negotiations import negotiations_bp
-    from onboarding.api.legal import legal_bp
-    from onboarding.api.documents import documents_bp
+    from src.onboarding.api.contracts import contracts_bp
+    from src.onboarding.api.contracts_query import contracts_query_bp
+    from src.onboarding.api.negotiations import negotiations_bp
+    from src.onboarding.api.legal import legal_bp
+    from src.onboarding.api.documents import documents_bp
     
     app.register_blueprint(contracts_bp, url_prefix='/contracts')
     app.register_blueprint(contracts_query_bp, url_prefix='/contracts-query')
     app.register_blueprint(negotiations_bp, url_prefix='/negotiations')
     app.register_blueprint(legal_bp, url_prefix='/legal')
     app.register_blueprint(documents_bp, url_prefix='/documents')
+    
+    # Initialize saga integration
+    event_dispatcher = PulsarEventDispatcher("onboarding")
+    onboarding_saga = OnboardingSagaIntegration(event_dispatcher)
+    
+    # Add saga integration endpoints
+    add_saga_endpoints(app, onboarding_saga)
     
     # Health check endpoints
     @app.route('/health')
@@ -154,6 +166,43 @@ def setup_logging():
     logging.getLogger().addFilter(CorrelationIDFilter())
 
 
+def add_saga_endpoints(app, onboarding_saga):
+    """Agregar endpoints de integración de saga"""
+    
+    @app.route('/saga/partner-onboarding', methods=['POST'])
+    def handle_saga_partner_onboarding():
+        """Endpoint para manejar eventos de saga de onboarding de partners"""
+        try:
+            data = request.get_json()
+            
+            # Crear evento de onboarding iniciado
+            event_data = {
+                'partner_id': data['partner_id'],
+                'partner_data': data['partner_data'],
+                'correlation_id': data.get('correlation_id', str(uuid.uuid4())),
+                'causation_id': data.get('causation_id', str(uuid.uuid4()))
+            }
+            
+            # Procesar el evento
+            result = onboarding_saga.handle_partner_onboarding_initiated(event_data)
+            
+            return jsonify({
+                'status': 'success',
+                'message': 'Partner onboarding processed by Onboarding service',
+                'partner_id': data['partner_id'],
+                'result': result,
+                'timestamp': datetime.utcnow().isoformat()
+            }), 200
+            
+        except Exception as e:
+            return jsonify({
+                'status': 'error',
+                'message': f'Error processing partner onboarding: {str(e)}',
+                'timestamp': datetime.utcnow().isoformat()
+            }), 500
+
+
 if __name__ == '__main__':
     app = crear_app()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    port = int(os.environ.get('SERVICE_PORT', 5001))
+    app.run(host='0.0.0.0', port=port, debug=True)

@@ -5,6 +5,9 @@ import logging
 from datetime import datetime
 import uuid
 
+# Importar integración de saga
+from src.recruitment.saga_integration import create_recruitment_saga_integration
+
 
 def crear_app():
     app = Flask(__name__)
@@ -23,17 +26,30 @@ def crear_app():
     setup_logging()
     
     # Register blueprints
-    from recruitment.api.candidates import candidates_bp
-    from recruitment.api.jobs import jobs_bp
-    from recruitment.api.applications import applications_bp
-    from recruitment.api.search import search_bp
-    from recruitment.api.matching import matching_bp
+    from src.recruitment.api.candidates import candidates_bp
+    from src.recruitment.api.jobs import jobs_bp
+    from src.recruitment.api.applications import applications_bp
+    from src.recruitment.api.search import search_bp
+    from src.recruitment.api.matching import matching_bp
     
     app.register_blueprint(candidates_bp, url_prefix='/candidates')
     app.register_blueprint(jobs_bp, url_prefix='/jobs')
     app.register_blueprint(applications_bp, url_prefix='/applications')
     app.register_blueprint(search_bp, url_prefix='/search')
     app.register_blueprint(matching_bp, url_prefix='/matching')
+    
+    # Inicializar integración de saga
+    try:
+        logging.info("Attempting to initialize Recruitment saga integration...")
+        saga_integration = create_recruitment_saga_integration()
+        if saga_integration:
+            logging.info("Recruitment saga integration initialized successfully")
+        else:
+            logging.warning("Failed to initialize Recruitment saga integration")
+    except Exception as e:
+        logging.error(f"Error initializing Recruitment saga integration: {str(e)}")
+        import traceback
+        logging.error(f"Traceback: {traceback.format_exc()}")
     
     # Health check endpoints
     @app.route('/health')
@@ -140,4 +156,5 @@ def setup_logging():
 
 if __name__ == '__main__':
     app = crear_app()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    port = int(os.environ.get('SERVICE_PORT', 5002))
+    app.run(host='0.0.0.0', port=port, debug=True)

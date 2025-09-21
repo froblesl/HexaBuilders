@@ -6,9 +6,9 @@ import logging
 from dataclasses import dataclass
 from typing import Optional
 
-from onboarding.seedwork.aplicacion.queries import ejecutar_query
-from onboarding.seedwork.infraestructura.uow import UnitOfWork
-from onboarding.seedwork.dominio.excepciones import DomainException
+from src.onboarding.seedwork.aplicacion.queries import ejecutar_query
+from src.onboarding.seedwork.infraestructura.uow import UnitOfWork
+from src.onboarding.seedwork.dominio.excepciones import DomainException
 from ...infraestructura.dto import ContractDTO
 from .base import QueryContract, QueryResultContract
 

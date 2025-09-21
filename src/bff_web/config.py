@@ -27,7 +27,7 @@ class Settings:
     ]
     
     # Configuración de servicios
-    SAGA_SERVICE_URL: str = os.getenv("SAGA_SERVICE_URL", "http://localhost:5000")
+    SAGA_SERVICE_URL: str = os.getenv("SAGA_SERVICE_URL", "http://partner-management:5000")
     SAGA_SERVICE_TIMEOUT: int = int(os.getenv("SAGA_SERVICE_TIMEOUT", "30"))
     
     # Configuración de logging

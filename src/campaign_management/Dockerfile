@@ -15,13 +15,13 @@ COPY pulsar-requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir -r pulsar-requirements.txt
 
-COPY src/campaign_management/ ./campaign_management/
+COPY src/ ./src/
 
 ENV PYTHONPATH=/app
 
-EXPOSE 5000
+EXPOSE 5003
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:5000/health || exit 1
+    CMD curl -f http://localhost:${SERVICE_PORT:-5003}/health || exit 1
 
-CMD ["python", "-m", "campaign_management.seedwork.presentacion.api"]
+CMD ["python", "-m", "src.campaign_management.seedwork.presentacion.api"]

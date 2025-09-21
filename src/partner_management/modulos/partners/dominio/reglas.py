@@ -3,7 +3,7 @@ Business rules for Partner domain.
 """
 
 from typing import Optional
-from partner_management.seedwork.dominio.reglas import BusinessRule
+from src.partner_management.seedwork.dominio.reglas import BusinessRule
 from .objetos_valor import PartnerEmail, PartnerPhone, PartnerValidationData
 
 
