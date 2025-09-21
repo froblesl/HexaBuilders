@@ -22,11 +22,32 @@ spec:
         # Esta imagen se construirá y subirá a GCR
         image: gcr.io/PROJECT_ID/hexabuilders-notifications:latest
         imagePullPolicy: Always
+        ports:
+        - containerPort: 5004
+          name: http
         env:
-        - name: PARTNER-MANAGEMENT_ADDRESS
-          value: "partner-management"
-        - name: PULSAR_ADDRESS
-          value: "broker"
+        - name: PYTHONPATH
+          value: "/app/src"
+        - name: PULSAR_BROKER_URL
+          value: "pulsar://broker:6650"
+        - name: PULSAR_ADMIN_URL
+          value: "http://broker:8080"
+        - name: FLASK_ENV
+          value: "production"
+        - name: SERVICE_PORT
+          value: "5004"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5004
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5004
+          initialDelaySeconds: 15
+          periodSeconds: 5
         resources:
           requests:
             memory: "128Mi"
@@ -46,8 +67,8 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 8000
-    targetPort: 8000
+  - port: 5004
+    targetPort: 5004
     name: http
   selector:
     app: notifications

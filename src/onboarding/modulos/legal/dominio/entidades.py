@@ -4,8 +4,8 @@ from enum import Enum
 from typing import List, Dict, Any, Optional
 from uuid import uuid4
 
-from onboarding.seedwork.dominio.entidades import AggregateRoot
-from onboarding.seedwork.dominio.eventos import DomainEvent
+from src.onboarding.seedwork.dominio.entidades import AggregateRoot
+from src.onboarding.seedwork.dominio.eventos import DomainEvent
 
 
 class LegalDocumentType(Enum):

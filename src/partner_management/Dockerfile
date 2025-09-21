@@ -20,7 +20,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir -r pulsar-requirements.txt
 
 # Copy application code
-COPY src/partner_management/ ./partner_management/
+COPY src/ ./src/
 
 # Set Python path
 ENV PYTHONPATH=/app
@@ -33,4 +33,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:5000/health || exit 1
 
 # Run application
-CMD ["python", "-m", "partner_management.seedwork.presentacion.api"]
+CMD ["python", "-m", "src.partner_management.seedwork.presentacion.api"]

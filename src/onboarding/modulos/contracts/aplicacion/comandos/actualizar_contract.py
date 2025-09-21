@@ -7,9 +7,9 @@ from dataclasses import dataclass
 from typing import Optional
 from datetime import date
 
-from onboarding.seedwork.aplicacion.comandos import ejecutar_comando
-from onboarding.seedwork.infraestructura.uow import UnitOfWork
-from onboarding.seedwork.dominio.excepciones import DomainException
+from src.onboarding.seedwork.aplicacion.comandos import ejecutar_comando
+from src.onboarding.seedwork.infraestructura.uow import UnitOfWork
+from src.onboarding.seedwork.dominio.excepciones import DomainException
 from ...dominio.objetos_valor import ContractType
 from .base import CommandContract
 

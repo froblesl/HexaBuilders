@@ -3,13 +3,13 @@ from datetime import datetime
 from typing import Dict, Any, List, Optional
 from enum import Enum
 
-from onboarding.seedwork.dominio.entidades import AggregateRoot, ValueObject, DomainEvent
-from onboarding.seedwork.dominio.excepciones import (
+from src.onboarding.seedwork.dominio.entidades import AggregateRoot, ValueObject, DomainEvent
+from src.onboarding.seedwork.dominio.excepciones import (
     ContractInvalidStateException,
     ContractAlreadySignedException,
     ContractValidationException
 )
-from onboarding.seedwork.dominio.eventos import (
+from src.onboarding.seedwork.dominio.eventos import (
     ContractCreated,
     ContractTermsUpdated,
     ContractSubmittedForLegalReview,

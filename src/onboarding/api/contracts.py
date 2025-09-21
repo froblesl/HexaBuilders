@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, current_app
 from datetime import datetime
 import uuid
 
-from onboarding.seedwork.aplicacion.comandos import (
+from src.onboarding.seedwork.aplicacion.comandos import (
     CreateContract,
     UpdateContractTerms,
     SubmitForLegalReview,

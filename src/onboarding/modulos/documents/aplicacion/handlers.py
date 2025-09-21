@@ -2,10 +2,10 @@ import logging
 from typing import Dict, Any
 from datetime import datetime
 
-from onboarding.seedwork.aplicacion.comandos import Command, CommandHandler
-from onboarding.seedwork.aplicacion.queries import Query, QueryHandler
-from onboarding.seedwork.aplicacion.handlers import Handler
-from onboarding.seedwork.dominio.uow import UnitOfWork
+from src.onboarding.seedwork.aplicacion.comandos import Command, CommandHandler
+from src.onboarding.seedwork.aplicacion.queries import Query, QueryHandler
+from src.onboarding.seedwork.aplicacion.handlers import Handler
+from src.onboarding.seedwork.dominio.uow import UnitOfWork
 
 from ..dominio.entidades import Document, DocumentPackage, DocumentType, VerificationLevel, DocumentStatus
 from ..dominio.repositorios import DocumentRepository, DocumentPackageRepository, DocumentQueryRepository

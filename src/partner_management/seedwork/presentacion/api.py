@@ -8,14 +8,14 @@ from flask import Flask, request, jsonify, g, current_app
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 
-from ..dominio.excepciones import (
+from src.partner_management.seedwork.dominio.excepciones import (
     DomainException, 
     ValidationException, 
     EntityNotFoundException,
     BusinessRuleViolationException,
     AuthorizationException
 )
-from ..aplicacion.dto import ResponseDTO, ErrorResponseDTO, ValidationErrorDTO
+from src.partner_management.seedwork.aplicacion.dto import ResponseDTO, ErrorResponseDTO, ValidationErrorDTO
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +60,9 @@ def create_app(config: Optional[Dict[str, Any]] = None) -> Flask:
     
     # Registrar blueprints CQRS
     register_cqrs_blueprints(app)
+    
+    # Registrar blueprints de Saga
+    register_saga_blueprints(app)
     
     # Configurar logging
     setup_logging(app)
@@ -230,13 +233,25 @@ def register_middleware(app: Flask) -> None:
 def register_cqrs_blueprints(app: Flask) -> None:
     """Registrar blueprints CQRS de la aplicación."""
     try:
-        from ...api.partners_cqrs import bp as partners_bp
+        from src.partner_management.api.partners_cqrs import bp as partners_bp
         app.register_blueprint(partners_bp)
         logger.info("Partners CQRS blueprint registered successfully")
     except ImportError as e:
         logger.warning(f"Could not register Partners CQRS blueprint: {e}")
     except Exception as e:
         logger.error(f"Error registering CQRS blueprints: {e}")
+
+
+def register_saga_blueprints(app: Flask) -> None:
+    """Registrar blueprints de Saga de la aplicación."""
+    try:
+        from src.partner_management.api.saga_endpoints import saga_bp
+        app.register_blueprint(saga_bp, url_prefix='/api/v1/saga')
+        logger.info("Saga blueprint registered successfully")
+    except ImportError as e:
+        logger.warning(f"Could not register Saga blueprint: {e}")
+    except Exception as e:
+        logger.error(f"Error registering Saga blueprints: {e}")
 
 
 def register_health_endpoints(app: Flask) -> None:
@@ -589,7 +604,7 @@ def paginate_response(items: List[Any], page: int, page_size: int, total_count: 
     Returns:
         Diccionario de respuesta paginada
     """
-    from ..aplicacion.dto import PagedResponseDTO
+    from src.partner_management.seedwork.aplicacion.dto import PagedResponseDTO
     
     response = PagedResponseDTO.create(
         items=items,

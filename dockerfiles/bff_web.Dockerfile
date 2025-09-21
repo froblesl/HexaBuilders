@@ -32,5 +32,5 @@ ENV PORT=8000
 ENV SAGA_SERVICE_URL=http://partner-management:5000
 ENV LOG_LEVEL=INFO
 
-# Comando de inicio
-CMD ["python", "-m", "uvicorn", "src.bff_web.app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Comando de inicio para producción
+CMD ["python", "-m", "uvicorn", "src.bff_web.app:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]

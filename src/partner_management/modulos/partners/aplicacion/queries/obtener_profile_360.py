@@ -6,9 +6,9 @@ import logging
 from dataclasses import dataclass
 from typing import Optional, List, Dict, Any
 
-from partner_management.seedwork.aplicacion.queries import ejecutar_query
-from partner_management.seedwork.infraestructura.uow import UnitOfWork
-from partner_management.seedwork.dominio.excepciones import DomainException
+from src.partner_management.seedwork.aplicacion.queries import ejecutar_query
+from src.partner_management.seedwork.infraestructura.uow import UnitOfWork
+from src.partner_management.seedwork.dominio.excepciones import DomainException
 from ...infraestructura.dto import PartnerDTO
 from .base import QueryPartner, QueryResultPartner
 

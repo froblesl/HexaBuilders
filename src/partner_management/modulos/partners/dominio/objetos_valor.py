@@ -6,8 +6,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any
 
-from partner_management.seedwork.dominio.objetos_valor import ValueObject
-from partner_management.seedwork.dominio.excepciones import DomainException
+from src.partner_management.seedwork.dominio.objetos_valor import ValueObject
+from src.partner_management.seedwork.dominio.excepciones import DomainException
 
 
 class PartnerType(Enum):

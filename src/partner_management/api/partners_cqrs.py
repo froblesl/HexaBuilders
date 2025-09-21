@@ -6,16 +6,16 @@ import logging
 from flask import Blueprint, request, jsonify, Response
 from datetime import datetime
 
-from ..seedwork.aplicacion.comandos import ejecutar_comando
-from ..seedwork.aplicacion.queries import ejecutar_query
-from ..seedwork.dominio.excepciones import DomainException
-from ..modulos.partners.aplicacion.comandos.crear_partner import CrearPartner
-from ..modulos.partners.aplicacion.comandos.actualizar_partner import ActualizarPartner
-from ..modulos.partners.aplicacion.comandos.activar_partner import ActivarPartner
-from ..modulos.partners.aplicacion.comandos.desactivar_partner import DesactivarPartner
-from ..modulos.partners.aplicacion.queries.obtener_partner import ObtenerPartner
-from ..modulos.partners.aplicacion.queries.obtener_todos_partners import ObtenerTodosPartners
-from ..modulos.partners.aplicacion.queries.obtener_profile_360 import ObtenerProfile360
+from src.partner_management.seedwork.aplicacion.comandos import ejecutar_comando
+from src.partner_management.seedwork.aplicacion.queries import ejecutar_query
+from src.partner_management.seedwork.dominio.excepciones import DomainException
+from src.partner_management.modulos.partners.aplicacion.comandos.crear_partner import CrearPartner
+from src.partner_management.modulos.partners.aplicacion.comandos.actualizar_partner import ActualizarPartner
+from src.partner_management.modulos.partners.aplicacion.comandos.activar_partner import ActivarPartner
+from src.partner_management.modulos.partners.aplicacion.comandos.desactivar_partner import DesactivarPartner
+from src.partner_management.modulos.partners.aplicacion.queries.obtener_partner import ObtenerPartner
+from src.partner_management.modulos.partners.aplicacion.queries.obtener_todos_partners import ObtenerTodosPartners
+from src.partner_management.modulos.partners.aplicacion.queries.obtener_profile_360 import ObtenerProfile360
 
 logger = logging.getLogger(__name__)
 

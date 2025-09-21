@@ -10,7 +10,7 @@ from enum import Enum
 
 
 @strawberry.enum
-class ChoreographySagaStatus:
+class ChoreographySagaStatus(Enum):
     """Estados de una Saga de Choreography"""
     INITIATED = "initiated"
     PARTNER_REGISTERED = "partner_registered"
@@ -25,7 +25,7 @@ class ChoreographySagaStatus:
 
 
 @strawberry.enum
-class PartnerType:
+class PartnerType(Enum):
     """Tipos de Partner"""
     EMPRESA = "EMPRESA"
     INDIVIDUAL = "INDIVIDUAL"
@@ -33,7 +33,7 @@ class PartnerType:
 
 
 @strawberry.enum
-class ContractType:
+class ContractType(Enum):
     """Tipos de Contrato"""
     BASIC = "BASIC"
     STANDARD = "STANDARD"

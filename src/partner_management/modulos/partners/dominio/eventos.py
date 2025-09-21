@@ -5,7 +5,7 @@ Implements all partner-related domain events following CQRS patterns.
 
 from typing import Dict, Any, Optional
 
-from partner_management.seedwork.dominio.eventos import DomainEvent, IntegrationEvent, EventMetadata
+from src.partner_management.seedwork.dominio.eventos import DomainEvent, IntegrationEvent, EventMetadata
 
 
 class PartnerCreated(DomainEvent):

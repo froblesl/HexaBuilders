@@ -6,9 +6,9 @@ import logging
 from dataclasses import dataclass
 from typing import Optional
 
-from onboarding.seedwork.aplicacion.comandos import ejecutar_comando
-from onboarding.seedwork.infraestructura.uow import UnitOfWork
-from onboarding.seedwork.dominio.excepciones import DomainException
+from src.onboarding.seedwork.aplicacion.comandos import ejecutar_comando
+from src.onboarding.seedwork.infraestructura.uow import UnitOfWork
+from src.onboarding.seedwork.dominio.excepciones import DomainException
 from ...dominio.entidades import Document
 from ...dominio.objetos_valor import DocumentType, DocumentStatus
 from ...infraestructura.fabricas import FabricaDocument

@@ -5,6 +5,9 @@ import logging
 from datetime import datetime
 import uuid
 
+# Importar integración de saga
+from src.campaign_management.saga_integration import create_campaign_saga_integration
+
 
 def crear_app():
     app = Flask(__name__)
@@ -22,17 +25,30 @@ def crear_app():
     setup_logging()
     
     # Register blueprints
-    from campaign_management.api.campaigns import campaigns_bp
-    from campaign_management.api.campaigns_query import campaigns_query_bp
-    from campaign_management.api.performance import performance_bp
-    from campaign_management.api.budget import budget_bp
-    from campaign_management.api.targeting import targeting_bp
+    from src.campaign_management.api.campaigns import campaigns_bp
+    from src.campaign_management.api.campaigns_query import campaigns_query_bp
+    from src.campaign_management.api.performance import performance_bp
+    from src.campaign_management.api.budget import budget_bp
+    from src.campaign_management.api.targeting import targeting_bp
     
     app.register_blueprint(campaigns_bp, url_prefix='/campaigns')
     app.register_blueprint(campaigns_query_bp, url_prefix='/campaigns-query')
     app.register_blueprint(performance_bp, url_prefix='/performance')
     app.register_blueprint(budget_bp, url_prefix='/budget')
     app.register_blueprint(targeting_bp, url_prefix='/targeting')
+    
+    # Inicializar integración de saga
+    try:
+        logging.info("Attempting to initialize Campaign Management saga integration...")
+        saga_integration = create_campaign_saga_integration()
+        if saga_integration:
+            logging.info("Campaign Management saga integration initialized successfully")
+        else:
+            logging.warning("Failed to initialize Campaign Management saga integration")
+    except Exception as e:
+        logging.error(f"Error initializing Campaign Management saga integration: {str(e)}")
+        import traceback
+        logging.error(f"Traceback: {traceback.format_exc()}")
     
     # Health check endpoints
     @app.route('/health')
@@ -138,4 +154,5 @@ def setup_logging():
 
 if __name__ == '__main__':
     app = crear_app()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    port = int(os.environ.get('SERVICE_PORT', 5003))
+    app.run(host='0.0.0.0', port=port, debug=True)

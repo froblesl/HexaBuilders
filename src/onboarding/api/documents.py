@@ -3,7 +3,7 @@ from datetime import datetime
 import asyncio
 from typing import Dict, Any
 
-from onboarding.modulos.documents.aplicacion.handlers import (
+from src.onboarding.modulos.documents.aplicacion.handlers import (
     UploadDocumentCommand, UploadDocumentHandler,
     ReviewDocumentCommand, ReviewDocumentHandler,
     PerformComplianceCheckCommand, ComplianceCheckHandler,

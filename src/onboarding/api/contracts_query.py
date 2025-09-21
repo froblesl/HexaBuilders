@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, current_app
 from datetime import datetime
 
-from onboarding.seedwork.aplicacion.queries import (
+from src.onboarding.seedwork.aplicacion.queries import (
     GetContract,
     GetContractsByPartner,
     SearchContracts,

@@ -6,8 +6,8 @@ import logging
 from dataclasses import dataclass
 from typing import List, Optional
 
-from onboarding.seedwork.aplicacion.queries import ejecutar_query
-from onboarding.seedwork.infraestructura.uow import UnitOfWork
+from src.onboarding.seedwork.aplicacion.queries import ejecutar_query
+from src.onboarding.seedwork.infraestructura.uow import UnitOfWork
 from ...infraestructura.dto import ContractDTO
 from .base import QueryContract, QueryResultContract
 

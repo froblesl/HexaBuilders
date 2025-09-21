@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any
 
-from partner_management.seedwork.aplicacion.queries import Query, QueryResult
+from src.partner_management.seedwork.aplicacion.queries import Query, QueryResult
 
 logger = logging.getLogger(__name__)
 

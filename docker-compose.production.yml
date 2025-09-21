@@ -238,6 +238,61 @@ services:
       timeout: 10s
       retries: 3
 
+  # Notifications Service
+  notifications:
+    build:
+      context: .
+      dockerfile: dockerfiles/notifications.Dockerfile
+    container_name: notifications
+    hostname: notifications
+    networks:
+      - pulsar
+    environment:
+      - PULSAR_BROKER_URL=pulsar://broker:6650
+      - PULSAR_ADDRESS=broker
+      - PULSAR_ADMIN_URL=http://broker:8080
+      - FLASK_ENV=production
+      - SERVICE_PORT=5004
+    ports:
+      - "5004:5004"
+    depends_on:
+      broker:
+        condition: service_started
+    volumes:
+      - ./src:/app/src
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BFF Web Service
+  bff-web:
+    build:
+      context: .
+      dockerfile: dockerfiles/bff_web.Dockerfile
+    container_name: bff-web
+    hostname: bff-web
+    networks:
+      - pulsar
+    environment:
+      - SAGA_SERVICE_URL=http://partner-management:5000
+      - SAGA_SERVICE_TIMEOUT=30
+      - BFF_PORT=8000
+      - ENVIRONMENT=production
+    ports:
+      - "8000:8000"
+    depends_on:
+      partner-management:
+        condition: service_started
+    volumes:
+      - ./src:/app/src
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
 networks:
   pulsar:
     driver: bridge

@@ -1,19 +1,19 @@
 from typing import Dict, Any
 from datetime import datetime
 
-from onboarding.seedwork.aplicacion.comandos import CommandHandler, CommandResult
-from onboarding.seedwork.aplicacion.queries import QueryHandler, QueryResult
-from onboarding.seedwork.dominio.entidades import EventStore
-from onboarding.modulos.contracts.dominio.entidades import Contract, ContractType
-from onboarding.modulos.contracts.dominio.repositorios import (
+from src.onboarding.seedwork.aplicacion.comandos import CommandHandler, CommandResult
+from src.onboarding.seedwork.aplicacion.queries import QueryHandler, QueryResult
+from src.onboarding.seedwork.dominio.entidades import EventStore
+from src.onboarding.modulos.contracts.dominio.entidades import Contract, ContractType
+from src.onboarding.modulos.contracts.dominio.repositorios import (
     ContractRepository, 
     ContractTemplateRepository
 )
-from onboarding.seedwork.dominio.excepciones import (
+from src.onboarding.seedwork.dominio.excepciones import (
     ContractNotFoundException,
     ContractValidationException
 )
-from onboarding.seedwork.aplicacion.comandos import (
+from src.onboarding.seedwork.aplicacion.comandos import (
     CreateContract,
     UpdateContractTerms,
     SubmitForLegalReview,
@@ -23,7 +23,7 @@ from onboarding.seedwork.aplicacion.comandos import (
     ActivateContract,
     CancelContract
 )
-from onboarding.seedwork.aplicacion.queries import (
+from src.onboarding.seedwork.aplicacion.queries import (
     GetContract,
     GetContractsByPartner,
     SearchContracts,

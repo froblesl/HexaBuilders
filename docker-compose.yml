@@ -28,7 +28,7 @@ services:
   # Apache Pulsar services
   zookeeper:
     image: apachepulsar/pulsar:3.1.0
-    profiles: ["pulsar"]
+    profiles: ["pulsar", "full"]
     container_name: zookeeper
     restart: on-failure
     networks:
@@ -53,7 +53,7 @@ services:
     container_name: pulsar-init
     hostname: pulsar-init
     image: apachepulsar/pulsar:3.1.0
-    profiles: ["pulsar"]
+    profiles: ["pulsar", "full"]
     networks:
       - pulsar
     environment:
@@ -68,7 +68,7 @@ services:
 
   bookie:
     image: apachepulsar/pulsar:3.1.0
-    profiles: ["pulsar"]
+    profiles: ["pulsar", "full"]
     container_name: bookie
     restart: on-failure
     networks:
@@ -93,7 +93,7 @@ services:
 
   broker:
     image: apachepulsar/pulsar:3.1.0
-    profiles: ["pulsar"]
+    profiles: ["pulsar", "full"]
     container_name: broker
     hostname: broker
     restart: on-failure
@@ -107,7 +107,7 @@ services:
       - managedLedgerDefaultWriteQuorum=1
       - managedLedgerDefaultAckQuorum=1
       - advertisedAddress=broker
-      - advertisedListeners=external:pulsar://127.0.0.1:6650
+      - advertisedListeners=external:pulsar://broker:6650
       - PULSAR_MEM=-Xms512m -Xmx512m -XX:MaxDirectMemorySize=256m
     depends_on:
       pulsar-init:
@@ -143,7 +143,7 @@ services:
     networks:
       - pulsar
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9200/_health || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -277,7 +277,7 @@ services:
   notifications:
     build:
       context: .
-      dockerfile: src/notificaciones/Dockerfile
+      dockerfile: notifications.Dockerfile
     container_name: notifications
     hostname: notifications
     profiles: ["services", "full"]
@@ -295,7 +295,7 @@ services:
     ports:
       - "5004:5004"
     volumes:
-      - ./src/notificaciones:/app
+      - ./src:/app/src
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5004/health"]
       interval: 30s

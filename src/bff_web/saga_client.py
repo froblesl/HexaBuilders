@@ -7,6 +7,7 @@ import httpx
 import logging
 from typing import Dict, Any, Optional
 from datetime import datetime
+from .config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -14,9 +15,9 @@ logger = logging.getLogger(__name__)
 class SagaClient:
     """Cliente para el servicio de Saga"""
     
-    def __init__(self, base_url: str = "http://localhost:5000"):
-        self.base_url = base_url
-        self.timeout = 30.0
+    def __init__(self, base_url: str = None):
+        self.base_url = base_url or settings.SAGA_SERVICE_URL
+        self.timeout = settings.SAGA_SERVICE_TIMEOUT
         self.logger = logging.getLogger(self.__class__.__name__)
     
     async def start_partner_onboarding(self, partner_data: Dict[str, Any], correlation_id: Optional[str] = None) -> Dict[str, Any]:
@@ -29,7 +30,7 @@ class SagaClient:
             
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 response = await client.post(
-                    f"{self.base_url}/sagas/partner-onboarding",
+                    f"{self.base_url}/api/v1/saga/partner-onboarding",
                     json=payload
                 )
                 response.raise_for_status()
@@ -46,7 +47,7 @@ class SagaClient:
         """Obtiene el estado de una Saga"""
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
-                response = await client.get(f"{self.base_url}/sagas/{partner_id}/status")
+                response = await client.get(f"{self.base_url}/api/v1/saga/{partner_id}/status")
                 
                 if response.status_code == 404:
                     return None
@@ -70,7 +71,7 @@ class SagaClient:
             
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 response = await client.post(
-                    f"{self.base_url}/sagas/{partner_id}/compensate",
+                    f"{self.base_url}/api/v1/saga/{partner_id}/compensate",
                     json=payload
                 )
                 response.raise_for_status()
@@ -87,7 +88,7 @@ class SagaClient:
         """Verifica el estado de salud del servicio"""
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
-                response = await client.get(f"{self.base_url}/sagas/health")
+                response = await client.get(f"{self.base_url}/api/v1/saga/health")
                 response.raise_for_status()
                 return response.json()
                 

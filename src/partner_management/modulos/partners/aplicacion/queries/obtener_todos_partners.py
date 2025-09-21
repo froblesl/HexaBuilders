@@ -5,8 +5,8 @@ import logging
 from dataclasses import dataclass
 from typing import List, Optional
 
-from partner_management.seedwork.aplicacion.queries import ejecutar_query
-from partner_management.seedwork.infraestructura.uow import InMemoryUnitOfWork
+from src.partner_management.seedwork.aplicacion.queries import ejecutar_query
+from src.partner_management.seedwork.infraestructura.uow import InMemoryUnitOfWork
 from ...infraestructura.dto import PartnerDTO
 from .base import QueryPartner, QueryResultPartner
 
