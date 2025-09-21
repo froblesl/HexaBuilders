@@ -246,10 +246,12 @@ def register_saga_blueprints(app: Flask) -> None:
     """Registrar blueprints de Saga de la aplicación."""
     try:
         from src.partner_management.api.saga_endpoints import saga_bp
+        from src.partner_management.api.saga_dashboard_endpoints import dashboard_bp
         app.register_blueprint(saga_bp, url_prefix='/api/v1/saga')
-        logger.info("Saga blueprint registered successfully")
+        app.register_blueprint(dashboard_bp, url_prefix='/api/v1/saga-dashboard')
+        logger.info("Saga blueprints registered successfully")
     except ImportError as e:
-        logger.warning(f"Could not register Saga blueprint: {e}")
+        logger.warning(f"Could not register Saga blueprints: {e}")
     except Exception as e:
         logger.error(f"Error registering Saga blueprints: {e}")
 
