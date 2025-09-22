@@ -87,11 +87,14 @@ class SagaAuditTrail:
     def _load_existing_audit(self):
         """Carga registros de auditoría existentes"""
         if not os.path.exists(self.audit_file_path):
+            self.logger.info("No audit file found, starting fresh")
             return
         
         try:
             with open(self.audit_file_path, 'r') as f:
                 audit_data = json.load(f)
+                self.logger.info(f"Loading {len(audit_data)} audit records from {self.audit_file_path}")
+                
                 for record_data in audit_data:
                     record = SagaAuditRecord(
                         id=record_data['id'],
@@ -110,6 +113,10 @@ class SagaAuditTrail:
                         metadata=record_data.get('metadata')
                     )
                     self._audit_records.append(record)
+                    # Reconstruir timeline al cargar cada registro
+                    self._update_saga_timeline(record)
+                
+                self.logger.info(f"Successfully loaded {len(self._audit_records)} audit records and {len(self._saga_timelines)} timelines")
         except Exception as e:
             self.logger.warning(f"Failed to load existing audit records: {e}")
     
@@ -388,15 +395,35 @@ class SagaAuditTrail:
     
     def record_saga_completion(self, saga_id: str, partner_id: str, correlation_id: str, service_name: str, status: str):
         """Registra la finalización de una Saga"""
+        # Handle both string and dict status
+        if isinstance(status, dict):
+            status_str = status.get("status", "UNKNOWN")
+        else:
+            status_str = str(status)
+            
         self._add_audit_record(
             saga_id=saga_id,
             partner_id=partner_id,
-            event_type=f"SAGA_{status.upper()}",
+            event_type=f"SAGA_{status_str.upper()}",
             service_name=service_name,
             correlation_id=correlation_id,
             causation_id=correlation_id,
-            event_data={"status": status},
-            result=status.upper()
+            event_data={"status": status_str},
+            result=status_str.upper()
+        )
+    
+    def record_saga_failure(self, saga_id: str, partner_id: str, correlation_id: str, service_name: str, error_details: Dict[str, Any]):
+        """Registra el fallo de una Saga"""
+        self._add_audit_record(
+            saga_id=saga_id,
+            partner_id=partner_id,
+            event_type="SAGA_FAILED",
+            service_name=service_name,
+            correlation_id=correlation_id,
+            causation_id=correlation_id,
+            event_data=error_details,
+            result="FAILED",
+            error_details=error_details
         )
     
     def get_saga_timeline(self, saga_id: str) -> Optional[SagaTimeline]:
@@ -408,6 +435,11 @@ class SagaAuditTrail:
         """Obtiene todas las líneas de tiempo de un Partner"""
         with self._lock:
             return [timeline for timeline in self._saga_timelines.values() if timeline.partner_id == partner_id]
+    
+    def get_all_saga_timelines(self) -> List[SagaTimeline]:
+        """Obtiene todas las líneas de tiempo de sagas"""
+        with self._lock:
+            return list(self._saga_timelines.values())
     
     def get_audit_records(self, 
                          saga_id: Optional[str] = None,

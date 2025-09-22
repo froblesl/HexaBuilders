@@ -8,6 +8,9 @@ import uuid
 # Importar integración de saga
 from src.campaign_management.saga_integration import create_campaign_saga_integration
 
+# Importar control de estado del servicio
+from src.campaign_management.service_state import get_service_state, set_service_state
+
 
 def crear_app():
     app = Flask(__name__)
@@ -131,6 +134,9 @@ def crear_app():
         
         return response
     
+    # Add service control endpoints
+    add_service_control_endpoints(app)
+    
     return app
 
 
@@ -150,6 +156,69 @@ def setup_logging():
             return True
     
     logging.getLogger().addFilter(CorrelationIDFilter())
+
+
+def add_service_control_endpoints(app):
+    """Agrega endpoints para controlar el estado del servicio"""
+    
+    @app.route('/api/v1/service/status', methods=['GET'])
+    def get_service_status():
+        """Obtiene el estado actual del servicio"""
+        enabled = get_service_state()
+        return jsonify({
+            "service": "campaign-management",
+            "enabled": enabled,
+            "status": "enabled" if enabled else "disabled",
+            "timestamp": datetime.utcnow().isoformat()
+        })
+    
+    @app.route('/api/v1/service/disable', methods=['POST'])
+    def disable_service():
+        """Deshabilita el servicio para pruebas de compensación"""
+        set_service_state(False)
+        
+        logging.info("Campaign Management service DISABLED for compensation testing")
+        
+        return jsonify({
+            "message": "Campaign Management service disabled successfully",
+            "service": "campaign-management",
+            "enabled": False,
+            "status": "disabled",
+            "timestamp": datetime.utcnow().isoformat()
+        })
+    
+    @app.route('/api/v1/service/enable', methods=['POST'])
+    def enable_service():
+        """Habilita el servicio"""
+        set_service_state(True)
+        
+        logging.info("Campaign Management service ENABLED")
+        
+        return jsonify({
+            "message": "Campaign Management service enabled successfully",
+            "service": "campaign-management",
+            "enabled": True,
+            "status": "enabled",
+            "timestamp": datetime.utcnow().isoformat()
+        })
+    
+    @app.route('/api/v1/service/toggle', methods=['POST'])
+    def toggle_service():
+        """Alterna el estado del servicio"""
+        current_state = get_service_state()
+        new_state = not current_state
+        set_service_state(new_state)
+        
+        status = "enabled" if new_state else "disabled"
+        logging.info(f"Campaign Management service TOGGLED to {status}")
+        
+        return jsonify({
+            "message": f"Campaign Management service {status} successfully",
+            "service": "campaign-management",
+            "enabled": new_state,
+            "status": status,
+            "timestamp": datetime.utcnow().isoformat()
+        })
 
 
 if __name__ == '__main__':

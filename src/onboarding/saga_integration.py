@@ -22,13 +22,20 @@ class OnboardingSagaIntegration:
     def __init__(self, event_dispatcher: PulsarEventDispatcher):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.event_dispatcher = event_dispatcher
+        self._processed_events = set()  # Para evitar procesar eventos duplicados
         self._subscribe_to_events()
     
     def _subscribe_to_events(self):
         """Suscribirse a eventos relevantes"""
+        # Eventos normales
         self.event_dispatcher.subscribe("PartnerOnboardingInitiated", self._handle_partner_onboarding_initiated)
         self.event_dispatcher.subscribe("ContractCreationRequested", self._handle_contract_creation_requested)
         self.event_dispatcher.subscribe("DocumentVerificationRequested", self._handle_document_verification_requested)
+        
+        # Eventos de compensación
+        self.event_dispatcher.subscribe("ContractCancellationRequested", self._handle_contract_cancellation_requested)
+        self.event_dispatcher.subscribe("DocumentVerificationRevertRequested", self._handle_document_verification_revert_requested)
+        self.event_dispatcher.subscribe("PartnerRegistrationRevertRequested", self._handle_partner_registration_revert_requested)
     
     def _handle_partner_onboarding_initiated(self, event_data: Dict[str, Any]):
         """Maneja el evento de onboarding iniciado"""
@@ -102,6 +109,144 @@ class OnboardingSagaIntegration:
         except Exception as e:
             self.logger.error(f"Error verifying documents for {partner_id}: {str(e)}")
     
+    def _handle_contract_cancellation_requested(self, event_data: Dict[str, Any]):
+        """Maneja la solicitud de cancelación de contrato (compensación)"""
+        partner_id = event_data["partner_id"]
+        saga_id = event_data.get("saga_id")
+        
+        # Check for duplicate events
+        event_id = f"contract_cancellation_requested_{partner_id}_{event_data.get('causation_id', '')}"
+        if event_id in self._processed_events:
+            self.logger.info(f"Contract cancellation request already processed, skipping: {event_id}")
+            return
+        self._processed_events.add(event_id)
+        
+        self.logger.info(f"Compensating: Cancelling contract for partner {partner_id}")
+        
+        try:
+            # Simular cancelación de contrato
+            time.sleep(0.5)
+            
+            # Aquí iría la lógica real de cancelación:
+            # - Marcar contrato como cancelado en BD
+            # - Revertir permisos otorgados
+            # - Notificar sistemas dependientes
+            
+            # Publicar evento de contrato cancelado
+            self.event_dispatcher.publish("ContractCancelled", {
+                "partner_id": partner_id,
+                "saga_id": saga_id,
+                "correlation_id": event_data["correlation_id"],
+                "causation_id": event_data["causation_id"],
+                "step": "contract_creation"
+            })
+            
+            self.logger.info(f"Contract cancelled for partner {partner_id} (compensation completed)")
+            
+        except Exception as e:
+            self.logger.error(f"Error cancelling contract for {partner_id}: {str(e)}")
+            # En caso de error, aún publicamos el evento para continuar la compensación
+            self.event_dispatcher.publish("ContractCancelled", {
+                "partner_id": partner_id,
+                "saga_id": saga_id,
+                "correlation_id": event_data["correlation_id"],
+                "causation_id": event_data["causation_id"],
+                "step": "contract_creation",
+                "error": str(e)
+            })
+    
+    def _handle_document_verification_revert_requested(self, event_data: Dict[str, Any]):
+        """Maneja la solicitud de reversión de verificación de documentos (compensación)"""
+        partner_id = event_data["partner_id"]
+        saga_id = event_data.get("saga_id")
+        
+        # Check for duplicate events
+        event_id = f"document_revert_requested_{partner_id}_{event_data.get('causation_id', '')}"
+        if event_id in self._processed_events:
+            self.logger.info(f"Document verification revert request already processed, skipping: {event_id}")
+            return
+        self._processed_events.add(event_id)
+        
+        self.logger.info(f"Compensating: Reverting document verification for partner {partner_id}")
+        
+        try:
+            # Simular reversión de verificación
+            time.sleep(0.5)
+            
+            # Aquí iría la lógica real de reversión:
+            # - Marcar documentos como no verificados
+            # - Revertir estado de verificación
+            # - Limpiar metadatos de verificación
+            
+            # Publicar evento de verificación revertida
+            self.event_dispatcher.publish("DocumentVerificationReverted", {
+                "partner_id": partner_id,
+                "saga_id": saga_id,
+                "correlation_id": event_data["correlation_id"],
+                "causation_id": event_data["causation_id"],
+                "step": "document_verification"
+            })
+            
+            self.logger.info(f"Document verification reverted for partner {partner_id} (compensation completed)")
+            
+        except Exception as e:
+            self.logger.error(f"Error reverting document verification for {partner_id}: {str(e)}")
+            # En caso de error, aún publicamos el evento para continuar la compensación
+            self.event_dispatcher.publish("DocumentVerificationReverted", {
+                "partner_id": partner_id,
+                "saga_id": saga_id,
+                "correlation_id": event_data["correlation_id"],
+                "causation_id": event_data["causation_id"],
+                "step": "document_verification",
+                "error": str(e)
+            })
+    
+    def _handle_partner_registration_revert_requested(self, event_data: Dict[str, Any]):
+        """Maneja la solicitud de reversión de registro de partner (compensación)"""
+        partner_id = event_data["partner_id"]
+        saga_id = event_data.get("saga_id")
+        
+        # Check for duplicate events
+        event_id = f"partner_revert_requested_{partner_id}_{event_data.get('causation_id', '')}"
+        if event_id in self._processed_events:
+            self.logger.info(f"Partner registration revert request already processed, skipping: {event_id}")
+            return
+        self._processed_events.add(event_id)
+        
+        self.logger.info(f"Compensating: Reverting partner registration for partner {partner_id}")
+        
+        try:
+            # Simular reversión de registro
+            time.sleep(0.5)
+            
+            # Aquí iría la lógica real de reversión:
+            # - Marcar partner como inactivo o eliminado
+            # - Revertir datos de registro
+            # - Limpiar permisos y configuraciones
+            
+            # Publicar evento de registro revertido
+            self.event_dispatcher.publish("PartnerRegistrationReverted", {
+                "partner_id": partner_id,
+                "saga_id": saga_id,
+                "correlation_id": event_data["correlation_id"],
+                "causation_id": event_data["causation_id"],
+                "step": "partner_registration"
+            })
+            
+            self.logger.info(f"Partner registration reverted for partner {partner_id} (compensation completed)")
+            
+        except Exception as e:
+            self.logger.error(f"Error reverting partner registration for {partner_id}: {str(e)}")
+            # En caso de error, aún publicamos el evento para continuar la compensación
+            self.event_dispatcher.publish("PartnerRegistrationReverted", {
+                "partner_id": partner_id,
+                "saga_id": saga_id,
+                "correlation_id": event_data["correlation_id"],
+                "causation_id": event_data["causation_id"],
+                "step": "partner_registration",
+                "error": str(e)
+            })
+
     def handle_partner_onboarding_initiated(self, event_data: Dict[str, Any]):
         """Método público para compatibilidad con endpoints REST"""
         return self._handle_partner_onboarding_initiated(event_data)

@@ -30,7 +30,7 @@ class SagaClient:
             
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 response = await client.post(
-                    f"{self.    }/api/v1/saga/partner-onboarding",
+                    f"{self.base_url}/api/v1/saga/partner-onboarding",
                     json=payload
                 )
                 response.raise_for_status()

@@ -159,23 +159,23 @@ def logs():
 def sagas():
     """Lista de todas las Sagas con métricas"""
     try:
-        all_metrics = saga_metrics.get_all_performance_metrics()
+        # Usar el audit trail para obtener las sagas
+        all_timelines = audit_trail.get_all_saga_timelines()
         sagas = []
         
-        for saga_id, metrics in all_metrics.items():
+        for timeline in all_timelines:
             sagas.append({
-                "saga_id": saga_id,
-                "partner_id": metrics.partner_id,
-                "total_duration_ms": metrics.total_duration_ms,
-                "average_step_duration_ms": metrics.average_step_duration_ms,
-                "slowest_step": metrics.slowest_step,
-                "slowest_step_duration_ms": metrics.slowest_step_duration_ms,
-                "fastest_step": metrics.fastest_step,
-                "fastest_step_duration_ms": metrics.fastest_step_duration_ms,
-                "error_count": metrics.error_count,
-                "compensation_count": metrics.compensation_count,
-                "retry_count": metrics.retry_count,
-                "throughput_events_per_second": metrics.throughput_events_per_second
+                "saga_id": timeline.saga_id,
+                "partner_id": timeline.partner_id,
+                "total_duration_ms": timeline.total_duration_ms,
+                "status": timeline.status,
+                "start_time": timeline.start_time.isoformat(),
+                "end_time": timeline.end_time.isoformat() if timeline.end_time else None,
+                "total_steps": len(timeline.steps),
+                "successful_steps": len([s for s in timeline.steps if s.get("result") == "SUCCESS"]),
+                "failed_steps": len([s for s in timeline.steps if s.get("result") == "FAILED"]),
+                "compensations": len(timeline.compensations),
+                "error_summary": timeline.error_summary
             })
         
         return jsonify(sagas)
