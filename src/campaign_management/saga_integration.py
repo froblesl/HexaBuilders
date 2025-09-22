@@ -25,7 +25,12 @@ class CampaignManagementSagaIntegration:
     
     def _subscribe_to_events(self):
         """Suscribirse a eventos relevantes"""
+        # Eventos normales
         self.event_dispatcher.subscribe("CampaignsEnabled", self._handle_campaigns_enabled)
+        
+        # Eventos de compensación
+        self.event_dispatcher.subscribe("CampaignsDisableRequested", self._handle_campaigns_disable_requested)
+        
         self.logger.info("Campaign Management service subscribed to saga events")
     
     def _handle_campaigns_enabled(self, event_data: Dict[str, Any]):
@@ -88,6 +93,45 @@ class CampaignManagementSagaIntegration:
         
         # En una implementación real, esto se guardaría en la base de datos
         self.logger.info(f"Campaign configuration created: {campaign_config}")
+    
+    def _handle_campaigns_disable_requested(self, event_data: Dict[str, Any]):
+        """Maneja la solicitud de deshabilitación de campañas (compensación)"""
+        partner_id = event_data["partner_id"]
+        saga_id = event_data.get("saga_id")
+        self.logger.info(f"Compensating: Disabling campaigns for partner {partner_id}")
+        
+        try:
+            # Simular deshabilitación de campañas
+            time.sleep(0.5)
+            
+            # Aquí iría la lógica real de deshabilitación:
+            # - Pausar campañas activas
+            # - Revocar permisos de creación
+            # - Limpiar configuraciones
+            # - Notificar sistemas dependientes
+            
+            # Publicar evento de campañas deshabilitadas
+            self.event_dispatcher.publish("CampaignsDisabled", {
+                "partner_id": partner_id,
+                "saga_id": saga_id,
+                "correlation_id": event_data["correlation_id"],
+                "causation_id": event_data["causation_id"],
+                "step": "campaigns_enabled"
+            })
+            
+            self.logger.info(f"Campaigns disabled for partner {partner_id} (compensation completed)")
+            
+        except Exception as e:
+            self.logger.error(f"Error disabling campaigns for {partner_id}: {str(e)}")
+            # En caso de error, aún publicamos el evento para continuar la compensación
+            self.event_dispatcher.publish("CampaignsDisabled", {
+                "partner_id": partner_id,
+                "saga_id": saga_id,
+                "correlation_id": event_data["correlation_id"],
+                "causation_id": event_data["causation_id"],
+                "step": "campaigns_enabled",
+                "error": str(e)
+            })
 
 
 def create_campaign_saga_integration():

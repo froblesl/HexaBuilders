@@ -25,7 +25,12 @@ class RecruitmentSagaIntegration:
     
     def _subscribe_to_events(self):
         """Suscribirse a eventos relevantes"""
+        # Eventos normales
         self.event_dispatcher.subscribe("RecruitmentSetupCompleted", self._handle_recruitment_setup)
+        
+        # Eventos de compensación
+        self.event_dispatcher.subscribe("RecruitmentSetupCompensationRequested", self._handle_recruitment_compensation_requested)
+        
         self.logger.info("Recruitment service subscribed to saga events")
     
     def _handle_recruitment_setup(self, event_data: Dict[str, Any]):
@@ -89,6 +94,45 @@ class RecruitmentSagaIntegration:
         
         # En una implementación real, esto se guardaría en la base de datos
         self.logger.info(f"Recruitment configuration created: {recruitment_setup}")
+    
+    def _handle_recruitment_compensation_requested(self, event_data: Dict[str, Any]):
+        """Maneja la solicitud de compensación de configuración de reclutamiento"""
+        partner_id = event_data["partner_id"]
+        saga_id = event_data.get("saga_id")
+        self.logger.info(f"Compensating: Reverting recruitment setup for partner {partner_id}")
+        
+        try:
+            # Simular reversión de configuración de reclutamiento
+            time.sleep(0.5)
+            
+            # Aquí iría la lógica real de reversión:
+            # - Pausar trabajos activos
+            # - Revocar permisos de publicación
+            # - Limpiar configuraciones
+            # - Notificar sistemas dependientes
+            
+            # Publicar evento de compensación completada
+            self.event_dispatcher.publish("RecruitmentSetupCompensated", {
+                "partner_id": partner_id,
+                "saga_id": saga_id,
+                "correlation_id": event_data["correlation_id"],
+                "causation_id": event_data["causation_id"],
+                "step": "recruitment_setup"
+            })
+            
+            self.logger.info(f"Recruitment setup reverted for partner {partner_id} (compensation completed)")
+            
+        except Exception as e:
+            self.logger.error(f"Error reverting recruitment setup for {partner_id}: {str(e)}")
+            # En caso de error, aún publicamos el evento para continuar la compensación
+            self.event_dispatcher.publish("RecruitmentSetupCompensated", {
+                "partner_id": partner_id,
+                "saga_id": saga_id,
+                "correlation_id": event_data["correlation_id"],
+                "causation_id": event_data["causation_id"],
+                "step": "recruitment_setup",
+                "error": str(e)
+            })
 
 
 def create_recruitment_saga_integration():

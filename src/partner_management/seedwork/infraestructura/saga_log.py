@@ -354,7 +354,7 @@ class SagaLog:
                 if duration_ms:
                     metrics.total_duration_ms += duration_ms
     
-    def saga_completed(self, saga_id: str, partner_id: str, correlation_id: str, service_name: str):
+    def saga_completed(self, saga_id: str, partner_id: str, correlation_id: str, service_name: str, event_data: Dict[str, Any] = None):
         """Registra la finalización exitosa de la Saga"""
         self._log(
             level=SagaLogLevel.INFO,
@@ -363,7 +363,8 @@ class SagaLog:
             partner_id=partner_id,
             message=f"Saga completed successfully for partner {partner_id}",
             correlation_id=correlation_id,
-            service_name=service_name
+            service_name=service_name,
+            event_data=event_data
         )
         
         # Update metrics
@@ -374,23 +375,34 @@ class SagaLog:
                 metrics.end_time = datetime.now(timezone.utc)
                 metrics.total_duration_ms = (metrics.end_time - metrics.start_time).total_seconds() * 1000
     
-    def saga_failed(self, saga_id: str, partner_id: str, correlation_id: str, service_name: str, error: Exception):
+    def saga_failed(self, saga_id: str, partner_id: str, correlation_id: str, service_name: str, error: Exception = None, event_data: Dict[str, Any] = None):
         """Registra el fallo de la Saga"""
-        error_details = {
-            "error_type": type(error).__name__,
-            "error_message": str(error),
-            "traceback": str(error.__traceback__) if hasattr(error, '__traceback__') else None
-        }
+        error_details = None
+        if error:
+            error_details = {
+                "error_type": type(error).__name__,
+                "error_message": str(error),
+                "traceback": str(error.__traceback__) if hasattr(error, '__traceback__') else None
+            }
+        elif event_data:
+            error_details = event_data
+        
+        message = f"Saga failed for partner {partner_id}"
+        if error:
+            message += f": {str(error)}"
+        elif event_data and "reason" in event_data:
+            message += f": {event_data['reason']}"
         
         self._log(
             level=SagaLogLevel.ERROR,
             event_type=SagaEventType.SAGA_FAILED,
             saga_id=saga_id,
             partner_id=partner_id,
-            message=f"Saga failed for partner {partner_id}: {str(error)}",
+            message=message,
             correlation_id=correlation_id,
             service_name=service_name,
-            error_details=error_details
+            error_details=error_details,
+            event_data=event_data
         )
         
         # Update metrics
