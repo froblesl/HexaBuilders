@@ -1,0 +1,588 @@
+{
+	"info": {
+		"_postman_id": "hexabuilders-complete-saga-testing",
+		"name": "HexaBuilders - Complete Saga Testing",
+		"description": "Colección completa para probar todos los flujos de Saga en HexaBuilders: Saga completa, Saga compensada, y BFF GraphQL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "hexabuilders-saga"
+	},
+	"item": [
+		{
+			"name": "Health Checks - All Services",
+			"item": [
+				{
+					"name": "Partner Management Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{partner_management_url}}/health",
+							"host": ["{{partner_management_url}}"],
+							"path": ["health"]
+						},
+						"description": "Health check del servicio Partner Management"
+					},
+					"response": []
+				},
+				{
+					"name": "BFF Web Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{bff_web_url}}/health",
+							"host": ["{{bff_web_url}}"],
+							"path": ["health"]
+						},
+						"description": "Health check del BFF Web"
+					},
+					"response": []
+				},
+				{
+					"name": "Campaign Management Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{campaign_management_url}}/health",
+							"host": ["{{campaign_management_url}}"],
+							"path": ["health"]
+						},
+						"description": "Health check del servicio Campaign Management"
+					},
+					"response": []
+				},
+				{
+					"name": "Onboarding Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{onboarding_url}}/health",
+							"host": ["{{onboarding_url}}"],
+							"path": ["health"]
+						},
+						"description": "Health check del servicio Onboarding"
+					},
+					"response": []
+				},
+				{
+					"name": "Recruitment Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{recruitment_url}}/health",
+							"host": ["{{recruitment_url}}"],
+							"path": ["health"]
+						},
+						"description": "Health check del servicio Recruitment"
+					},
+					"response": []
+				},
+				{
+					"name": "Notifications Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{notifications_url}}/health",
+							"host": ["{{notifications_url}}"],
+							"path": ["health"]
+						},
+						"description": "Health check del servicio Notifications"
+					},
+					"response": []
+				},
+				{
+					"name": "Saga Dashboard Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{partner_management_url}}/api/v1/saga-dashboard/health",
+							"host": ["{{partner_management_url}}"],
+							"path": ["api", "v1", "saga-dashboard", "health"]
+						},
+						"description": "Health check del Saga Dashboard"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Flujo 1: Saga Completa desde Partner Management",
+			"item": [
+				{
+					"name": "1.1 Crear Saga Completa",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Extraer partner_id de la respuesta",
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('saga_partner_id', response.partner_id);",
+									"    pm.environment.set('saga_correlation_id', response.correlation_id || 'test-correlation-' + Date.now());",
+									"    console.log('Saga creada con partner_id:', response.partner_id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"partner_data\": {\n    \"partner_id\": \"test_saga_completa_{{$timestamp}}\",\n    \"nombre\": \"Test Saga Completa\",\n    \"email\": \"test@sagacompleta.com\",\n    \"telefono\": \"+1234567890\",\n    \"tipo_partner\": \"EMPRESA\",\n    \"direccion\": \"123 Saga Completa St\",\n    \"ciudad\": \"Saga Completa City\",\n    \"pais\": \"US\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{partner_management_url}}/api/v1/saga/partner-onboarding",
+							"host": ["{{partner_management_url}}"],
+							"path": ["api", "v1", "saga", "partner-onboarding"]
+						},
+						"description": "Crear una saga completa desde Partner Management"
+					},
+					"response": []
+				},
+				{
+					"name": "1.2 Validar Estado de Saga",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{partner_management_url}}/api/v1/saga/{{saga_partner_id}}/status",
+							"host": ["{{partner_management_url}}"],
+							"path": ["api", "v1", "saga", "{{saga_partner_id}}", "status"]
+						},
+						"description": "Validar el estado actual de la saga"
+					},
+					"response": []
+				},
+				{
+					"name": "1.3 Validar Dashboard Status (SagaLog)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{partner_management_url}}/api/v1/saga-dashboard/system-status",
+							"host": ["{{partner_management_url}}"],
+							"path": ["api", "v1", "saga-dashboard", "system-status"]
+						},
+						"description": "Validar el estado del sistema desde el dashboard (SagaLog)"
+					},
+					"response": []
+				},
+				{
+					"name": "1.4 Listar Todas las Sagas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{partner_management_url}}/api/v1/saga-dashboard/sagas",
+							"host": ["{{partner_management_url}}"],
+							"path": ["api", "v1", "saga-dashboard", "sagas"]
+						},
+						"description": "Listar todas las sagas en el dashboard"
+					},
+					"response": []
+				},
+				{
+					"name": "1.5 Ver Timeline de Saga",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{partner_management_url}}/api/v1/saga-dashboard/timeline/{{saga_partner_id}}",
+							"host": ["{{partner_management_url}}"],
+							"path": ["api", "v1", "saga-dashboard", "timeline", "{{saga_partner_id}}"]
+						},
+						"description": "Ver la timeline detallada de la saga"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Flujo 2: Saga desde BFF con GraphQL",
+			"item": [
+				{
+					"name": "2.1 Iniciar Saga con GraphQL Mutation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Extraer partner_id de la respuesta GraphQL",
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.startPartnerOnboarding) {",
+									"        pm.environment.set('bff_partner_id', response.data.startPartnerOnboarding.partnerId);",
+									"        console.log('Saga BFF creada con partner_id:', response.data.startPartnerOnboarding.partnerId);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"mutation StartPartnerOnboarding($input: PartnerOnboardingInput!) {\\n    startPartnerOnboarding(input: $input) {\\n      success\\n      message\\n      partnerId\\n      sagaState {\\n        status\\n        completedSteps\\n        failedSteps\\n      }\\n      timestamp\\n    }\\n  }\",\n  \"variables\": {\n    \"input\": {\n      \"partnerData\": {\n        \"partnerId\": \"test_bff_saga_{{$timestamp}}\",\n        \"nombre\": \"Test BFF Saga\",\n        \"email\": \"test@bffsaga.com\",\n        \"telefono\": \"+1234567890\",\n        \"tipoPartner\": \"EMPRESA\",\n        \"preferredContractType\": \"BASIC\",\n        \"requiredDocuments\": [\"IDENTITY\", \"BUSINESS_REGISTRATION\"],\n        \"campaignPermissions\": \"can_create_campaigns\",\n        \"recruitmentPreferences\": \"job_posting_enabled\"\n      },\n      \"correlationId\": \"bff-test-{{$timestamp}}\"\n    }\n  }\n}"
+						},
+						"url": {
+							"raw": "{{bff_web_url}}/api/v1/graphql",
+							"host": ["{{bff_web_url}}"],
+							"path": ["api", "v1", "graphql"]
+						},
+						"description": "Iniciar una saga usando GraphQL mutation desde el BFF"
+					},
+					"response": []
+				},
+				{
+					"name": "2.2 Consultar Estado de Saga con GraphQL Query",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"query GetSagaStatus($partnerId: String!) {\\n    sagaStatus(partnerId: $partnerId) {\\n      status\\n      completedSteps\\n      failedSteps\\n    }\\n  }\",\n  \"variables\": {\n    \"partnerId\": \"{{bff_partner_id}}\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{bff_web_url}}/api/v1/graphql",
+							"host": ["{{bff_web_url}}"],
+							"path": ["api", "v1", "graphql"]
+						},
+						"description": "Consultar el estado de la saga usando GraphQL query"
+					},
+					"response": []
+				},
+				{
+					"name": "2.3 Health Check GraphQL",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"query {\\n    health {\\n      service\\n      status\\n      pattern\\n      sagaTypes\\n      eventDispatcher\\n      timestamp\\n    }\\n  }\"\n}"
+						},
+						"url": {
+							"raw": "{{bff_web_url}}/api/v1/graphql",
+							"host": ["{{bff_web_url}}"],
+							"path": ["api", "v1", "graphql"]
+						},
+						"description": "Health check usando GraphQL"
+					},
+					"response": []
+				},
+				{
+					"name": "2.4 Ver Timeline desde Dashboard",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{partner_management_url}}/api/v1/saga-dashboard/timeline/{{bff_partner_id}}",
+							"host": ["{{partner_management_url}}"],
+							"path": ["api", "v1", "saga-dashboard", "timeline", "{{bff_partner_id}}"]
+						},
+						"description": "Ver la timeline de la saga iniciada desde BFF"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Flujo 3: Saga desde BFF Compensada por Indisponibilidad de Campañas",
+			"item": [
+				{
+					"name": "3.1 Inhabilitar Servicio de Campañas",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    console.log('Servicio de campañas deshabilitado para pruebas de compensación');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{campaign_management_url}}/api/v1/service/disable",
+							"host": ["{{campaign_management_url}}"],
+							"path": ["api", "v1", "service", "disable"]
+						},
+						"description": "Deshabilitar el servicio de Campaign Management para simular fallo"
+					},
+					"response": []
+				},
+				{
+					"name": "3.2 Verificar Estado del Servicio",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{campaign_management_url}}/api/v1/service/status",
+							"host": ["{{campaign_management_url}}"],
+							"path": ["api", "v1", "service", "status"]
+						},
+						"description": "Verificar que el servicio esté deshabilitado"
+					},
+					"response": []
+				},
+				{
+					"name": "3.3 Crear Saga con GraphQL (Fallará por Timeout)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Extraer partner_id de la respuesta GraphQL",
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.startPartnerOnboarding) {",
+									"        pm.environment.set('compensation_partner_id', response.data.startPartnerOnboarding.partnerId);",
+									"        console.log('Saga de compensación creada con partner_id:', response.data.startPartnerOnboarding.partnerId);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"mutation StartPartnerOnboarding($input: PartnerOnboardingInput!) {\\n    startPartnerOnboarding(input: $input) {\\n      success\\n      message\\n      partnerId\\n      sagaState {\\n        status\\n        completedSteps\\n        failedSteps\\n      }\\n      timestamp\\n    }\\n  }\",\n  \"variables\": {\n    \"input\": {\n      \"partnerData\": {\n        \"partnerId\": \"test_compensacion_{{$timestamp}}\",\n        \"nombre\": \"Test Saga Compensada\",\n        \"email\": \"test@compensacion.com\",\n        \"telefono\": \"+1234567890\",\n        \"tipoPartner\": \"EMPRESA\",\n        \"preferredContractType\": \"BASIC\",\n        \"requiredDocuments\": [\"IDENTITY\", \"BUSINESS_REGISTRATION\"],\n        \"campaignPermissions\": \"can_create_campaigns\",\n        \"recruitmentPreferences\": \"job_posting_enabled\"\n      },\n      \"correlationId\": \"compensation-test-{{$timestamp}}\"\n    }\n  }\n}"
+						},
+						"url": {
+							"raw": "{{bff_web_url}}/api/v1/graphql",
+							"host": ["{{bff_web_url}}"],
+							"path": ["api", "v1", "graphql"]
+						},
+						"description": "Crear una saga que fallará por timeout del servicio de campañas"
+					},
+					"response": []
+				},
+				{
+					"name": "3.4 Consultar Estado de Saga con GraphQL Query",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"query GetSagaStatus($partnerId: String!) {\\n    sagaStatus(partnerId: $partnerId) {\\n      status\\n      completedSteps\\n      failedSteps\\n    }\\n  }\",\n  \"variables\": {\n    \"partnerId\": \"{{compensation_partner_id}}\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{bff_web_url}}/api/v1/graphql",
+							"host": ["{{bff_web_url}}"],
+							"path": ["api", "v1", "graphql"]
+						},
+						"description": "Consultar el estado de la saga usando GraphQL query"
+					},
+					"response": []
+				},
+				{
+					"name": "3.5 Esperar Timeout (35 segundos)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{partner_management_url}}/api/v1/saga/{{compensation_partner_id}}/status",
+							"host": ["{{partner_management_url}}"],
+							"path": ["api", "v1", "saga", "{{compensation_partner_id}}", "status"]
+						},
+						"description": "Esperar 35 segundos para que se active el timeout y la compensación"
+					},
+					"response": []
+				},
+				{
+					"name": "3.6 Validar Dashboard Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{partner_management_url}}/api/v1/saga-dashboard/system-status",
+							"host": ["{{partner_management_url}}"],
+							"path": ["api", "v1", "saga-dashboard", "system-status"]
+						},
+						"description": "Validar el estado del sistema después de la compensación"
+					},
+					"response": []
+				},
+				{
+					"name": "3.7 Validar Saga Timeline",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{partner_management_url}}/api/v1/saga-dashboard/timeline/{{compensation_partner_id}}",
+							"host": ["{{partner_management_url}}"],
+							"path": ["api", "v1", "saga-dashboard", "timeline", "{{compensation_partner_id}}"]
+						},
+						"description": "Ver la timeline de la saga compensada con pasos de rollback"
+					},
+					"response": []
+				},
+				{
+					"name": "3.8 Habilitar Servicio de Campañas",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{campaign_management_url}}/api/v1/service/enable",
+							"host": ["{{campaign_management_url}}"],
+							"path": ["api", "v1", "service", "enable"]
+						},
+						"description": "Rehabilitar el servicio de Campaign Management"
+					},
+					"response": []
+				},
+				{
+					"name": "3.9 Verificar Servicio Habilitado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{campaign_management_url}}/api/v1/service/status",
+							"host": ["{{campaign_management_url}}"],
+							"path": ["api", "v1", "service", "status"]
+						},
+						"description": "Verificar que el servicio esté habilitado nuevamente"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Utilidades y Control de Servicios",
+			"item": [
+				{
+					"name": "Toggle Campaign Service",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{campaign_management_url}}/api/v1/service/toggle",
+							"host": ["{{campaign_management_url}}"],
+							"path": ["api", "v1", "service", "toggle"]
+						},
+						"description": "Alternar el estado del servicio de Campaign Management"
+					},
+					"response": []
+				},
+				{
+					"name": "Ver Logs de Saga",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{partner_management_url}}/api/v1/saga-dashboard/logs",
+							"host": ["{{partner_management_url}}"],
+							"path": ["api", "v1", "saga-dashboard", "logs"]
+						},
+						"description": "Ver los logs de todas las sagas"
+					},
+					"response": []
+				},
+				{
+					"name": "Ver Métricas de Saga",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{partner_management_url}}/api/v1/saga-dashboard/metrics",
+							"host": ["{{partner_management_url}}"],
+							"path": ["api", "v1", "saga-dashboard", "metrics"]
+						},
+						"description": "Ver las métricas de rendimiento de las sagas"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Generar timestamp único para evitar conflictos",
+					"pm.environment.set('timestamp', Date.now());"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Log de respuestas para debugging",
+					"console.log('Response Status:', pm.response.code);",
+					"console.log('Response Time:', pm.response.responseTime + 'ms');"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "partner_management_url",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "bff_web_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "campaign_management_url",
+			"value": "http://localhost:5003",
+			"type": "string"
+		}
+	]
+}
