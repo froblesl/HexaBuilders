@@ -1,0 +1,37 @@
+{
+    "experimentation_scenarios": [
+        {
+            "quality_attribute": "Escalabilidad",
+            "scenario_name": "Lectura de Base de Datos",
+            "description": "El sistema debe manejar un incremento a 500 usuarios concurrentes haciendo operaciones de consulta que impactan la base de datos sin afectar significativamente el rendimiento.",
+            "source": "Usuarios de la plataforma",
+            "stimulus": "Un incremento a 500 usuarios concurrentes haciendo operaciones de consulta que impactan la base de datos",
+            "artifact": "Base de datos",
+            "environment": "Operacion normal",
+            "response": "El sistema puede atender operaciones transaccionales tanto de escritura como de lectura sin afectación significativa en rendimiento ni de percepción en el usuario.",
+            "response_measure": "Los tiempos de respuesta del API transaccional se mantienen inferiores al SLA (menor a 500ms). 90% de las operaciones que involucran consultas se procesan en menos de 2 segundos. La base de datos transaccional primaria no muesta un aumento relevante en latencia de lectura."
+        },
+        {
+            "quality_attribute": "Escalabilidad",
+            "scenario_name": "Fallo en proveedor de nube, estrategia multi AZ (Falla en infraestructura)",
+            "description": "Ante una falla en la infraestructura del proveedor de nube, el sistema debe mantener su disponibilidad mediante una estrategia de despliegue multi AZ.",
+            "source": "Ocurre una falla en el proveedor de nube",
+            "stimulus": "Una zona de disponibilidad se encuentra completamente indisponible",
+            "artifact": "Sistema completo: microservicios, bases de datos, broker de mensajería.",
+            "environment": "Operación normal",
+            "response": "Los balanceadores de carga redireccionan el tráfico a las instancias que se encuentran en la zona saludable.",
+            "response_measure": "El sistema se encuentra disponible en las zonas saludables en menos de 5 minutos."
+        },
+        {
+            "quality_attribute": "Interoperabilidad",
+            "scenario_name": "Sincronización de perfil 360° de un partner",
+            "description": "Un partner actualiza sus datos de contacto (ej. email, dirección fiscal) en el portal interno de ProgramaPartners. La plataforma debe emitir un evento de dominio PartnerPerfilActualizado que pueda ser consumido por múltiples bounded contexts internos (Pagos, Campañas), sin exponer directamente el modelo interno.",
+            "source": "Partner (usuario humano) desde el portal de autoservicio",
+            "stimulus": "Actualización de perfil (HTTP/REST PUT /partners/{id}/profile).",
+            "artifact": "Contexto ProgramaPartners (módulo Gestión de Perfil), DB principal, Sidecar de mensajería, Broker de eventos.",
+            "environment": "Operación normal, concurrencia de múltiples actualizaciones en campañas activas.",
+            "response": "1) Validar cambios y aplicar reglas de negocio. 2) Notificar al sidecar que hay un evento a publicar. 3) El sidecar maneja la publicación confiable en el broker (PartnerPerfilActualizado). 4) Consumidores internos (Campañas, Finanzas, Compliance) actualizan sus proyecciones.",
+            "response_measure": "Consistencia eventual entre ProgramaPartners y demás bounded contexts internos <= 2 segundos. Recuperación ante fallos: sidecar debe reenviar eventos no confirmados en <= 1 minuto."
+        }
+    ]
+}

@@ -1,0 +1,39 @@
+# Configuración de pruebas de escenarios de calidad
+test_config:
+  # URLs de servicios
+  services:
+    partner_management: "http://localhost:5000"
+    bff_web: "http://localhost:8000"
+    campaign_management: "http://localhost:5003"
+    onboarding: "http://localhost:5001"
+    recruitment: "http://localhost:5002"
+    notifications: "http://localhost:5004"
+  
+  # Configuración de escalabilidad
+  scalability:
+    target_throughput: 100  # registros por minuto
+    max_latency: 30  # segundos
+    ramp_up_time: 60  # segundos
+    test_duration: 300  # segundos
+    concurrent_users: 50
+  
+  # Configuración de disponibilidad
+  availability:
+    target_uptime: 99.9  # porcentaje
+    max_recovery_time: 60  # segundos
+    failure_simulation_duration: 120  # segundos
+    health_check_interval: 5  # segundos
+  
+  # Configuración de interoperabilidad
+  interoperability:
+    max_sync_latency: 5  # segundos
+    event_verification_timeout: 30  # segundos
+    consistency_check_interval: 2  # segundos
+  
+  # Configuración general
+  general:
+    test_timeout: 600  # segundos
+    retry_attempts: 3
+    retry_delay: 5  # segundos
+    report_format: "html"
+    log_level: "INFO"
