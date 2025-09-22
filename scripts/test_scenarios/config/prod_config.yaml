@@ -1,0 +1,37 @@
+# Configuración para pruebas en producción
+test_config:
+  # URLs de producción
+  services:
+    partner_management: "http://34.42.68.40:31299"
+    bff_web: "http://34.122.246.210:32745"
+    campaign_management: "http://34.42.68.40:30964"
+    onboarding: "http://34.42.68.40:30798"
+    recruitment: "http://34.42.68.40:30164"
+    notifications: "http://34.42.68.40:8000"
+  
+  # Configuración de escalabilidad (más conservadora para producción)
+  scalability:
+    target_throughput: 50  # registros por minuto (reducido para producción)
+    max_latency: 60  # segundos (más tolerante para producción)
+    ramp_up_time: 120  # segundos (más gradual)
+    test_duration: 180  # segundos (más corto para producción)
+    concurrent_users: 20  # usuarios concurrentes (reducido)
+  
+  # Configuración de disponibilidad
+  availability:
+    target_uptime: 99.0  # porcentaje (más realista para producción)
+    max_recovery_time: 120  # segundos (más tiempo para recuperación)
+    failure_simulation_duration: 60  # segundos (más corto)
+    health_check_interval: 10  # segundos (menos frecuente)
+  
+  # Configuración de interoperabilidad
+  interoperability:
+    max_sync_latency: 10  # segundos (más tolerante para producción)
+    event_verification_timeout: 60  # segundos (más tiempo)
+    consistency_check_interval: 5  # segundos (menos frecuente)
+  
+  # Configuración general
+  general:
+    test_timeout: 300  # segundos (más corto para producción)
+    retry_attempts: 2  # reintentos (menos para producción)
+    delay_between_tests: 5  # segundos entre pruebas

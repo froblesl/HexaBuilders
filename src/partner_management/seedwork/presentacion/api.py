@@ -233,6 +233,11 @@ def register_middleware(app: Flask) -> None:
 def register_cqrs_blueprints(app: Flask) -> None:
     """Registrar blueprints CQRS de la aplicación."""
     try:
+        # Importar comandos para registrar handlers
+        from src.partner_management.modulos.partners.aplicacion.comandos import crear_partner
+        logger.info("Command handlers registered successfully")
+        
+        # Registrar blueprint CQRS
         from src.partner_management.api.partners_cqrs import bp as partners_bp
         app.register_blueprint(partners_bp)
         logger.info("Partners CQRS blueprint registered successfully")

@@ -1,0 +1,32 @@
+{
+  "summary": {
+    "total_tests": 1,
+    "passed_tests": 0,
+    "failed_tests": 1,
+    "success_rate": 0.0,
+    "total_duration": 329.6100809574127,
+    "average_duration": 329.6100809574127
+  },
+  "results": [
+    {
+      "test_name": "Scalability Load Test",
+      "success": false,
+      "duration": 329.6100809574127,
+      "metrics": {
+        "total_requests": 500,
+        "successful_requests": 0,
+        "failed_requests": 0,
+        "success_rate": 0.0,
+        "actual_throughput": 0.0,
+        "target_throughput": 100,
+        "actual_duration": 256.3346691131592,
+        "avg_response_time": 7.47404710005021,
+        "max_response_time": 29.217571020126343,
+        "min_response_time": 0.034438133239746094,
+        "concurrent_users": 50
+      },
+      "error_message": null,
+      "timestamp": "2025-09-22T08:55:11.503703"
+    }
+  ]
+}

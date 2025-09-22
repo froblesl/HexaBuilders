@@ -22,6 +22,12 @@ class FabricaPartner(Factory):
     Encapsulates partner creation logic and validation.
     """
     
+    def _create_instance(self, **kwargs) -> Partner:
+        """
+        Implementación del método abstracto para crear instancias de Partner.
+        """
+        return self.crear_partner(**kwargs)
+    
     def crear_partner(
         self,
         nombre: PartnerName,
@@ -70,26 +76,18 @@ class FabricaPartner(Factory):
             
             # Create partner entity
             partner = Partner(
-                name=nombre,
+                nombre=nombre,
                 email=email,
-                phone=telefono,
-                type=tipo,
+                telefono=telefono,
+                tipo=tipo,
                 status=PartnerStatus.INACTIVO,  # New partners start inactive
-                direccion=direccion,
-                ciudad=ciudad,
-                pais=pais,
-                address=address,
+                direccion=address,
                 validation_data=validation_data,
-                metrics=metrics,
-                created_at=datetime.now(),
-                updated_at=datetime.now()
+                metrics=metrics
             )
             
             # Apply business rules
             self._aplicar_reglas_negocio(partner)
-            
-            # Add creation event
-            partner.crear_evento_creacion()
             
             logger.info(f"Partner created successfully: {partner.id}")
             return partner
@@ -224,19 +222,20 @@ class FabricaPartner(Factory):
             DomainException: If business rules are violated
         """
         # Business rule: Business partners must have address
-        if partner.type in [PartnerType.EMPRESA, PartnerType.STARTUP]:
-            if not partner.direccion or not partner.ciudad or not partner.pais:
+        if partner._tipo in [PartnerType.EMPRESA, PartnerType.STARTUP]:
+            if not partner._direccion:
                 raise DomainException(
-                    f"Business partners of type {partner.type.value} must have complete address information"
+                    message=f"Business partners of type {partner._tipo.value} must have complete address information",
+                    error_code="MISSING_ADDRESS_INFO"
                 )
         
         # Business rule: Email domain validation for business partners
-        if partner.type == PartnerType.EMPRESA:
-            if partner.email.value.endswith(('@gmail.com', '@hotmail.com', '@yahoo.com')):
+        if partner._tipo == PartnerType.EMPRESA:
+            if partner._email.value.endswith(('@gmail.com', '@hotmail.com', '@yahoo.com')):
                 logger.warning(f"Business partner {partner.id} using personal email domain")
         
         # Business rule: All new partners start inactive and need validation
-        if partner.status != PartnerStatus.INACTIVO:
+        if partner._status != PartnerStatus.INACTIVO:
             partner._status = PartnerStatus.INACTIVO
             logger.info(f"Reset partner status to INACTIVO as per business rules: {partner.id}")
         
