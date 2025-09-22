@@ -63,89 +63,94 @@ HexaBuilders is a comprehensive microservices platform that implements:
 
 ### Core Components Breakdown
 
-1. BFF (Backend for Frontend)
-   Technology: FastAPI + Strawberry GraphQL
-   Port: 8000
-   Purpose: Single API gateway for all frontend applications
-   Features:
-   - GraphQL API with type safety
-   - Real-time saga status tracking
-   - Health monitoring
+#### 1. BFF (Backend for Frontend)
+- **Technology:** FastAPI + Strawberry GraphQL  
+- **Port:** 8000  
+- **Purpose:** Single API gateway for all frontend applications  
+- **Features:**
+  - GraphQL API with type safety
+  - Real-time saga status tracking
+  - Health monitoring  
 
-2. Microservices Layer
-   **Partner Management Service**
-      Technology: Flask + Python
-      Port: 5000
-      Purpose: Core partner lifecycle management
-      **Features:**
-         - Partner CRUD operations
-         - Saga orchestration (Choreography pattern)
-         - Partner 360° profile aggregation
-         - CQRS implementation
+#### 2. Microservices Layer
 
-   **Onboarding Service**
-      Technology: Flask + Python
-      Port: 5001
-      Purpose: Partner onboarding workflow
-      **Features:**
-         - Contract management
-         - Document verification
-         - Legal compliance
-         - Onboarding saga integration
+**Partner Management Service**  
+- **Technology:** Flask + Python  
+- **Port:** 5000  
+- **Purpose:** Core partner lifecycle management  
+- **Features:**
+  - Partner CRUD operations
+  - Saga orchestration (Choreography pattern)
+  - Partner 360° profile aggregation
+  - CQRS implementation  
 
-   **Campaign Management Service**
-      Technology: Flask + Python
-      Port: 5003
-      Purpose: Marketing campaign management
-      **Features:**
-         - Campaign creation and management
-         - Performance tracking
-         - Budget management
-         - Targeting configuration
-         - Saga integration for partner enablement
+**Onboarding Service**  
+- **Technology:** Flask + Python  
+- **Port:** 5001  
+- **Purpose:** Partner onboarding workflow  
+- **Features:**
+  - Contract management
+  - Document verification
+  - Legal compliance
+  - Onboarding saga integration  
 
-   **Recruitment Service**
-      Technology: Flask + Python
-      Port: 5002
-      Purpose: Job posting and candidate management
-      **Features:**
-         - Candidate management
-         - Job posting
-         - Application tracking
-         - Advanced search and matching
-         - Saga integration for partner setup
+**Campaign Management Service**  
+- **Technology:** Flask + Python  
+- **Port:** 5003  
+- **Purpose:** Marketing campaign management  
+- **Features:**
+  - Campaign creation and management
+  - Performance tracking
+  - Budget management
+  - Targeting configuration
+  - Saga integration for partner enablement  
 
-   **Notifications Service**
-      Technology: Flask + Python
-      Port: 5004
-      Purpose: System notifications
-      **Features:**
-         - Event-driven messaging
+**Recruitment Service**  
+- **Technology:** Flask + Python  
+- **Port:** 5002  
+- **Purpose:** Job posting and candidate management  
+- **Features:**
+  - Candidate management
+  - Job posting
+  - Application tracking
+  - Advanced search and matching
+  - Saga integration for partner setup  
+
+**Notifications Service**  
+- **Technology:** Flask + Python  
+- **Port:** 5004  
+- **Purpose:** System notifications  
+- **Features:**
+  - Event-driven messaging  
+
+---
 
 ### Event Infrastructure
 
-**Apache Pulsar**
-   Purpose: Event streaming and message broker
-   Port: 6650 (broker), 8080 (admin)
-   Features:
-      - Real-time event processing
-      - Schema registry
+**Apache Pulsar**  
+- **Purpose:** Event streaming and message broker  
+- **Port:** 6650 (broker), 8080 (admin)  
+- **Features:**
+  - Real-time event processing
+  - Schema registry  
 
-**Zookeeper**
-   Purpose: Pulsar coordination and configuration
+**Zookeeper**  
+- **Purpose:** Pulsar coordination and configuration  
 
-**BookKeeper**
-   Purpose: Pulsar storage backend
+**BookKeeper**  
+- **Purpose:** Pulsar storage backend  
+
+---
 
 ### Event Flow
 
-Partner Onboarding Initiated -> Partner Management
-Partner Registration -> Onboarding Service
-Contract Creation -> Onboarding Service
-Document Verification -> Onboarding Service
-Campaigns Enabled -> Campaign Management Service
-Recruitment Setup -> Recruitment Service
-Saga Completion -> Partner Management
+1. Partner Onboarding Initiated → Partner Management  
+2. Partner Registration → Onboarding Service  
+3. Contract Creation → Onboarding Service  
+4. Document Verification → Onboarding Service  
+5. Campaigns Enabled → Campaign Management Service  
+6. Recruitment Setup → Recruitment Service  
+7. Saga Completion → Partner Management  
 
 ## Core Services
 
