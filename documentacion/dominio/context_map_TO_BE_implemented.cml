@@ -1,0 +1,130 @@
+Domain GestionProgramasPartners {
+    domainVisionStatement = "Plataforma integral de gestión de partners: reclutamiento, contratos, campañas, onboarding y pagos con arquitectura de microservicios basada en eventos."
+
+    Subdomain ReclutamientoYDescubrimiento {
+        type = CORE_DOMAIN
+        domainVisionStatement = "Captación y calificación de partners (búsqueda/marketplace) con matching inteligente."
+    }
+    Subdomain OnboardingYContratos {
+        type = CORE_DOMAIN
+        domainVisionStatement = "Alta de partners y gestión de términos/acuerdos con proceso legal completo."
+    }
+    Subdomain TrackingYAtribucion {
+        type = CORE_DOMAIN
+        domainVisionStatement = "Eventos (clic/lead/venta) y resolución de atribución con métricas en tiempo real."
+    }
+    Subdomain Campanas {
+        type = CORE_DOMAIN
+        domainVisionStatement = "Configuración y ejecución de campañas con partners con targeting avanzado."
+    }
+    Subdomain GestionRelacionPartners {
+        type = CORE_DOMAIN
+        domainVisionStatement = "Perfil 360 y gestión de relación con partners con analytics avanzados."
+    }
+    Subdomain PagosYPayouts {
+        type = SUPPORTING_DOMAIN
+        domainVisionStatement = "Cálculo, conciliación y pago de comisiones."
+    }
+    Subdomain CumplimientoYAntifraude {
+        type = SUPPORTING_DOMAIN
+        domainVisionStatement = "Políticas, verificación y detección de fraude."
+    }
+    Subdomain OrquestacionDeProcesos {
+        type = SUPPORTING_DOMAIN
+        domainVisionStatement = "Motor genérico de tareas/estados y aprobaciones."
+    }
+    Subdomain Notificaciones {
+        type = SUPPORTING_DOMAIN
+        domainVisionStatement = "Sistema de notificaciones y alertas del sistema."
+    }
+    Subdomain BackendForFrontend {
+        type = SUPPORTING_DOMAIN
+        domainVisionStatement = "API Gateway GraphQL para frontend web con orquestación de sagas."
+    }
+    Subdomain EventStreaming {
+        type = GENERIC_DOMAIN
+        domainVisionStatement = "Infraestructura de eventos y mensajería asíncrona."
+    }
+    Subdomain IdentidadAccesoYPermisos {
+        type = GENERIC_DOMAIN
+        domainVisionStatement = "Autenticación y autorización (SSO/RBAC) transversal."
+    }
+}
+
+BoundedContext PartnerManagementService implements GestionRelacionPartners, ReclutamientoYDescubrimiento {
+    domainVisionStatement = "Gestión integral del ciclo de vida de partners con perfil 360°, métricas avanzadas y orquestación de sagas de onboarding."
+}
+
+BoundedContext OnboardingService implements OnboardingYContratos {
+    domainVisionStatement = "Gestión completa del proceso legal y contractual incluyendo negociación, validación legal y firmas digitales."
+}
+
+BoundedContext RecruitmentService implements ReclutamientoYDescubrimiento {
+    domainVisionStatement = "Marketplace de talentos con matching inteligente, gestión de candidatos y proceso de entrevistas."
+}
+
+BoundedContext CampaignManagementService implements Campanas, TrackingYAtribucion {
+    domainVisionStatement = "Gestión avanzada de campañas con targeting inteligente, métricas en tiempo real y control presupuestario."
+}
+
+BoundedContext NotificationsService implements Notificaciones {
+    domainVisionStatement = "Sistema de notificaciones y alertas basado en eventos para todos los servicios."
+}
+
+BoundedContext BFFWebService implements BackendForFrontend {
+    domainVisionStatement = "API Gateway GraphQL que expone funcionalidad de sagas y orquestación para el frontend web."
+}
+
+BoundedContext EventInfrastructure implements EventStreaming {
+    domainVisionStatement = "Infraestructura de eventos con Apache Pulsar para comunicación asíncrona entre servicios."
+}
+
+BoundedContext DatabaseInfrastructure {
+    domainVisionStatement = "Infraestructura de base de datos PostgreSQL para persistencia de datos de los microservicios."
+}
+
+ContextMap HexaBuilders_IMPLEMENTED {
+    state = TO_BE
+
+    contains PartnerManagementService
+    contains OnboardingService
+    contains RecruitmentService
+    contains CampaignManagementService
+    contains NotificationsService
+    contains BFFWebService
+    contains EventInfrastructure
+    contains DatabaseInfrastructure
+
+    PartnerManagementService [U, OHS, PL] -> [D, ACL] OnboardingService
+    OnboardingService [U, OHS, PL] -> [D, ACL] PartnerManagementService
+    OnboardingService [U, OHS, PL] -> [D, ACL] CampaignManagementService
+    
+    PartnerManagementService [U, OHS, PL] -> [D, ACL] RecruitmentService
+    RecruitmentService [U, OHS, PL] -> [D, ACL] PartnerManagementService
+    RecruitmentService [U, OHS, PL] -> [D, ACL] OnboardingService
+    
+    CampaignManagementService [U, OHS, PL] -> [D, ACL] PartnerManagementService
+    CampaignManagementService [U, OHS, PL] -> [D, ACL] RecruitmentService
+    
+    PartnerManagementService [U, OHS, PL] -> [D, ACL] NotificationsService
+    OnboardingService [U, OHS, PL] -> [D, ACL] NotificationsService
+    CampaignManagementService [U, OHS, PL] -> [D, ACL] NotificationsService
+    RecruitmentService [U, OHS, PL] -> [D, ACL] NotificationsService
+
+    BFFWebService [U, OHS, PL] -> [D, ACL] PartnerManagementService
+    BFFWebService [U, OHS, PL] -> [D, ACL] OnboardingService
+    BFFWebService [U, OHS, PL] -> [D, ACL] RecruitmentService
+    BFFWebService [U, OHS, PL] -> [D, ACL] CampaignManagementService
+    
+    PartnerManagementService [U, OHS, PL] -> [D, ACL] EventInfrastructure
+    OnboardingService [U, OHS, PL] -> [D, ACL] EventInfrastructure
+    RecruitmentService [U, OHS, PL] -> [D, ACL] EventInfrastructure
+    CampaignManagementService [U, OHS, PL] -> [D, ACL] EventInfrastructure
+    NotificationsService [U, OHS, PL] -> [D, ACL] EventInfrastructure
+    
+    PartnerManagementService [U, OHS, PL] -> [D, ACL] DatabaseInfrastructure
+    OnboardingService [U, OHS, PL] -> [D, ACL] DatabaseInfrastructure
+    RecruitmentService [U, OHS, PL] -> [D, ACL] DatabaseInfrastructure
+    CampaignManagementService [U, OHS, PL] -> [D, ACL] DatabaseInfrastructure
+    NotificationsService [U, OHS, PL] -> [D, ACL] DatabaseInfrastructure
+}
