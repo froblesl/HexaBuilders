@@ -61,33 +61,91 @@ HexaBuilders is a comprehensive microservices platform that implements:
    ./scripts/deploy-to-gke.sh YOUR_PROJECT_ID
    ```
 
-## 📁 Project Structure
+### Core Components Breakdown
 
-```
-HexaBuilders-1/
-├── src/                          # Source code
-│   ├── bff_web/                  # Backend for Frontend (GraphQL)
-│   ├── partner_management/       # Partner Management Service
-│   ├── onboarding/               # Onboarding Service
-│   ├── recruitment/              # Recruitment Service
-│   ├── campaign_management/      # Campaign Management Service
-│   ├── notificaciones/           # Notifications Service
-│   └── pulsar_event_dispatcher.py # Event dispatcher
-├── k8s/                          # Kubernetes deployments
-├── dockerfiles/                  # Docker files
-├── scripts/                      # Deployment scripts
-├── tests/                        # Test suites
-│   ├── unit/                     # Unit tests
-│   ├── integration/              # Integration tests
-│   └── scripts/                  # Test scripts
-├── documentacion/                # Documentation
-│   ├── arquitectura/             # Architecture docs
-│   ├── implementacion/           # Implementation guides
-│   ├── eventos/                  # Event documentation
-│   └── servicios/                # Service documentation
-├── postman/                      # API collections
-└── sql/                          # Database scripts
-```
+1. BFF (Backend for Frontend)
+   Technology: FastAPI + Strawberry GraphQL
+   Port: 8000
+   Purpose: Single API gateway for all frontend applications
+   Features:
+   - GraphQL API with type safety
+   - Real-time saga status tracking
+   - Health monitoring
+
+2. Microservices Layer
+   **Partner Management Service**
+      Technology: Flask + Python
+      Port: 5000
+      Purpose: Core partner lifecycle management
+      **Features:**
+         - Partner CRUD operations
+         - Saga orchestration (Choreography pattern)
+         - Partner 360° profile aggregation
+         - CQRS implementation
+
+   **Onboarding Service**
+      Technology: Flask + Python
+      Port: 5001
+      Purpose: Partner onboarding workflow
+      **Features:**
+         - Contract management
+         - Document verification
+         - Legal compliance
+         - Onboarding saga integration
+
+   **Campaign Management Service**
+      Technology: Flask + Python
+      Port: 5003
+      Purpose: Marketing campaign management
+      **Features:**
+         - Campaign creation and management
+         - Performance tracking
+         - Budget management
+         - Targeting configuration
+         - Saga integration for partner enablement
+
+   **Recruitment Service**
+      Technology: Flask + Python
+      Port: 5002
+      Purpose: Job posting and candidate management
+      **Features:**
+         - Candidate management
+         - Job posting
+         - Application tracking
+         - Advanced search and matching
+         - Saga integration for partner setup
+
+   **Notifications Service**
+      Technology: Flask + Python
+      Port: 5004
+      Purpose: System notifications
+      **Features:**
+         - Event-driven messaging
+
+### Event Infrastructure
+
+**Apache Pulsar**
+   Purpose: Event streaming and message broker
+   Port: 6650 (broker), 8080 (admin)
+   Features:
+      - Real-time event processing
+      - Schema registry
+
+**Zookeeper**
+   Purpose: Pulsar coordination and configuration
+
+**BookKeeper**
+   Purpose: Pulsar storage backend
+
+### Event Flow
+
+Partner Onboarding Initiated -> Partner Management
+Partner Registration -> Onboarding Service
+Contract Creation -> Onboarding Service
+Document Verification -> Onboarding Service
+Campaigns Enabled -> Campaign Management Service
+Recruitment Setup -> Recruitment Service
+Saga Completion -> Partner Management
 
 ## Core Services
 
@@ -144,7 +202,7 @@ cd tests/scripts
 python test_final_integration.py
 ```
 
-## 📚 Documentation
+## Documentation
 
 - [Architecture Overview](documentacion/arquitectura/OVERVIEW.md)
 - [Microservices Design](documentacion/arquitectura/MICROSERVICES_DESIGN.md)
