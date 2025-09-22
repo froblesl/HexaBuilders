@@ -142,7 +142,7 @@ HexaBuilders is a comprehensive microservices platform that implements:
 
 ---
 
-### Event Flow
+### Saga Event Flow
 
 1. Partner Onboarding Initiated → Partner Management  
 2. Partner Registration → Onboarding Service  
