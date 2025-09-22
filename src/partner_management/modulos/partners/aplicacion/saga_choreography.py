@@ -434,23 +434,6 @@ class ChoreographySagaOrchestrator:
         """Obtiene el estado actual de la Saga"""
         return self.saga_state_repository.get(partner_id)
     
-    def _initiate_compensation(self, partner_id: str, failed_step: str, correlation_id: str):
-        """Inicia la compensación de la Saga"""
-        saga_state = self.saga_state_repository.get(partner_id)
-        
-        if saga_state:
-            saga_state["status"] = ChoreographySagaStatus.COMPENSATING
-            saga_state["updated_at"] = datetime.now(timezone.utc).isoformat()
-            saga_state["failed_steps"] = saga_state.get("failed_steps", []) + [failed_step]
-            self.saga_state_repository.save(partner_id, saga_state)
-            
-            # Record saga failure in metrics
-            saga_id = saga_state.get("saga_id")
-            if saga_id:
-                self.saga_metrics.record_saga_completion(saga_id, "FAILED")
-        
-        self.logger.info(f"Compensation initiated for partner {partner_id}, failed step: {failed_step}")
-    
     def update(self, partner_id: str, updates: Dict[str, Any]):
         """Actualiza el estado de la Saga con los cambios especificados"""
         saga_state = self.saga_state_repository.get(partner_id)
@@ -570,6 +553,10 @@ class ChoreographySagaOrchestrator:
         step_to_compensate = compensation_steps[compensation_index]
         self.logger.info(f"Compensating step {compensation_index + 1}/{len(compensation_steps)}: {step_to_compensate}")
         
+        # Log step started
+        self.saga_log.step_started(saga_id, partner_id, f"compensate_{step_to_compensate}", correlation_id, "partner-management")
+        self.audit_trail.record_step_start(saga_id, partner_id, f"compensate_{step_to_compensate}", correlation_id, "partner-management")
+        
         # Publish compensation event based on step
         compensation_event = {
             "partner_id": partner_id,
@@ -589,10 +576,6 @@ class ChoreographySagaOrchestrator:
             self.event_dispatcher.publish("ContractCancellationRequested", compensation_event)
         elif step_to_compensate == "partner_registration":
             self.event_dispatcher.publish("PartnerRegistrationRevertRequested", compensation_event)
-        
-        # Log compensation step started
-        self.saga_log.step_started(saga_id, partner_id, f"compensate_{step_to_compensate}", correlation_id, "partner-management")
-        self.audit_trail.record_step_start(saga_id, partner_id, f"compensate_{step_to_compensate}", correlation_id, "partner-management")
     
     def _complete_compensation(self, partner_id: str, saga_id: str, correlation_id: str):
         """Completa el proceso de compensación"""
@@ -617,6 +600,13 @@ class ChoreographySagaOrchestrator:
         saga_id = event_data.get("saga_id")
         correlation_id = event_data["correlation_id"]
         
+        # Check for duplicate events
+        event_id = f"recruitment_compensated_{partner_id}_{event_data.get('causation_id', '')}"
+        if event_id in self._processed_events:
+            self.logger.info(f"Recruitment compensation event already processed, skipping: {event_id}")
+            return
+        self._processed_events.add(event_id)
+        
         self.logger.info(f"Recruitment setup compensated for partner: {partner_id}")
         
         # Log step completed
@@ -631,6 +621,13 @@ class ChoreographySagaOrchestrator:
         partner_id = event_data["partner_id"]
         saga_id = event_data.get("saga_id")
         correlation_id = event_data["correlation_id"]
+        
+        # Check for duplicate events
+        event_id = f"campaigns_compensated_{partner_id}_{event_data.get('causation_id', '')}"
+        if event_id in self._processed_events:
+            self.logger.info(f"Campaigns compensation event already processed, skipping: {event_id}")
+            return
+        self._processed_events.add(event_id)
         
         self.logger.info(f"Campaigns disabled for partner: {partner_id}")
         
@@ -647,6 +644,13 @@ class ChoreographySagaOrchestrator:
         saga_id = event_data.get("saga_id")
         correlation_id = event_data["correlation_id"]
         
+        # Check for duplicate events
+        event_id = f"documents_compensated_{partner_id}_{event_data.get('causation_id', '')}"
+        if event_id in self._processed_events:
+            self.logger.info(f"Documents compensation event already processed, skipping: {event_id}")
+            return
+        self._processed_events.add(event_id)
+        
         self.logger.info(f"Document verification reverted for partner: {partner_id}")
         
         # Log step completed
@@ -662,6 +666,13 @@ class ChoreographySagaOrchestrator:
         saga_id = event_data.get("saga_id")
         correlation_id = event_data["correlation_id"]
         
+        # Check for duplicate events
+        event_id = f"contract_compensated_{partner_id}_{event_data.get('causation_id', '')}"
+        if event_id in self._processed_events:
+            self.logger.info(f"Contract compensation event already processed, skipping: {event_id}")
+            return
+        self._processed_events.add(event_id)
+        
         self.logger.info(f"Contract cancelled for partner: {partner_id}")
         
         # Log step completed
@@ -676,6 +687,13 @@ class ChoreographySagaOrchestrator:
         partner_id = event_data["partner_id"]
         saga_id = event_data.get("saga_id")
         correlation_id = event_data["correlation_id"]
+        
+        # Check for duplicate events
+        event_id = f"partner_compensated_{partner_id}_{event_data.get('causation_id', '')}"
+        if event_id in self._processed_events:
+            self.logger.info(f"Partner compensation event already processed, skipping: {event_id}")
+            return
+        self._processed_events.add(event_id)
         
         self.logger.info(f"Partner registration reverted for partner: {partner_id}")
         

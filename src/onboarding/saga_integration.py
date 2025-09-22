@@ -22,6 +22,7 @@ class OnboardingSagaIntegration:
     def __init__(self, event_dispatcher: PulsarEventDispatcher):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.event_dispatcher = event_dispatcher
+        self._processed_events = set()  # Para evitar procesar eventos duplicados
         self._subscribe_to_events()
     
     def _subscribe_to_events(self):
@@ -112,6 +113,14 @@ class OnboardingSagaIntegration:
         """Maneja la solicitud de cancelación de contrato (compensación)"""
         partner_id = event_data["partner_id"]
         saga_id = event_data.get("saga_id")
+        
+        # Check for duplicate events
+        event_id = f"contract_cancellation_requested_{partner_id}_{event_data.get('causation_id', '')}"
+        if event_id in self._processed_events:
+            self.logger.info(f"Contract cancellation request already processed, skipping: {event_id}")
+            return
+        self._processed_events.add(event_id)
+        
         self.logger.info(f"Compensating: Cancelling contract for partner {partner_id}")
         
         try:
@@ -150,6 +159,14 @@ class OnboardingSagaIntegration:
         """Maneja la solicitud de reversión de verificación de documentos (compensación)"""
         partner_id = event_data["partner_id"]
         saga_id = event_data.get("saga_id")
+        
+        # Check for duplicate events
+        event_id = f"document_revert_requested_{partner_id}_{event_data.get('causation_id', '')}"
+        if event_id in self._processed_events:
+            self.logger.info(f"Document verification revert request already processed, skipping: {event_id}")
+            return
+        self._processed_events.add(event_id)
+        
         self.logger.info(f"Compensating: Reverting document verification for partner {partner_id}")
         
         try:
@@ -188,6 +205,14 @@ class OnboardingSagaIntegration:
         """Maneja la solicitud de reversión de registro de partner (compensación)"""
         partner_id = event_data["partner_id"]
         saga_id = event_data.get("saga_id")
+        
+        # Check for duplicate events
+        event_id = f"partner_revert_requested_{partner_id}_{event_data.get('causation_id', '')}"
+        if event_id in self._processed_events:
+            self.logger.info(f"Partner registration revert request already processed, skipping: {event_id}")
+            return
+        self._processed_events.add(event_id)
+        
         self.logger.info(f"Compensating: Reverting partner registration for partner {partner_id}")
         
         try:
